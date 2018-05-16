@@ -1,9 +1,16 @@
 package com.macbitsgoa.student_companion;
 
+import android.annotation.TargetApi;
 import android.app.Dialog;
+import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.pm.PackageManager;
+import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
+import android.support.v4.app.ActivityCompat;
+import android.support.v4.content.ContextCompat;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.View;
@@ -47,13 +54,13 @@ public class SignInActivity extends AppCompatActivity implements GoogleApiClient
     GoogleSignInClient mGoogleSignInClient;
     GoogleApiClient mGoogleApiClient;
     private int RC_SIGN_IN = 0;
+    private final int RC_PERM_REQ_EXT_STORAGE = 7;
     @BindView(R.id.sign_in_button)
     com.google.android.gms.common.SignInButton SignInButton;
     private String serverClientId = "666225132801-iklcdj36jau98rf2v44a0v1rnguioatd.apps.googleusercontent.com";
     private String clientSecret = "NGfzk-7sJilNmFla6TZy8WrL";
-    //private String serverClientId1 = "  666225132801-5d33mmf5uic0d5qecjaogl457psphq03.apps.googleusercontent.com";
-    String idTokenString = "";
     String authCode = "";
+    String accessToken;
     FirebaseAuth mAuth;
     FirebaseAuth.AuthStateListener mAuthListener;
 
@@ -63,6 +70,8 @@ public class SignInActivity extends AppCompatActivity implements GoogleApiClient
         setContentView(R.layout.activity_sign_in);
         ButterKnife.bind(this);
         checkGooglePlayServices();
+        checkPermission();
+
 
         mAuth = FirebaseAuth.getInstance();
         mAuthListener = new FirebaseAuth.AuthStateListener() {
@@ -130,7 +139,6 @@ public class SignInActivity extends AppCompatActivity implements GoogleApiClient
     private void handleSignInResult(Task<GoogleSignInAccount> completedTask) {
         try {
             GoogleSignInAccount account = completedTask.getResult(ApiException.class);
-
             // Signed in successfully, show authenticated UI.
             updateUI(account);
         } catch (ApiException e) {
@@ -147,13 +155,10 @@ public class SignInActivity extends AppCompatActivity implements GoogleApiClient
         Log.e("Response", account.getServerAuthCode());
         firebaseAuthWithGoogle(account);
 
-        Intent intent = new Intent(this, HomeActivity.class);
-        startActivity(intent);
-
         Log.e("Response:email:", account.getEmail());
         Log.e("Response:id:", account.getId());
         Log.e("Response:name:", account.getDisplayName());
-        finish();
+
     }
 
 
@@ -183,52 +188,13 @@ public class SignInActivity extends AppCompatActivity implements GoogleApiClient
 
     void firebaseAuthWithGoogle(GoogleSignInAccount account) {
 
-        Log.e("Response:", "Google User Id :" + account.getId());
-
-        // --------------------------------- //
-        // BELOW LINE GIVES YOU JSON WEB TOKEN, (USED TO GET ACCESS TOKEN) : 
-        Log.e("Response:", "Google JWT : " + account.getIdToken());
-        // --------------------------------- //
-
-        // Save this JWT in global String : 
-        idTokenString = account.getIdToken();
-        getGoogleToken();
-
-        AuthCredential credential = GoogleAuthProvider.getCredential(account.getIdToken(), null);
-        mAuth.signInWithCredential(credential)
-                .addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
-                    @Override
-                    public void onComplete(@NonNull Task<AuthResult> task) {
-                        Log.e("Response:", "signInWithCredential:onComplete:" + task.isSuccessful());
-
-                        if (task.isSuccessful()) {
-
-                            // --------------------------------- //
-                            // BELOW LINE GIVES YOU FIREBASE TOKEN ID : 
-                            //Log.e`("TAG", "Firebase User Access Token : " + task.getResult());
-                            // --------------------------------- //
-                        }
-                        // If sign in fails, display a message to the user. If sign in succeeds
-                        // the auth state listener will be notified and logic to handle the
-                        // signed in user can be handled in the listener.
-                        else {
-                            Log.e("Response:", "signInWithCredential", task.getException());
-                            Toast.makeText(SignInActivity.this, "Authentication failed.",
-                                    Toast.LENGTH_SHORT).show();
-                        }
-                    }
-                });
-    }
-
-    void getGoogleToken() {
         OkHttpClient client = new OkHttpClient();
         RequestBody requestBody = new FormEncodingBuilder()
                 .add("grant_type", "authorization_code")
                 .add("client_id", serverClientId)   // something like : ...apps.googleusercontent.com
                 .add("client_secret", clientSecret)
                 .add("redirect_uri", "https://balmy-component-204213.firebaseapp.com/__/auth/handler")
-                .add("code", authCode) // device code.
-                .add("id_token", idTokenString) // This is what we received in Step 5, the jwt token.
+                .add("code",account.getServerAuthCode()) // device code.
                 .build();
 
         final Request request = new Request.Builder()
@@ -239,6 +205,7 @@ public class SignInActivity extends AppCompatActivity implements GoogleApiClient
         client.newCall(request).enqueue(this);
 
     }
+
 
 
     @Override
@@ -259,11 +226,54 @@ public class SignInActivity extends AppCompatActivity implements GoogleApiClient
         JSONObject jsonObject = null;
         try {
             jsonObject = new JSONObject(response.body().string());
+            accessToken= (String) jsonObject.get("access_token");
             String message = jsonObject.toString(5);
             Log.e("Response:AuthKey:", message);
+            if(accessToken!=null) {
+                Log.e("Response:", accessToken);
+                Intent intent = new Intent(this, HomeActivity.class);
+                intent.putExtra("accessToken",accessToken);
+                startActivity(intent);
+                finish();
+            }
         } catch (JSONException e) {
             e.printStackTrace();
         }
 
     }
+
+    public boolean checkPermission() {
+        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.M
+                || ContextCompat.checkSelfPermission(SignInActivity.this, android.Manifest.permission.READ_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED) {
+            return true;
+        }
+        if (ActivityCompat.shouldShowRequestPermissionRationale(SignInActivity.this, android.Manifest.permission.READ_EXTERNAL_STORAGE)) {
+            AlertDialog.Builder alertBuilder = new AlertDialog.Builder(SignInActivity.this);
+            alertBuilder.setCancelable(true);
+            alertBuilder.setTitle("Permission necessary");
+            alertBuilder.setMessage("Permission to read storage is required .");
+            alertBuilder.setPositiveButton("Proceed", new DialogInterface.OnClickListener() {
+                @TargetApi(Build.VERSION_CODES.JELLY_BEAN)
+                public void onClick(DialogInterface dialog, int which) {
+                    ActivityCompat.requestPermissions(SignInActivity.this, new String[]{android.Manifest.permission.READ_EXTERNAL_STORAGE}, 7);
+                }
+            });
+            AlertDialog alert = alertBuilder.create();
+            alert.show();
+        } else {
+            ActivityCompat.requestPermissions(SignInActivity.this, new String[]{android.Manifest.permission.READ_EXTERNAL_STORAGE}, RC_PERM_REQ_EXT_STORAGE);
+        }
+        return false;
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        if (requestCode == RC_PERM_REQ_EXT_STORAGE) {
+            if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_DENIED) {
+                Toast.makeText(this, "Permission Denied !, Retrying.", Toast.LENGTH_SHORT).show();
+                checkPermission();
+            }
+        }
+    }
+
 }
