@@ -42,7 +42,6 @@ import java.io.IOException;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 
-import static com.macbitsgoa.student_companion.Testcode.REQUEST_GOOGLE_PLAY_SERVICES;
 
 
 public class SignInActivity extends AppCompatActivity implements GoogleApiClient.OnConnectionFailedListener, com.squareup.okhttp.Callback {
@@ -51,12 +50,14 @@ public class SignInActivity extends AppCompatActivity implements GoogleApiClient
     private final int RC_PERM_REQ_EXT_STORAGE = 7;
     @BindView(R.id.sign_in_button)
     com.google.android.gms.common.SignInButton SignInButton;
-    private String serverClientId = "666225132801-iklcdj36jau98rf2v44a0v1rnguioatd.apps.googleusercontent.com";
-    private String clientSecret = "NGfzk-7sJilNmFla6TZy8WrL";
     String authCode = "";
     String accessToken;
     FirebaseAuth mAuth;
     FirebaseAuth.AuthStateListener mAuthListener;
+
+    static final String serverClientId = "666225132801-iklcdj36jau98rf2v44a0v1rnguioatd.apps.googleusercontent.com";
+    static final String clientSecret = "NGfzk-7sJilNmFla6TZy8WrL";
+    static final int REQUEST_GOOGLE_PLAY_SERVICES = 1002;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -180,15 +181,20 @@ public class SignInActivity extends AppCompatActivity implements GoogleApiClient
 
 
     void firebaseAuthWithGoogle(GoogleSignInAccount account) {
+        String authCode=account.getServerAuthCode();
 
         OkHttpClient client = new OkHttpClient();
-        RequestBody requestBody = new FormEncodingBuilder()
-                .add("grant_type", "authorization_code")
-                .add("client_id", serverClientId)   // something like : ...apps.googleusercontent.com
-                .add("client_secret", clientSecret)
-                .add("redirect_uri", "https://balmy-component-204213.firebaseapp.com/__/auth/handler")
-                .add("code",account.getServerAuthCode()) // device code.
-                .build();
+        RequestBody requestBody = null;
+
+        if (authCode != null) {
+            requestBody = new FormEncodingBuilder()
+                    .add("grant_type", "authorization_code")
+                    .add("client_id", serverClientId)   // something like : ...apps.googleusercontent.com
+                    .add("client_secret", clientSecret)
+                    .add("redirect_uri", "https://balmy-component-204213.firebaseapp.com/__/auth/handler")
+                    .add("code",authCode) // device code.
+                    .build();
+        }
 
         final Request request = new Request.Builder()
                 .url("https://www.googleapis.com/oauth2/v4/token")
@@ -216,7 +222,7 @@ public class SignInActivity extends AppCompatActivity implements GoogleApiClient
 
     @Override
     public void onResponse(com.squareup.okhttp.Response response) throws IOException {
-        JSONObject jsonObject = null;
+        JSONObject jsonObject;
         try {
             jsonObject = new JSONObject(response.body().string());
             accessToken= (String) jsonObject.get("access_token");

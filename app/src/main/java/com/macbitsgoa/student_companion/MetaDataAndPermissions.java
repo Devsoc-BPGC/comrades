@@ -121,9 +121,12 @@ public class MetaDataAndPermissions extends AsyncTask<Void, Void, Void> {
 
     private void pushToFirebase(JSONObject jsonObject) throws JSONException {
         DatabaseReference databaseReference = FirebaseDatabase.getInstance().getReference().child(fileId);
+        String weblink=(String) jsonObject.get("webContentLink");
         HashMap<String, String> hashMap = jsonToMap(jsonObject.toString());
         databaseReference.child("fileId").setValue(fileId);
         databaseReference.child("meta-data").setValue(hashMap);
+        databaseReference.child("webContentLink").setValue(weblink);
+
 
     }
 
