@@ -8,26 +8,29 @@ import android.util.Log;
 import android.webkit.MimeTypeMap;
 import android.widget.Toast;
 
-import com.squareup.okhttp.Callback;
 import com.squareup.okhttp.MediaType;
 import com.squareup.okhttp.OkHttpClient;
 import com.squareup.okhttp.Request;
 import com.squareup.okhttp.RequestBody;
 import com.squareup.okhttp.Response;
+
+import org.json.JSONObject;
+
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 
 /**
- * @author AayushSingla
+ * @author aayushSingla
  */
 
-public class UploadFile extends AsyncTask<Void,Void,Void> implements Callback {
+public class UploadFile extends AsyncTask<Void, Void, String> {
      private String path;
-     private String accessToken;
+    private String accessToken;
      private ProgressDialog progressDialog;
      @SuppressLint("StaticFieldLeak")
      private Context mContext;
+    JSONObject jsonObject = null;
 
      UploadFile(String path,String accessToken,Context mContext){
             progressDialog=new ProgressDialog(mContext);
@@ -37,12 +40,11 @@ public class UploadFile extends AsyncTask<Void,Void,Void> implements Callback {
      }
 
     @Override
-    protected Void doInBackground(Void... voids) {
-         uploadFile();
-        return null;
+    protected String doInBackground(Void... voids) {
+        return uploadFile();
     }
 
-    private void uploadFile() {
+    private String uploadFile() {
 
         try {
             File file = new File(path);
@@ -70,21 +72,23 @@ public class UploadFile extends AsyncTask<Void,Void,Void> implements Callback {
                     .addHeader("Authorization","Bearer "+accessToken)
                     .post(requestBody)
                     .build();
-
-            okHttpClient.newCall(request).enqueue(this);
-
             Log.e("Response:content-type",getMimeType(path));
             Log.e("Response:","authorization:"+accessToken);
             Log.e("Response:content-Length",file.length()+"");
 
+            Response response = okHttpClient.newCall(request).execute();
+            //Log.e("Response",response.body().string());
+
+            return response.body().string();
 
         } catch (Exception e) {
             Log.e("Response:","Failed");
             e.printStackTrace();
         }
+        return null;
 
 
-     }
+    }
 
 
     private byte[] fileToBytes(File file){
@@ -108,16 +112,6 @@ public class UploadFile extends AsyncTask<Void,Void,Void> implements Callback {
         return type;
     }
 
-    @Override
-    public void onFailure(Request request, IOException e) {
-        Log.e("Response:", e.getMessage());
-
-    }
-
-    @Override
-    public void onResponse(Response response) throws IOException {
-           Log.e("Response",response.body().string());
-    }
 
     @Override
     protected void onPreExecute() {
@@ -128,7 +122,7 @@ public class UploadFile extends AsyncTask<Void,Void,Void> implements Callback {
     }
 
     @Override
-    protected void onPostExecute(Void result){
+    protected void onPostExecute(String result) {
         progressDialog.hide();
         Toast.makeText(mContext,"File Uploaded",Toast.LENGTH_LONG).show();
     }

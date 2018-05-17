@@ -1,12 +1,17 @@
 package com.macbitsgoa.student_companion;
 
-import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 
 import com.codekidlabs.storagechooser.StorageChooser;
+
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.util.concurrent.ExecutionException;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -42,13 +47,28 @@ public class HomeActivity extends AppCompatActivity {
                 Log.e("SELECTED_PATH", path);
 
                 UploadFile uploadFile=new UploadFile(path,getIntent().getStringExtra("accessToken"),HomeActivity.this);
-                uploadFile.execute();
+                String response_string = null;
+                try {
+                    response_string = uploadFile.execute().get();
+                    JSONObject jsonObject = new JSONObject(response_string);
+                    String fileId = (String) jsonObject.get("id");
+                    MetaDataAndPermissions metaDataAndPermissions = new MetaDataAndPermissions(HomeActivity.this, fileId, getIntent().getStringExtra("accessToken"));
+                    metaDataAndPermissions.execute();
 
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                } catch (ExecutionException e) {
+                    e.printStackTrace();
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
             }
         });
 
 
     }
+
+
 }
 
 

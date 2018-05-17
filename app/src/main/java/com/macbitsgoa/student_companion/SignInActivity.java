@@ -19,21 +19,16 @@ import android.widget.Toast;
 import com.google.android.gms.auth.api.Auth;
 import com.google.android.gms.auth.api.signin.GoogleSignIn;
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
-import com.google.android.gms.auth.api.signin.GoogleSignInClient;
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.GoogleApiAvailability;
 import com.google.android.gms.common.api.ApiException;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.common.api.Scope;
-import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.api.services.drive.DriveScopes;
-import com.google.firebase.auth.AuthCredential;
-import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
-import com.google.firebase.auth.GoogleAuthProvider;
 import com.squareup.okhttp.FormEncodingBuilder;
 import com.squareup.okhttp.OkHttpClient;
 import com.squareup.okhttp.Request;
@@ -51,7 +46,6 @@ import static com.macbitsgoa.student_companion.Testcode.REQUEST_GOOGLE_PLAY_SERV
 
 
 public class SignInActivity extends AppCompatActivity implements GoogleApiClient.OnConnectionFailedListener, com.squareup.okhttp.Callback {
-    GoogleSignInClient mGoogleSignInClient;
     GoogleApiClient mGoogleApiClient;
     private int RC_SIGN_IN = 0;
     private final int RC_PERM_REQ_EXT_STORAGE = 7;
@@ -70,7 +64,7 @@ public class SignInActivity extends AppCompatActivity implements GoogleApiClient
         setContentView(R.layout.activity_sign_in);
         ButterKnife.bind(this);
         checkGooglePlayServices();
-        checkPermission();
+        checkStoragePermission();
 
 
         mAuth = FirebaseAuth.getInstance();
@@ -97,7 +91,6 @@ public class SignInActivity extends AppCompatActivity implements GoogleApiClient
                 .requestEmail()
                 .build();
 
-        // ...
         // Build a GoogleApiClient with access to the Google Sign-In API and the
         // options specified by gso.
         mGoogleApiClient = new GoogleApiClient.Builder(this)
@@ -151,14 +144,14 @@ public class SignInActivity extends AppCompatActivity implements GoogleApiClient
 
 
     private void updateUI(GoogleSignInAccount account) {
-        authCode = account.getServerAuthCode();
-        Log.e("Response", account.getServerAuthCode());
-        firebaseAuthWithGoogle(account);
-
-        Log.e("Response:email:", account.getEmail());
-        Log.e("Response:id:", account.getId());
-        Log.e("Response:name:", account.getDisplayName());
-
+        if (account != null) {
+            authCode = account.getServerAuthCode();
+            firebaseAuthWithGoogle(account);
+            Log.e("Response", account.getServerAuthCode());
+            Log.e("Response:email:", account.getEmail());
+            Log.e("Response:id:", account.getId());
+            Log.e("Response:name:", account.getDisplayName());
+        }
     }
 
 
@@ -242,10 +235,10 @@ public class SignInActivity extends AppCompatActivity implements GoogleApiClient
 
     }
 
-    public boolean checkPermission() {
+    public void checkStoragePermission() {
         if (Build.VERSION.SDK_INT < Build.VERSION_CODES.M
                 || ContextCompat.checkSelfPermission(SignInActivity.this, android.Manifest.permission.READ_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED) {
-            return true;
+            return;
         }
         if (ActivityCompat.shouldShowRequestPermissionRationale(SignInActivity.this, android.Manifest.permission.READ_EXTERNAL_STORAGE)) {
             AlertDialog.Builder alertBuilder = new AlertDialog.Builder(SignInActivity.this);
@@ -263,7 +256,6 @@ public class SignInActivity extends AppCompatActivity implements GoogleApiClient
         } else {
             ActivityCompat.requestPermissions(SignInActivity.this, new String[]{android.Manifest.permission.READ_EXTERNAL_STORAGE}, RC_PERM_REQ_EXT_STORAGE);
         }
-        return false;
     }
 
     @Override
@@ -271,7 +263,7 @@ public class SignInActivity extends AppCompatActivity implements GoogleApiClient
         if (requestCode == RC_PERM_REQ_EXT_STORAGE) {
             if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_DENIED) {
                 Toast.makeText(this, "Permission Denied !, Retrying.", Toast.LENGTH_SHORT).show();
-                checkPermission();
+                checkStoragePermission();
             }
         }
     }
