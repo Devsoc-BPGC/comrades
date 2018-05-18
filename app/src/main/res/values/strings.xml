@@ -2,4 +2,6 @@
     <string name="app_name">Student-Companion</string>
     <string name="title_activity_sign_in">SignInActivity</string>
     <string name="title_activity_download">DownloadActivity</string>
+    <string name="server_client_id">666225132801-iklcdj36jau98rf2v44a0v1rnguioatd.apps.googleusercontent.com</string>
+    <string name="client_secret">NGfzk-7sJilNmFla6TZy8WrL</string>
 </resources>

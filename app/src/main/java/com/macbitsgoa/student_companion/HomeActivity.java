@@ -2,7 +2,6 @@ package com.macbitsgoa.student_companion;
 
 import android.content.Intent;
 import android.os.Bundle;
-import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
@@ -19,21 +18,18 @@ import org.json.JSONObject;
 import java.util.HashMap;
 import java.util.concurrent.ExecutionException;
 
-import butterknife.BindView;
-import butterknife.ButterKnife;
+import androidx.appcompat.app.AppCompatActivity;
 
 public class HomeActivity extends AppCompatActivity {
-    @BindView(R.id.btn_upload)
     Button upload;
-    @BindView(R.id.btn_download)
     Button download;
     StorageChooser chooser;
-    @Override
 
+    @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_home);
-        ButterKnife.bind(this);
+        initViews();
         chooser = new StorageChooser.Builder()
                 .withActivity(HomeActivity.this)
                 .withFragmentManager(getFragmentManager())
@@ -54,7 +50,7 @@ public class HomeActivity extends AppCompatActivity {
             public void onSelect(String path) {
                 Log.e("SELECTED_PATH", path);
 
-                UploadFile uploadFile=new UploadFile(path,getIntent().getStringExtra("accessToken"),HomeActivity.this);
+                UploadFile uploadFile = new UploadFile(path, getIntent().getStringExtra("accessToken"), HomeActivity.this);
                 String response_string = null;
                 try {
                     response_string = uploadFile.execute().get();
@@ -79,16 +75,16 @@ public class HomeActivity extends AppCompatActivity {
                 FirebaseDatabase.getInstance().getReference().addListenerForSingleValueEvent(new ValueEventListener() {
                     @Override
                     public void onDataChange(DataSnapshot dataSnapshot) {
-                        HashMap<String,String> hashMap=new HashMap<>();
+                        HashMap<String, String> hashMap = new HashMap<>();
 
-                        for(DataSnapshot snapshot:dataSnapshot.getChildren()){
-                            String fileId=snapshot.child("fileId").getValue(String.class);
-                            String link=snapshot.child("webContentLink").getValue(String.class);
-                            hashMap.put(fileId,link);
+                        for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
+                            String fileId = snapshot.child("fileId").getValue(String.class);
+                            String link = snapshot.child("webContentLink").getValue(String.class);
+                            hashMap.put(fileId, link);
                         }
 
-                        Intent intent=new Intent(HomeActivity.this,DownloadActivity.class);
-                        intent.putExtra("hashmap",hashMap);
+                        Intent intent = new Intent(HomeActivity.this, DownloadActivity.class);
+                        intent.putExtra("hashmap", hashMap);
                         startActivity(intent);
 
 
@@ -102,6 +98,11 @@ public class HomeActivity extends AppCompatActivity {
             }
         });
 
+    }
+
+    private void initViews() {
+        upload = findViewById(R.id.btn_upload);
+        download = findViewById(R.id.btn_download);
     }
 
 
