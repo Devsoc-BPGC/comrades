@@ -19,9 +19,11 @@ import static com.macbitsgoa.companions.MetaDataAndPermissions.AUTHORIZATION_FIE
 import static com.macbitsgoa.companions.MetaDataAndPermissions.AUTHORIZATION_FIELD_VALUE_PREFIX;
 
 /**
+ * Code to upload file.
  * @author aayushSingla
  */
 
+@SuppressWarnings("WeakerAccess")
 public class UploadFile extends AsyncTask<Void, Void, String> {
     private static final String TAG = "MAC->" + UploadFile.class.getSimpleName();
     private final String path;

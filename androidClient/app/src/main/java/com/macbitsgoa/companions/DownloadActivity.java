@@ -14,7 +14,7 @@ import androidx.appcompat.widget.Toolbar;
 
 public class DownloadActivity extends AppCompatActivity implements View.OnClickListener {
 
-    public static final String FILES_MAP_KEY = "hashmap";
+    public static final String FILES_MAP_KEY = "filesData";
     private LinearLayout scrollView;
     private HashMap<String, String> filesData;
     private static final String TAG = "MAC->" + DownloadActivity.class.getSimpleName();
@@ -58,7 +58,7 @@ public class DownloadActivity extends AppCompatActivity implements View.OnClickL
     @Override
     public void onClick(final View v) {
         final String url = (String) v.getTag();
-        final DownloadFile downloadFile = new DownloadFile("aayush");
+        final DownloadFile downloadFile = new DownloadFile("Untitled");
         downloadFile.execute(url);
     }
 }

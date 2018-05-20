@@ -18,8 +18,10 @@ import javax.annotation.Nullable;
 import static android.os.Environment.getExternalStorageDirectory;
 
 /**
+ * Downloads the file.
  * @author aayush singla
  */
+@SuppressWarnings("WeakerAccess")
 public class DownloadFile extends AsyncTask<String, String, String> {
     private static final String DOWNLOAD_DIRECTORY = "/StudentCompanion/";
     private static final String TAG = "MAC->" + DownloadFile.class.getSimpleName();

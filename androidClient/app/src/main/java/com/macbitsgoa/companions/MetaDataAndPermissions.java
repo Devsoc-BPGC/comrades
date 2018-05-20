@@ -23,9 +23,11 @@ import androidx.annotation.Nullable;
 
 
 /**
+ * Request google drive permissions.
  * @author aayush singla
  */
 
+@SuppressWarnings("WeakerAccess")
 public class MetaDataAndPermissions extends AsyncTask<Void, Void, Void> {
     @SuppressWarnings("WeakerAccess")
     public static final String AUTHORIZATION_FIELD_KEY = "Authorization";
@@ -37,7 +39,12 @@ public class MetaDataAndPermissions extends AsyncTask<Void, Void, Void> {
     private final String fileId;
     private final String accessToken;
 
-
+    /**
+     * Default constructor.
+     * @param fileId id of the file.
+     * @param accessToken obtained from sign in.
+     * @param driveApiBaseUrl base url of google drive api.
+     */
     @SuppressWarnings("WeakerAccess")
     public MetaDataAndPermissions(final String fileId, final String accessToken,
                                   @NonNull final String driveApiBaseUrl) {

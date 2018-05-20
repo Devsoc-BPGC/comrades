@@ -21,7 +21,7 @@ import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.common.api.Scope;
 import com.google.android.gms.tasks.Task;
 import com.google.api.services.drive.DriveScopes;
-import com.google.firebase.auth.FirebaseAuth;
+import com.squareup.okhttp.Callback;
 import com.squareup.okhttp.FormEncodingBuilder;
 import com.squareup.okhttp.OkHttpClient;
 import com.squareup.okhttp.Request;
@@ -45,16 +45,13 @@ import static com.google.android.gms.auth.api.signin.GoogleSignInOptions.DEFAULT
 
 
 public class SignInActivity extends AppCompatActivity
-        implements GoogleApiClient.OnConnectionFailedListener, com.squareup.okhttp.Callback {
+        implements GoogleApiClient.OnConnectionFailedListener, Callback, View.OnClickListener {
     public static final String ACCESS_TOKEN_KEY = "accessToken";
     private static final int REQUEST_GOOGLE_PLAY_SERVICES = 1002;
     private static final int RC_PERM_REQ_EXT_STORAGE = 7;
     private static final int RC_SIGN_IN = 0;
     private static final String TAG = "MAC->" + SignInActivity.class.getSimpleName();
-    GoogleSignInClient signInClient;
-    String authCode = "";
-    String accessToken;
-    FirebaseAuth mAuth;
+    private GoogleSignInClient signInClient;
     private SignInButton signInButton;
 
     @Override
@@ -85,7 +82,7 @@ public class SignInActivity extends AppCompatActivity
         }
     }
 
-    public void askStoragePermission() {
+    private void askStoragePermission() {
         if (Build.VERSION.SDK_INT < Build.VERSION_CODES.M
                 || checkSelfPermission(READ_EXTERNAL_STORAGE) == PERMISSION_GRANTED) {
             return;
@@ -111,21 +108,20 @@ public class SignInActivity extends AppCompatActivity
     private void handleSignInResult(final Task<GoogleSignInAccount> completedTask) {
         try {
             final GoogleSignInAccount account = completedTask.getResult(ApiException.class);
-            updateUI(account);
+            updateUi(account);
         } catch (final ApiException e) {
             Log.w(TAG, "sign in result failed " + e.getMessage(), e.fillInStackTrace());
-            updateUI(null);
+            updateUi(null);
         }
     }
 
-    private void updateUI(final GoogleSignInAccount account) {
+    private void updateUi(final GoogleSignInAccount account) {
         if (account != null) {
-            authCode = account.getServerAuthCode();
             firebaseAuthWithGoogle(account);
         }
     }
 
-    void firebaseAuthWithGoogle(final GoogleSignInAccount account) {
+    private void firebaseAuthWithGoogle(final GoogleSignInAccount account) {
         final String authCode = account.getServerAuthCode();
 
         final OkHttpClient client = new OkHttpClient();
@@ -137,7 +133,7 @@ public class SignInActivity extends AppCompatActivity
                     .add("client_id", getString(R.string.server_client_id))
                     .add("client_secret", getString(R.string.client_secret))
                     .add("redirect_uri", getString(R.string.redirect_url))
-                    .add("code", authCode) // device code.
+                    .add("code", authCode)
                     .build();
         }
 
@@ -157,7 +153,6 @@ public class SignInActivity extends AppCompatActivity
         askStoragePermission();
 
 
-        mAuth = FirebaseAuth.getInstance();
         final GoogleSignInOptions gso = new GoogleSignInOptions.Builder(DEFAULT_SIGN_IN)
                 .requestScopes(new Scope(DriveScopes.DRIVE))
                 .requestIdToken(getString(R.string.server_client_id))
@@ -168,13 +163,7 @@ public class SignInActivity extends AppCompatActivity
         // Build a GoogleApiClient with access to the Google Sign-In API and the
         // options specified by gso.
         signInClient = GoogleSignIn.getClient(this, gso);
-        signInButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(final View v) {
-                final Intent signInIntent = signInClient.getSignInIntent();
-                startActivityForResult(signInIntent, RC_SIGN_IN);
-            }
-        });
+        signInButton.setOnClickListener(this);
     }
 
     private void initViews() {
@@ -211,7 +200,7 @@ public class SignInActivity extends AppCompatActivity
         final JSONObject jsonObject;
         try {
             jsonObject = new JSONObject(response.body().string());
-            accessToken = (String) jsonObject.get("access_token");
+            final String accessToken = (String) jsonObject.get("access_token");
             final String message = jsonObject.toString(5);
             Log.e("Response:AuthKey:", message);
             if (accessToken != null) {
@@ -222,6 +211,15 @@ public class SignInActivity extends AppCompatActivity
             }
         } catch (final JSONException e) {
             Log.e(TAG, e.getMessage(), e.fillInStackTrace());
+        }
+    }
+
+    @Override
+    public void onClick(final View view) {
+        final int id = view.getId();
+        if (id == R.id.sign_in_button) {
+            final Intent signInIntent = signInClient.getSignInIntent();
+            startActivityForResult(signInIntent, RC_SIGN_IN);
         }
     }
 }

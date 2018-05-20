@@ -5,7 +5,7 @@
     android:layout_width="match_parent"
     android:id="@+id/button_container"
     android:layout_height="match_parent"
-    app:layout_behavior="@string/appbar_scrolling_view_behavior"
+    app:layout_behavior="com.google.android.material.appbar.AppBarLayout$ScrollingViewBehavior"
     tools:context=".DownloadActivity"
     tools:showIn="@layout/activity_download"
     android:orientation="vertical">
