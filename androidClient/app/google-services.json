@@ -1,0 +1,63 @@
+{
+  "project_info": {
+    "project_number": "666225132801",
+    "firebase_url": "https://balmy-component-204213.firebaseio.com",
+    "project_id": "balmy-component-204213",
+    "storage_bucket": "balmy-component-204213.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:666225132801:android:449c34f3952ac23f",
+        "android_client_info": {
+          "package_name": "com.macbitsgoa.student_companion"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "666225132801-s6nhab6kbl1rooipjlqqnf12qiqvvjfl.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.macbitsgoa.student_companion",
+            "certificate_hash": "506cc66679f84c1e583cb61b04e321c6f3b42b45"
+          }
+        },
+        {
+          "client_id": "666225132801-iklcdj36jau98rf2v44a0v1rnguioatd.apps.googleusercontent.com",
+          "client_type": 3
+        },
+        {
+          "client_id": "666225132801-5d33mmf5uic0d5qecjaogl457psphq03.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.macbitsgoa.student_companion",
+            "certificate_hash": "3b671ed1d2f5f1936948b9d4c3221aae91f6b5b7"
+          }
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCWj6KEuZmR51aLtCD_HhdkQDXm6O36g-8"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 2,
+          "other_platform_oauth_client": [
+            {
+              "client_id": "666225132801-iklcdj36jau98rf2v44a0v1rnguioatd.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        },
+        "ads_service": {
+          "status": 2
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
