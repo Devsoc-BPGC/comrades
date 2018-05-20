@@ -1,11 +1,7 @@
 package com.macbitsgoa.companions;
 
-import android.annotation.SuppressLint;
-import android.app.ProgressDialog;
-import android.content.Context;
 import android.os.AsyncTask;
 import android.util.Log;
-import android.widget.Toast;
 
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
@@ -22,126 +18,127 @@ import java.io.IOException;
 import java.util.HashMap;
 import java.util.Iterator;
 
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+
 
 /**
  * @author aayush singla
  */
 
 public class MetaDataAndPermissions extends AsyncTask<Void, Void, Void> {
-    private ProgressDialog progressDialog;
-    @SuppressLint("StaticFieldLeak")
-    private Context mContext;
-    private String fileId;
-    private String accessToken;
+    @SuppressWarnings("WeakerAccess")
+    public static final String AUTHORIZATION_FIELD_KEY = "Authorization";
+    @SuppressWarnings("WeakerAccess")
+    public static final String AUTHORIZATION_FIELD_VALUE_PREFIX = "Bearer ";
+    private static final String TAG = "MAC->" + MetaDataAndPermissions.class.getSimpleName();
+    @NonNull
+    private final String driveApiBaseUrl;
+    private final String fileId;
+    private final String accessToken;
 
 
-    MetaDataAndPermissions(Context mContext, String fileId, String accessToken) {
-        progressDialog = new ProgressDialog(mContext);
-        this.mContext = mContext;
+    @SuppressWarnings("WeakerAccess")
+    public MetaDataAndPermissions(final String fileId, final String accessToken,
+                                  @NonNull final String driveApiBaseUrl) {
         this.fileId = fileId;
         this.accessToken = accessToken;
+        this.driveApiBaseUrl = driveApiBaseUrl;
     }
 
 
     @Override
-    protected Void doInBackground(Void... voids) {
+    protected Void doInBackground(final Void... voids) {
         try {
             getPermissions();
+            final JSONObject metaData = getMetadata();
+            if (metaData == null) {
+                Log.e(TAG, "Received null metadata, returning");
+                return null;
+            }
             pushToFirebase(getMetadata());
-        } catch (JSONException e) {
-            e.printStackTrace();
+        } catch (final JSONException e) {
+            Log.e(TAG, e.getMessage(), e.fillInStackTrace());
         }
         return null;
     }
 
     @Override
     protected void onPreExecute() {
-        progressDialog.setTitle("Uploading your file");
-        progressDialog.setMessage("Granting Permissions....");
-        progressDialog.setIndeterminate(true);
-        progressDialog.show();
+        if (BuildConfig.DEBUG) {
+            Log.i(TAG, "Uploading file and granting permissions");
+        }
     }
 
     @Override
-    protected void onPostExecute(Void result) {
-        progressDialog.hide();
-        Toast.makeText(mContext, "Permissions Granted", Toast.LENGTH_LONG).show();
-        Toast.makeText(mContext, "Pushed to Firebase", Toast.LENGTH_LONG).show();
+    protected void onPostExecute(final Void result) {
+        if (BuildConfig.DEBUG) {
+            Log.i(TAG, "Permissions granted and pushed to firebase");
+        }
     }
 
     private void getPermissions() throws JSONException {
 
-        JSONObject jsonPermission = new JSONObject()
+        final JSONObject jsonPermission = new JSONObject()
                 .put("role", "reader")
                 .put("type", "anyone")
                 .put("allowFileDiscovery", "true");
 
-        OkHttpClient client = new OkHttpClient();
-        RequestBody requestBody = RequestBody.create(MediaType.parse("application/json"), jsonPermission.toString());
+        final OkHttpClient client = new OkHttpClient();
+        final RequestBody requestBody = RequestBody.create(MediaType.parse("application/json"),
+                jsonPermission.toString());
 
-        Request permission = new Request.Builder()
-                .addHeader("Authorization", "Bearer " + accessToken)
-                .url("https://www.googleapis.com/drive/v3/files/" + fileId + "/permissions")
+        final Request permission = new Request.Builder()
+                .addHeader(AUTHORIZATION_FIELD_KEY, AUTHORIZATION_FIELD_VALUE_PREFIX + accessToken)
+                .url(driveApiBaseUrl + fileId + "/permissions")
                 .post(requestBody)
                 .build();
 
         try {
-            Response response = client.newCall(permission).execute();
-            //JSONObject jsonObject=new JSONObject(response.body().string());
-            Log.e("Response:permission", response.body().string());
-        } catch (IOException e) {
-            e.printStackTrace();
-            //} catch (JSONException e) {
-            //    e.printStackTrace();
+            client.newCall(permission).execute();
+        } catch (final IOException e) {
+            Log.e(TAG, e.getMessage(), e.fillInStackTrace());
         }
 
     }
 
-
+    @Nullable
     private JSONObject getMetadata() {
-
-        OkHttpClient okHttpClient = new OkHttpClient();
-        Request request = new Request.Builder()
-                .url("https://www.googleapis.com/drive/v3/files/" + fileId + "?access_token=" + accessToken + "&fields=*")
+        final OkHttpClient okHttpClient = new OkHttpClient();
+        final Request request = new Request.Builder()
+                .url(driveApiBaseUrl + fileId + "?access_token=" + accessToken + "&fields=*")
                 .get()
                 .build();
-
         try {
-            Response response = okHttpClient.newCall(request).execute();
-            JSONObject jsonObject = new JSONObject(response.body().string());
-            Log.e("Response:", jsonObject.toString());
-            return jsonObject;
-        } catch (IOException | JSONException e) {
-            e.printStackTrace();
+            final Response response = okHttpClient.newCall(request).execute();
+            return new JSONObject(response.body().string());
+        } catch (final IOException | JSONException e) {
+            Log.e(TAG, e.getMessage(), e.fillInStackTrace());
         }
 
         return null;
     }
 
 
-    private void pushToFirebase(JSONObject jsonObject) throws JSONException {
-        DatabaseReference databaseReference = FirebaseDatabase.getInstance().getReference().child(fileId);
-        String weblink=(String) jsonObject.get("webContentLink");
-        HashMap<String, String> hashMap = jsonToMap(jsonObject.toString());
-        databaseReference.child("fileId").setValue(fileId);
-        databaseReference.child("meta-data").setValue(hashMap);
-        databaseReference.child("webContentLink").setValue(weblink);
-
-
+    private void pushToFirebase(final JSONObject jsonObject) throws JSONException {
+        final DatabaseReference dbRef = FirebaseDatabase.getInstance().getReference().child(fileId);
+        final String webLink = (String) jsonObject.get(HomeActivity.WEB_CONTENT_LINK);
+        final HashMap<String, String> hashMap = jsonToMap(jsonObject.toString());
+        dbRef.child(HomeActivity.FILE_ID_KEY).setValue(fileId);
+        dbRef.child("meta-data").setValue(hashMap);
+        dbRef.child(HomeActivity.WEB_CONTENT_LINK).setValue(webLink);
     }
 
 
-    private HashMap<String, String> jsonToMap(String t) throws JSONException {
-
-        HashMap<String, String> map = new HashMap<>();
-        JSONObject jObject = new JSONObject(t);
-        Iterator<?> keys = jObject.keys();
+    private static HashMap<String, String> jsonToMap(final String t) throws JSONException {
+        final HashMap<String, String> map = new HashMap<>(0);
+        final JSONObject jObject = new JSONObject(t);
+        final Iterator<?> keys = jObject.keys();
 
         while (keys.hasNext()) {
-            String key = (String) keys.next();
-            String value = jObject.getString(key);
+            final String key = (String) keys.next();
+            final String value = jObject.getString(key);
             map.put(key, value);
-
         }
         return map;
     }

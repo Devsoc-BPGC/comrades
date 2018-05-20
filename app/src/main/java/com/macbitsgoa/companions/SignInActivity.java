@@ -50,7 +50,7 @@ public class SignInActivity extends AppCompatActivity
     private static final int REQUEST_GOOGLE_PLAY_SERVICES = 1002;
     private static final int RC_PERM_REQ_EXT_STORAGE = 7;
     private static final int RC_SIGN_IN = 0;
-    private static final String TAG = SignInActivity.class.getSimpleName();
+    private static final String TAG = "MAC->" + SignInActivity.class.getSimpleName();
     GoogleSignInClient signInClient;
     String authCode = "";
     String accessToken;

@@ -21,12 +21,17 @@ import java.util.concurrent.ExecutionException;
 import androidx.appcompat.app.AppCompatActivity;
 
 public class HomeActivity extends AppCompatActivity {
-    Button upload;
-    Button download;
-    StorageChooser chooser;
+    public static final String FILE_ID_KEY = "fileId";
+    public static final String WEB_CONTENT_LINK = "webContentLink";
+    private static final String TAG = "MAC->" + HomeActivity.class.getSimpleName();
+    private Button upload;
+    private Button download;
+    private StorageChooser chooser;
+    private String accessToken;
+    private ValueEventListener dbListener;
 
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
+    protected void onCreate(final Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_home);
         initViews();
@@ -40,61 +45,58 @@ public class HomeActivity extends AppCompatActivity {
 
         upload.setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onClick(View v) {
+            public void onClick(final View v) {
                 chooser.show();
             }
         });
+        accessToken = getIntent().getStringExtra(SignInActivity.ACCESS_TOKEN_KEY);
+        dbListener = new ValueEventListener() {
+            @Override
+            public void onDataChange(final DataSnapshot dataSnapshot) {
+                final HashMap<String, String> filesData = new HashMap<>(0);
 
+                for (final DataSnapshot snapshot : dataSnapshot.getChildren()) {
+                    final String fileId = snapshot.child(FILE_ID_KEY).getValue(String.class);
+                    final String link = snapshot.child(WEB_CONTENT_LINK).getValue(String.class);
+                    filesData.put(fileId, link);
+                }
+
+                final Intent intent = new Intent(HomeActivity.this, DownloadActivity.class);
+                intent.putExtra(DownloadActivity.FILES_MAP_KEY, filesData);
+                startActivity(intent);
+            }
+
+            @Override
+            public void onCancelled(final DatabaseError databaseError) {
+            }
+        };
         chooser.setOnSelectListener(new StorageChooser.OnSelectListener() {
             @Override
-            public void onSelect(String path) {
+            public void onSelect(final String path) {
                 Log.e("SELECTED_PATH", path);
 
-                UploadFile uploadFile = new UploadFile(path, getIntent().getStringExtra(SignInActivity.ACCESS_TOKEN_KEY), HomeActivity.this);
-                String response_string = null;
+                final UploadFile uploadFile = new UploadFile(path, accessToken,
+                        getString(R.string.drive_upload_url));
+                final String response;
                 try {
-                    response_string = uploadFile.execute().get();
-                    JSONObject jsonObject = new JSONObject(response_string);
-                    String fileId = (String) jsonObject.get("id");
-                    MetaDataAndPermissions metaDataAndPermissions = new MetaDataAndPermissions(HomeActivity.this, fileId, getIntent().getStringExtra(SignInActivity.ACCESS_TOKEN_KEY));
-                    metaDataAndPermissions.execute();
+                    response = uploadFile.execute().get();
+                    final JSONObject jsonObject = new JSONObject(response);
+                    final String fileId = (String) jsonObject.get("id");
+                    final MetaDataAndPermissions permissions = new MetaDataAndPermissions(
+                            fileId, accessToken, getString(R.string.drive_api_base_url));
+                    permissions.execute();
 
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
-                } catch (ExecutionException e) {
-                    e.printStackTrace();
-                } catch (JSONException e) {
-                    e.printStackTrace();
+                } catch (final InterruptedException | ExecutionException | JSONException e) {
+                    Log.e(TAG, e.getMessage(), e.fillInStackTrace());
                 }
             }
         });
 
         download.setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onClick(View v) {
-                FirebaseDatabase.getInstance().getReference().addListenerForSingleValueEvent(new ValueEventListener() {
-                    @Override
-                    public void onDataChange(DataSnapshot dataSnapshot) {
-                        HashMap<String, String> hashMap = new HashMap<>();
-
-                        for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
-                            String fileId = snapshot.child("fileId").getValue(String.class);
-                            String link = snapshot.child("webContentLink").getValue(String.class);
-                            hashMap.put(fileId, link);
-                        }
-
-                        Intent intent = new Intent(HomeActivity.this, DownloadActivity.class);
-                        intent.putExtra("hashmap", hashMap);
-                        startActivity(intent);
-
-
-                    }
-
-                    @Override
-                    public void onCancelled(DatabaseError databaseError) {
-
-                    }
-                });
+            public void onClick(final View v) {
+                FirebaseDatabase.getInstance().getReference()
+                        .addListenerForSingleValueEvent(dbListener);
             }
         });
 
@@ -104,8 +106,6 @@ public class HomeActivity extends AppCompatActivity {
         upload = findViewById(R.id.btn_upload);
         download = findViewById(R.id.btn_download);
     }
-
-
 }
 
 

@@ -1,12 +1,8 @@
 package com.macbitsgoa.companions;
 
-import android.annotation.SuppressLint;
-import android.app.ProgressDialog;
-import android.content.Context;
 import android.os.AsyncTask;
 import android.util.Log;
 import android.webkit.MimeTypeMap;
-import android.widget.Toast;
 
 import com.squareup.okhttp.MediaType;
 import com.squareup.okhttp.OkHttpClient;
@@ -14,98 +10,75 @@ import com.squareup.okhttp.Request;
 import com.squareup.okhttp.RequestBody;
 import com.squareup.okhttp.Response;
 
-import org.json.JSONObject;
-
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
+
+import static android.webkit.MimeTypeMap.getFileExtensionFromUrl;
+import static com.macbitsgoa.companions.MetaDataAndPermissions.AUTHORIZATION_FIELD_KEY;
+import static com.macbitsgoa.companions.MetaDataAndPermissions.AUTHORIZATION_FIELD_VALUE_PREFIX;
 
 /**
  * @author aayushSingla
  */
 
 public class UploadFile extends AsyncTask<Void, Void, String> {
-     private String path;
-    private String accessToken;
-     private ProgressDialog progressDialog;
-     @SuppressLint("StaticFieldLeak")
-     private Context mContext;
-    JSONObject jsonObject = null;
+    private static final String TAG = "MAC->" + UploadFile.class.getSimpleName();
+    private final String path;
+    private final String accessToken;
+    private final String driveUploadUrl;
 
-     UploadFile(String path,String accessToken,Context mContext){
-            progressDialog=new ProgressDialog(mContext);
-            this.path=path;
-            this.mContext=mContext;
-            this.accessToken=accessToken;
-     }
+    UploadFile(final String path, final String accessToken, final String driveUploadUrl) {
+        this.path = path;
+        this.accessToken = accessToken;
+        this.driveUploadUrl = driveUploadUrl;
+    }
 
     @Override
-    protected String doInBackground(Void... voids) {
+    protected String doInBackground(final Void... voids) {
         return uploadFile();
     }
 
     private String uploadFile() {
-
         try {
-            File file = new File(path);
-            OkHttpClient okHttpClient=new OkHttpClient();
-            ///////////////////DON'T REMOVE THIS///////////////////////////
-            /*JSONObject jsonObject=new JSONObject()
-                    .put("name","Aayush.jpg");
+            final File file = new File(path);
+            final OkHttpClient okHttpClient = new OkHttpClient();
 
-            Headers header_metadata=new Headers.Builder().add("Content-Type","application/json; charset=UTF-8").build();
-            Headers header_data=new Headers.Builder().add("Content-Type",getMimeType(path)).build();
+            final RequestBody requestBody = RequestBody.create(MediaType.parse(getMimeType(path)),
+                    fileToBytes(file));
 
-            RequestBody metadata=RequestBody.create(MediaType.parse("application/json"),jsonObject.toString());
-
-            RequestBody requestBody= new MultipartBuilder()
-                    .addPart(header_metadata,metadata)
-                    .addPart(header_data,RequestBody.create(MediaType.parse(getMimeType(path)),fileToBytes(file)))
-                    .build();*/
-
-            RequestBody requestBody= RequestBody.create(MediaType.parse(getMimeType(path)),fileToBytes(file));
-
-            Request request=new Request.Builder()
-                    .url("https://www.googleapis.com/upload/drive/v3/files?uploadType=media")
-                    .addHeader("Content-Type",getMimeType(path))
+            final Request request = new Request.Builder()
+                    .url(driveUploadUrl)
+                    .addHeader("Content-Type", getMimeType(path))
                     .addHeader("Content-Length", String.valueOf(file.length()))
-                    .addHeader("Authorization","Bearer "+accessToken)
+                    .addHeader(AUTHORIZATION_FIELD_KEY,
+                            AUTHORIZATION_FIELD_VALUE_PREFIX + accessToken
+                    )
                     .post(requestBody)
                     .build();
-            Log.e("Response:content-type",getMimeType(path));
-            Log.e("Response:","authorization:"+accessToken);
-            Log.e("Response:content-Length",file.length()+"");
-
-            Response response = okHttpClient.newCall(request).execute();
-            //Log.e("Response",response.body().string());
-
+            final Response response = okHttpClient.newCall(request).execute();
             return response.body().string();
-
-        } catch (Exception e) {
-            Log.e("Response:","Failed");
-            e.printStackTrace();
+        } catch (final Exception e) {
+            Log.e(TAG, e.getMessage(), e.fillInStackTrace());
         }
         return null;
-
-
     }
 
-
-    private byte[] fileToBytes(File file){
+    private static byte[] fileToBytes(final File file) {
         byte[] bytes = new byte[0];
-        try(FileInputStream inputStream = new FileInputStream(file)) {
+        try (final FileInputStream inputStream = new FileInputStream(file)) {
             bytes = new byte[inputStream.available()];
             //noinspection ResultOfMethodCallIgnored
             inputStream.read(bytes);
-        } catch (IOException e) {
-            e.printStackTrace();
+        } catch (final IOException e) {
+            Log.e(TAG, e.getMessage(), e.fillInStackTrace());
         }
         return bytes;
     }
 
-    private String getMimeType(String filePath) {
+    private static String getMimeType(final String filePath) {
         String type = null;
-        String extension = MimeTypeMap.getFileExtensionFromUrl(filePath);
+        final String extension = getFileExtensionFromUrl(filePath);
         if (extension != null) {
             type = MimeTypeMap.getSingleton().getMimeTypeFromExtension(extension);
         }
@@ -115,16 +88,16 @@ public class UploadFile extends AsyncTask<Void, Void, String> {
 
     @Override
     protected void onPreExecute() {
-        progressDialog.setTitle("Uploading your file");
-        progressDialog.setMessage("Please wait.....");
-        progressDialog.setIndeterminate(true);
-        progressDialog.show();
+        if (BuildConfig.DEBUG) {
+            Log.i(TAG, "Uploading file");
+        }
     }
 
     @Override
-    protected void onPostExecute(String result) {
-        progressDialog.hide();
-        Toast.makeText(mContext,"File Uploaded",Toast.LENGTH_LONG).show();
+    protected void onPostExecute(final String result) {
+        if (BuildConfig.DEBUG) {
+            Log.i(TAG, "File upload result is " + result);
+        }
     }
 
 

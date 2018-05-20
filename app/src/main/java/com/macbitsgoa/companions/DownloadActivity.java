@@ -1,10 +1,12 @@
 package com.macbitsgoa.companions;
 
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.LinearLayout;
 
+import java.io.Serializable;
 import java.util.HashMap;
 
 import androidx.appcompat.app.AppCompatActivity;
@@ -12,34 +14,41 @@ import androidx.appcompat.widget.Toolbar;
 
 public class DownloadActivity extends AppCompatActivity implements View.OnClickListener {
 
-    LinearLayout scrollView;
-    HashMap<String, String> hashMap;
+    public static final String FILES_MAP_KEY = "hashmap";
+    private LinearLayout scrollView;
+    private HashMap<String, String> filesData;
+    private static final String TAG = "MAC->" + DownloadActivity.class.getSimpleName();
+
 
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
+    protected void onCreate(final Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_download);
         initViews();
-        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+        final Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
-        hashMap = (HashMap<String, String>) getIntent().getSerializableExtra("hashmap");
-        Object[] array = hashMap.keySet().toArray();
-
-        for (int i = 0; i < array.length; i++) {
-            Button button = new Button(this);
-            button.setText("File" + i + ":" + (String) array[i]);
-            button.setTag((String) array[i]);
+        final Serializable filesDataSer = getIntent().getSerializableExtra(FILES_MAP_KEY);
+        if (filesDataSer instanceof HashMap) {
+            //noinspection unchecked
+            filesData = (HashMap<String, String>) filesDataSer;
+        } else {
+            Log.e(TAG, "filesDataSet is not instance of hashMap");
+        }
+        int i = 1;
+        final int btnHeight = 200;
+        for (final HashMap.Entry<String, String> fileData : filesData.entrySet()) {
+            final Button button = new Button(this);
+            button.setText("File " + i + ":" + fileData.getKey());
+            button.setTag(fileData.getValue());
             button.setOnClickListener(this);
-            LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(
-                    LinearLayout.LayoutParams.MATCH_PARENT, 200);
+            final LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(
+                    LinearLayout.LayoutParams.MATCH_PARENT, btnHeight);
             params.setMargins(0, 8, 0, 0);
             button.setLayoutParams(params);
             button.setBackgroundColor(getResources().getColor(R.color.colorPrimary));
-
             scrollView.addView(button);
-
+            i++;
         }
-
     }
 
     private void initViews() {
@@ -47,9 +56,9 @@ public class DownloadActivity extends AppCompatActivity implements View.OnClickL
     }
 
     @Override
-    public void onClick(View v) {
-        String url = hashMap.get(v.getTag());
-        DownloadFile downloadFile = new DownloadFile(this, "aayush");
+    public void onClick(final View v) {
+        final String url = (String) v.getTag();
+        final DownloadFile downloadFile = new DownloadFile("aayush");
         downloadFile.execute(url);
     }
 }
