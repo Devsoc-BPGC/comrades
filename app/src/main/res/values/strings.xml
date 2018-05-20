@@ -4,4 +4,5 @@
     <string name="title_activity_download">DownloadActivity</string>
     <string name="server_client_id">666225132801-iklcdj36jau98rf2v44a0v1rnguioatd.apps.googleusercontent.com</string>
     <string name="client_secret">NGfzk-7sJilNmFla6TZy8WrL</string>
+    <string name="redirect_url">https://balmy-component-204213.firebaseapp.com/__/auth/handler</string>
 </resources>

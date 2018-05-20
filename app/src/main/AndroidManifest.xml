@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
-    package="com.macbitsgoa.student_companion">
+    package="com.macbitsgoa.companions">
 
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
@@ -18,11 +18,11 @@
         android:theme="@style/AppTheme"
         tools:ignore="GoogleAppIndexingWarning">
         <activity
-            android:name=".HomeActivity"
+            android:name="com.macbitsgoa.companions.HomeActivity"
             android:label="@string/title_activity_sign_in"
             android:theme="@style/AppTheme.NoActionBar" />
         <activity
-            android:name=".SignInActivity"
+            android:name="com.macbitsgoa.companions.SignInActivity"
             android:label="@string/title_activity_sign_in"
             android:theme="@style/AppTheme.NoActionBar">
             <intent-filter>
@@ -32,7 +32,7 @@
             </intent-filter>
         </activity>
         <activity
-            android:name=".DownloadActivity"
+            android:name="com.macbitsgoa.companions.DownloadActivity"
             android:label="@string/title_activity_download"
             android:theme="@style/AppTheme.NoActionBar" />
     </application>

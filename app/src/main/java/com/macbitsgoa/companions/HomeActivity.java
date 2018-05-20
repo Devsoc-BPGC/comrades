@@ -1,4 +1,4 @@
-package com.macbitsgoa.student_companion;
+package com.macbitsgoa.companions;
 
 import android.content.Intent;
 import android.os.Bundle;
@@ -50,13 +50,13 @@ public class HomeActivity extends AppCompatActivity {
             public void onSelect(String path) {
                 Log.e("SELECTED_PATH", path);
 
-                UploadFile uploadFile = new UploadFile(path, getIntent().getStringExtra("accessToken"), HomeActivity.this);
+                UploadFile uploadFile = new UploadFile(path, getIntent().getStringExtra(SignInActivity.ACCESS_TOKEN_KEY), HomeActivity.this);
                 String response_string = null;
                 try {
                     response_string = uploadFile.execute().get();
                     JSONObject jsonObject = new JSONObject(response_string);
                     String fileId = (String) jsonObject.get("id");
-                    MetaDataAndPermissions metaDataAndPermissions = new MetaDataAndPermissions(HomeActivity.this, fileId, getIntent().getStringExtra("accessToken"));
+                    MetaDataAndPermissions metaDataAndPermissions = new MetaDataAndPermissions(HomeActivity.this, fileId, getIntent().getStringExtra(SignInActivity.ACCESS_TOKEN_KEY));
                     metaDataAndPermissions.execute();
 
                 } catch (InterruptedException e) {

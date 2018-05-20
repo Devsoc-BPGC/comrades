@@ -125,13 +125,21 @@
     </inspection_tool>
     <inspection_tool class="FieldMayBeFinal" enabled="true" level="WARNING" enabled_by_default="true" />
     <inspection_tool class="FieldNamingConvention" enabled="true" level="WARNING" enabled_by_default="true">
-      <extension name="ConstantNamingConvention" enabled="true" />
+      <extension name="ConstantNamingConvention" enabled="true">
+        <option name="m_regex" value="[A-Z][A-Z_\d]*" />
+        <option name="m_minLength" value="3" />
+        <option name="m_maxLength" value="32" />
+      </extension>
       <extension name="InstanceVariableNamingConvention" enabled="true">
         <option name="m_regex" value="[a-z][A-Za-z\d]*" />
         <option name="m_minLength" value="5" />
         <option name="m_maxLength" value="32" />
       </extension>
-      <extension name="StaticVariableNamingConvention" enabled="true" />
+      <extension name="StaticVariableNamingConvention" enabled="true">
+        <option name="m_regex" value="[a-z][a-zA-Z\d]*" />
+        <option name="m_minLength" value="5" />
+        <option name="m_maxLength" value="32" />
+      </extension>
     </inspection_tool>
     <inspection_tool class="FloatingPointEquality" enabled="true" level="WARNING" enabled_by_default="true" />
     <inspection_tool class="ForLoopReplaceableByWhile" enabled="true" level="WARNING" enabled_by_default="true">
@@ -140,18 +148,6 @@
     <inspection_tool class="ForLoopThatDoesntUseLoopVariable" enabled="true" level="WARNING" enabled_by_default="true" />
     <inspection_tool class="ForLoopWithMissingComponent" enabled="false" level="WARNING" enabled_by_default="false">
       <option name="ignoreCollectionLoops" value="true" />
-    </inspection_tool>
-    <inspection_tool class="HardCodedStringLiteral" enabled="true" level="WARNING" enabled_by_default="true">
-      <option name="ignoreForAssertStatements" value="true" />
-      <option name="ignoreForExceptionConstructors" value="true" />
-      <option name="ignoreForSpecifiedExceptionConstructors" value="" />
-      <option name="ignoreForJUnitAsserts" value="true" />
-      <option name="ignoreForClassReferences" value="true" />
-      <option name="ignoreForPropertyKeyReferences" value="true" />
-      <option name="ignoreForNonAlpha" value="true" />
-      <option name="ignoreAssignedToConstants" value="false" />
-      <option name="ignoreToString" value="false" />
-      <option name="nonNlsCommentPattern" value="NON-NLS" />
     </inspection_tool>
     <inspection_tool class="HardcodedFileSeparators" enabled="true" level="WARNING" enabled_by_default="true">
       <option name="m_recognizeExampleMediaType" value="false" />
@@ -309,15 +305,6 @@
     <inspection_tool class="StringBufferField" enabled="true" level="WARNING" enabled_by_default="true" />
     <inspection_tool class="StringBufferMustHaveInitialCapacity" enabled="true" level="WARNING" enabled_by_default="true" />
     <inspection_tool class="StringBufferToStringInConcatenation" enabled="true" level="WARNING" enabled_by_default="true" />
-    <inspection_tool class="StringConcatenation" enabled="true" level="WARNING" enabled_by_default="true">
-      <option name="ignoreAsserts" value="false" />
-      <option name="ignoreSystemOuts" value="false" />
-      <option name="ignoreSystemErrs" value="false" />
-      <option name="ignoreThrowableArguments" value="false" />
-      <option name="ignoreConstantInitializers" value="false" />
-      <option name="ignoreInTestCode" value="false" />
-      <option name="ignoreInToString" value="false" />
-    </inspection_tool>
     <inspection_tool class="StringConcatenationMissingWhitespace" enabled="true" level="WARNING" enabled_by_default="true" />
     <inspection_tool class="StringEqualsEmptyString" enabled="true" level="WARNING" enabled_by_default="true" />
     <inspection_tool class="StringToUpperWithoutLocale" enabled="true" level="WARNING" enabled_by_default="true" />

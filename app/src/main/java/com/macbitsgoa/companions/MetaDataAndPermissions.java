@@ -1,4 +1,4 @@
-package com.macbitsgoa.student_companion;
+package com.macbitsgoa.companions;
 
 import android.annotation.SuppressLint;
 import android.app.ProgressDialog;
