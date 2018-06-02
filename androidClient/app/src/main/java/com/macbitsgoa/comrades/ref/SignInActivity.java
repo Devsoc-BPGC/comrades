@@ -1,4 +1,4 @@
-package com.macbitsgoa.companions;
+package com.macbitsgoa.comrades.ref;
 
 import android.app.Dialog;
 import android.content.DialogInterface;
@@ -21,6 +21,7 @@ import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.common.api.Scope;
 import com.google.android.gms.tasks.Task;
 import com.google.api.services.drive.DriveScopes;
+import com.macbitsgoa.comrades.R;
 import com.squareup.okhttp.Callback;
 import com.squareup.okhttp.FormEncodingBuilder;
 import com.squareup.okhttp.OkHttpClient;

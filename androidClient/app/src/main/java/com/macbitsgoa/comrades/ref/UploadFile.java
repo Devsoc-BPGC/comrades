@@ -1,9 +1,10 @@
-package com.macbitsgoa.companions;
+package com.macbitsgoa.comrades.ref;
 
 import android.os.AsyncTask;
 import android.util.Log;
 import android.webkit.MimeTypeMap;
 
+import com.macbitsgoa.comrades.BuildConfig;
 import com.squareup.okhttp.MediaType;
 import com.squareup.okhttp.OkHttpClient;
 import com.squareup.okhttp.Request;
@@ -15,8 +16,8 @@ import java.io.FileInputStream;
 import java.io.IOException;
 
 import static android.webkit.MimeTypeMap.getFileExtensionFromUrl;
-import static com.macbitsgoa.companions.MetaDataAndPermissions.AUTHORIZATION_FIELD_KEY;
-import static com.macbitsgoa.companions.MetaDataAndPermissions.AUTHORIZATION_FIELD_VALUE_PREFIX;
+import static com.macbitsgoa.comrades.ref.MetaDataAndPermissions.AUTHORIZATION_FIELD_KEY;
+import static com.macbitsgoa.comrades.ref.MetaDataAndPermissions.AUTHORIZATION_FIELD_VALUE_PREFIX;
 
 /**
  * Code to upload file.

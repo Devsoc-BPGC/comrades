@@ -1,4 +1,4 @@
-package com.macbitsgoa.companions;
+package com.macbitsgoa.comrades.ref;
 
 import android.content.Intent;
 import android.os.Bundle;
@@ -11,6 +11,7 @@ import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
+import com.macbitsgoa.comrades.R;
 
 import org.json.JSONException;
 import org.json.JSONObject;

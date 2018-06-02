@@ -1,6 +1,6 @@
 <!--suppress ALL -->
 <resources>
-    <string name="app_name">Student-Companion</string>
+    <string name="app_name">Comrades</string>
     <string name="title_activity_sign_in">SignInActivity</string>
     <string name="title_activity_download">DownloadActivity</string>
     <string name="server_client_id">666225132801-iklcdj36jau98rf2v44a0v1rnguioatd.apps.googleusercontent.com</string>
@@ -8,4 +8,11 @@
     <string name="redirect_url">https://balmy-component-204213.firebaseapp.com/__/auth/handler</string>
     <string name="drive_upload_url">https://www.googleapis.com/upload/drive/v3/files?uploadType=media</string>
     <string name="drive_api_base_url">https://www.googleapis.com/drive/v3/files/</string>
+    <string name="action_search">Search App</string>
+    <string name="login_to_add_course">Please login to add course.</string>
+    <string name="login">Log In</string>
+    <string name="sign_in_failes">Sign in failed</string>
+    <string name="retry">Retry</string>
+    <string name="bits_only_email_allowed">Only BITS email is allowed</string>
+    <string name="sign_out">Sign Out</string>
 </resources>

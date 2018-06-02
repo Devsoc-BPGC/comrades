@@ -1,7 +1,9 @@
-package com.macbitsgoa.companions;
+package com.macbitsgoa.comrades.ref;
 
 import android.os.AsyncTask;
 import android.util.Log;
+
+import com.macbitsgoa.comrades.BuildConfig;
 
 import java.io.BufferedInputStream;
 import java.io.File;

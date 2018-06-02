@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.coordinatorlayout.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/cl_main_activity"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context="com.macbitsgoa.comrades.CourseActivity">
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/rv_content_list"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent" />
+
+    <com.google.android.material.floatingactionbutton.FloatingActionButton
+        android:id="@+id/fab_add_course"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="end|bottom"
+        android:layout_marginBottom="16dp"
+        android:layout_marginEnd="16dp"
+        android:tint="@color/colorAccentContrast"
+        android:src="@drawable/ic_add" />
+
+    <androidx.appcompat.widget.Toolbar
+        android:layout_width="match_parent"
+        android:layout_height="?android:attr/actionBarSize"
+        android:background="?android:attr/colorPrimary"
+        android:elevation="4dp"
+        android:theme="@style/ThemeOverlay.AppCompat.ActionBar"
+        app:layout_scrollFlags="enterAlways|scroll"
+        app:popupTheme="@style/ThemeOverlay.AppCompat.Light" />
+
+</androidx.coordinatorlayout.widget.CoordinatorLayout>

@@ -1,10 +1,11 @@
-package com.macbitsgoa.companions;
+package com.macbitsgoa.comrades.ref;
 
 import android.os.AsyncTask;
 import android.util.Log;
 
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.macbitsgoa.comrades.BuildConfig;
 import com.squareup.okhttp.MediaType;
 import com.squareup.okhttp.OkHttpClient;
 import com.squareup.okhttp.Request;

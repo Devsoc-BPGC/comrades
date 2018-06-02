@@ -1,10 +1,12 @@
-package com.macbitsgoa.companions;
+package com.macbitsgoa.comrades.ref;
 
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.LinearLayout;
+
+import com.macbitsgoa.comrades.R;
 
 import java.io.Serializable;
 import java.util.HashMap;
@@ -30,7 +32,7 @@ public class DownloadActivity extends AppCompatActivity implements View.OnClickL
         final Serializable filesDataSer = getIntent().getSerializableExtra(FILES_MAP_KEY);
         if (filesDataSer instanceof HashMap) {
             //noinspection unchecked
-            filesData = (HashMap<String, String>) filesDataSer;
+            // filesData = (HashMap<String, String>) filesDataSer;
         } else {
             Log.e(TAG, "filesDataSet is not instance of hashMap");
         }
