@@ -1,12 +1,14 @@
 package com.macbitsgoa.comrades;
 
 
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
+import android.widget.EditText;
 
 import com.google.android.gms.auth.api.signin.GoogleSignIn;
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
@@ -15,12 +17,18 @@ import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
 import com.google.android.gms.common.api.ApiException;
 import com.google.android.gms.tasks.Task;
 import com.google.android.material.snackbar.Snackbar;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
 
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.coordinatorlayout.widget.CoordinatorLayout;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
 import static com.macbitsgoa.comrades.CHC.BITS_EMAIL_SUFFIX;
 import static com.macbitsgoa.comrades.CHC.TAG_PREFIX;
+import static com.macbitsgoa.comrades.FirebaseKeys.COURSES;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -43,13 +51,16 @@ public class MainActivity extends AppCompatActivity {
         findViewById(R.id.fab_add_course).setOnClickListener(view -> handleAddCourse());
         rootCl = findViewById(R.id.cl_main_activity);
         setSupportActionBar(findViewById(R.id.toolbar_main_act));
+        final RecyclerView coursesRv = findViewById(R.id.rv_course_list);
+        coursesRv.setLayoutManager(new LinearLayoutManager(this));
+        coursesRv.setAdapter(new CourseAdapter());
     }
 
     private void handleAddCourse() {
         final boolean canAddCourse = GoogleSignIn.getLastSignedInAccount(this) != null;
         wantsToAddCourse = true;
         if (canAddCourse) {
-            // TODO: add course ui
+            (new AddCourseFragment()).show(getSupportFragmentManager(), "AddCourseFragment");
             wantsToAddCourse = false;
         } else {
             Snackbar.make(rootCl, getString(R.string.login_to_add_course), Snackbar.LENGTH_SHORT)

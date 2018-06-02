@@ -8,6 +8,7 @@ import androidx.appcompat.app.AppCompatActivity;
 
 public class CourseActivity extends AppCompatActivity {
 
+    public static final String EXTRA_COURSE_NAME = "courseName";
     @Override
     protected void onCreate(final Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);

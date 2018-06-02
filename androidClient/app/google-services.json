@@ -33,6 +33,10 @@
             "package_name": "com.macbitsgoa.student_companion",
             "certificate_hash": "3b671ed1d2f5f1936948b9d4c3221aae91f6b5b7"
           }
+        },
+        {
+          "client_id": "666225132801-iklcdj36jau98rf2v44a0v1rnguioatd.apps.googleusercontent.com",
+          "client_type": 3
         }
       ],
       "api_key": [

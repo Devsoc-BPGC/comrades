@@ -15,4 +15,8 @@
     <string name="retry">Retry</string>
     <string name="bits_only_email_allowed">Only BITS email is allowed</string>
     <string name="sign_out">Sign Out</string>
+    <string name="add_course">Add Course</string>
+    <string name="cancel">Cancel</string>
+    <string name="course_name">course name</string>
+    <string name="warn_empty_course_name">Course came should now be empty</string>
 </resources>
