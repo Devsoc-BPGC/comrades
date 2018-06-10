@@ -59,8 +59,6 @@ public class DownloadActivity extends AppCompatActivity implements View.OnClickL
 
     @Override
     public void onClick(final View v) {
-        final String url = (String) v.getTag();
-        final DownloadFile downloadFile = new DownloadFile("Untitled");
-        downloadFile.execute(url);
+
     }
 }

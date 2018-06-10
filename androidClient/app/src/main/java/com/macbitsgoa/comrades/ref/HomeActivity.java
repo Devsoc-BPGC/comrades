@@ -46,7 +46,7 @@ public class HomeActivity extends AppCompatActivity
                 .build();
 
         upload.setOnClickListener(this);
-        accessToken = getIntent().getStringExtra(SignInActivity.ACCESS_TOKEN_KEY);
+        accessToken = getIntent().getStringExtra("ACCESS_TOKEN_KEY");
         dbListener = new ValueEventListener() {
             @Override
             public void onDataChange(final DataSnapshot dataSnapshot) {
