@@ -135,7 +135,7 @@ public class DownloadFile extends AsyncTask<Void, Integer, Integer> {
     private void setIntentAction() {
         final File file = new File(path + fName);
         final Intent generic = new Intent();
-        generic.setAction(android.content.Intent.ACTION_VIEW);
+        generic.setAction(Intent.ACTION_VIEW);
         generic.setDataAndType(Uri.parse(file.toString()), mimeType);
 
         final PendingIntent contentIntent = PendingIntent.getActivity(context,
