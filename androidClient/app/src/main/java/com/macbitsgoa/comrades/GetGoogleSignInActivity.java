@@ -1,8 +1,6 @@
 package com.macbitsgoa.comrades;
 
-import android.annotation.TargetApi;
 import android.app.Activity;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Build;
 import android.os.Bundle;
@@ -30,7 +28,6 @@ import org.json.JSONObject;
 import java.io.IOException;
 
 import androidx.annotation.NonNull;
-import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AlertDialog;
 
 import static android.Manifest.permission.READ_EXTERNAL_STORAGE;
@@ -40,7 +37,11 @@ import static com.macbitsgoa.comrades.CHC.TAG_PREFIX;
 
 
 /**
- * This Activity can be used to make signIn available at specific places in app.
+ * This Activity can be used to make signIn available and ask for storage permissions
+ * at specific places in app.
+ * if you want this activity to return an accessToken,
+ * start activity using ***startActivityForResult(intent,request code)***
+ * By default this Activity will not return anything.
  * use onActivityResult() in the calling activity to get the result.
  * use Intent.getExtra() using key as KEY_ACCOUNT to get the user account
  * and KEY_TOKEN to get access token
@@ -52,7 +53,7 @@ public class GetGoogleSignInActivity extends Activity {
     private static final String TAG = TAG_PREFIX + GetGoogleSignInActivity.class.getSimpleName();
     private static final int RC_SIGN_IN = 0;
     public static final String KEY_TOKEN = "token";
-    public static final String KEY_ACCOUNT = "account";
+    private boolean returnResult;
     private static final int ERROR_CODE_PERMISSION_DENIED = 12501;
     private static final int RC_PERM_REQ_EXT_STORAGE = 7;
 
@@ -107,16 +108,15 @@ public class GetGoogleSignInActivity extends Activity {
     }
 
     private void returnResult(final GoogleSignInAccount account) {
-        if (account != null) {
+        final Intent intent = new Intent();
+        if (returnResult && account != null) {
             final String accessToken = firebaseAuthWithGoogle(account);
-            final Intent intent = new Intent();
-            intent.putExtra(KEY_ACCOUNT, account);
             intent.putExtra(KEY_TOKEN, accessToken);
-            setResult(RESULT_OK, intent);
-            askStoragePermission();
-        } else {
-            finish();
         }
+        setResult(RESULT_OK, intent);
+        askStoragePermission();
+        finish();
+
     }
 
     /**
@@ -127,7 +127,8 @@ public class GetGoogleSignInActivity extends Activity {
     protected void onStart() {
         super.onStart();
         final GoogleSignInAccount account = GoogleSignIn.getLastSignedInAccount(this);
-
+        returnResult = getCallingActivity() != null;
+        Log.e(TAG, returnResult + "");
         if (account != null) {
             returnResult(account);
         }
@@ -179,17 +180,13 @@ public class GetGoogleSignInActivity extends Activity {
             return;
         }
         if (shouldShowRequestPermissionRationale(READ_EXTERNAL_STORAGE)) {
-            final AlertDialog.Builder alertBuilder = new AlertDialog.Builder(GetGoogleSignInActivity.this);
+            final AlertDialog.Builder alertBuilder = new
+                    AlertDialog.Builder(GetGoogleSignInActivity.this);
             alertBuilder.setCancelable(true);
             alertBuilder.setTitle("read access of external storage");
             alertBuilder.setMessage("Permission to read storage is required.");
-            alertBuilder.setPositiveButton("Proceed", new DialogInterface.OnClickListener() {
-                @TargetApi(Build.VERSION_CODES.M)
-                @RequiresApi(api = Build.VERSION_CODES.M)
-                public void onClick(final DialogInterface dialog, final int which) {
-                    requestPermissions(new String[]{READ_EXTERNAL_STORAGE}, 7);
-                }
-            });
+            alertBuilder.setPositiveButton("Proceed", (dialog, which) ->
+                    requestPermissions(new String[]{READ_EXTERNAL_STORAGE}, 7));
             final AlertDialog alert = alertBuilder.create();
             alert.show();
         } else {

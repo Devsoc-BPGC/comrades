@@ -1,14 +1,12 @@
 package com.macbitsgoa.comrades;
 
 
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
-import android.widget.EditText;
 
 import com.google.android.gms.auth.api.signin.GoogleSignIn;
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
@@ -17,10 +15,7 @@ import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
 import com.google.android.gms.common.api.ApiException;
 import com.google.android.gms.tasks.Task;
 import com.google.android.material.snackbar.Snackbar;
-import com.google.firebase.database.DatabaseReference;
-import com.google.firebase.database.FirebaseDatabase;
 
-import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.coordinatorlayout.widget.CoordinatorLayout;
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -28,7 +23,6 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import static com.macbitsgoa.comrades.CHC.BITS_EMAIL_SUFFIX;
 import static com.macbitsgoa.comrades.CHC.TAG_PREFIX;
-import static com.macbitsgoa.comrades.FirebaseKeys.COURSES;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -118,7 +112,7 @@ public class MainActivity extends AppCompatActivity {
             }
         } catch (final ApiException e) {
             Log.e(TAG, e.getMessage(), e.fillInStackTrace());
-            Snackbar.make(rootCl, getString(R.string.sign_in_failes), Snackbar.LENGTH_SHORT)
+            Snackbar.make(rootCl, getString(R.string.sign_in_fails), Snackbar.LENGTH_SHORT)
                     .setAction(getString(R.string.retry), view -> launchDefaultSignIn())
                     .show();
         }

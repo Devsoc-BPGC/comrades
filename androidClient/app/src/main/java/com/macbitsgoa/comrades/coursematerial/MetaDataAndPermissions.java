@@ -1,4 +1,4 @@
-package com.macbitsgoa.comrades.ref;
+package com.macbitsgoa.comrades.coursematerial;
 
 import android.os.AsyncTask;
 import android.util.Log;
@@ -16,12 +16,8 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.IOException;
-import java.util.HashMap;
-import java.util.Iterator;
 
-import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-
 
 /**
  * Request google drive permissions.
@@ -35,23 +31,22 @@ public class MetaDataAndPermissions extends AsyncTask<Void, Void, Void> {
     @SuppressWarnings("WeakerAccess")
     public static final String AUTHORIZATION_FIELD_VALUE_PREFIX = "Bearer ";
     private static final String TAG = "MAC->" + MetaDataAndPermissions.class.getSimpleName();
-    @NonNull
-    private final String driveApiBaseUrl;
+    private final String driveApiBaseUrl = "https://www.googleapis.com/drive/v3/files/";
     private final String fileId;
     private final String accessToken;
+    private final String fName;
 
     /**
      * Default constructor.
      * @param fileId id of the file.
      * @param accessToken obtained from sign in.
-     * @param driveApiBaseUrl base url of google drive api.
      */
     @SuppressWarnings("WeakerAccess")
-    public MetaDataAndPermissions(final String fileId, final String accessToken,
-                                  @NonNull final String driveApiBaseUrl) {
+    public MetaDataAndPermissions(final String fileId,
+                                  final String accessToken, final String fName) {
         this.fileId = fileId;
         this.accessToken = accessToken;
-        this.driveApiBaseUrl = driveApiBaseUrl;
+        this.fName = fName;
     }
 
 
@@ -97,7 +92,8 @@ public class MetaDataAndPermissions extends AsyncTask<Void, Void, Void> {
                 jsonPermission.toString());
 
         final Request permission = new Request.Builder()
-                .addHeader(AUTHORIZATION_FIELD_KEY, AUTHORIZATION_FIELD_VALUE_PREFIX + accessToken)
+                .addHeader(AUTHORIZATION_FIELD_KEY,
+                        AUTHORIZATION_FIELD_VALUE_PREFIX + accessToken)
                 .url(driveApiBaseUrl + fileId + "/permissions")
                 .post(requestBody)
                 .build();
@@ -129,25 +125,18 @@ public class MetaDataAndPermissions extends AsyncTask<Void, Void, Void> {
 
 
     private void pushToFirebase(final JSONObject jsonObject) throws JSONException {
-        final DatabaseReference dbRef = FirebaseDatabase.getInstance().getReference().child(fileId);
-        final String webLink = (String) jsonObject.get(HomeActivity.WEB_CONTENT_LINK);
-        final HashMap<String, String> hashMap = jsonToMap(jsonObject.toString());
-        dbRef.child(HomeActivity.FILE_ID_KEY).setValue(fileId);
-        dbRef.child("meta-data").setValue(hashMap);
-        dbRef.child(HomeActivity.WEB_CONTENT_LINK).setValue(webLink);
+        final DatabaseReference dbRef = FirebaseDatabase.getInstance()
+                .getReferenceFromUrl(CourseActivity.databaseUrl);
+        final JSONObject ownerObject = (JSONObject) jsonObject.getJSONArray("owners").get(0);
+        final String owner = (String) ownerObject.get("displayName");
+
+        final ItemCourseMaterial itemCourseMaterial = new ItemCourseMaterial();
+        itemCourseMaterial.setAddedBy(owner);
+        itemCourseMaterial.setFileName(fName);
+        itemCourseMaterial.setId(fileId);
+        itemCourseMaterial.setLink(jsonObject.get("webContentLink").toString());
+        itemCourseMaterial.setMimeType(jsonObject.get("mimeType").toString());
+        dbRef.child(fileId).setValue(itemCourseMaterial);
     }
 
-
-    private static HashMap<String, String> jsonToMap(final String t) throws JSONException {
-        final HashMap<String, String> map = new HashMap<>(0);
-        final JSONObject jObject = new JSONObject(t);
-        final Iterator<?> keys = jObject.keys();
-
-        while (keys.hasNext()) {
-            final String key = (String) keys.next();
-            final String value = jObject.getString(key);
-            map.put(key, value);
-        }
-        return map;
-    }
 }

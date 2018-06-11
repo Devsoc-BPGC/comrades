@@ -12,6 +12,7 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 import com.macbitsgoa.comrades.R;
+import com.macbitsgoa.comrades.coursematerial.UploadFile;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -24,7 +25,6 @@ import androidx.appcompat.app.AppCompatActivity;
 public class HomeActivity extends AppCompatActivity
         implements View.OnClickListener, StorageChooser.OnSelectListener {
     public static final String FILE_ID_KEY = "fileId";
-    public static final String WEB_CONTENT_LINK = "webContentLink";
     private static final String TAG = "MAC->" + HomeActivity.class.getSimpleName();
     private Button upload;
     private Button download;
@@ -54,8 +54,8 @@ public class HomeActivity extends AppCompatActivity
 
                 for (final DataSnapshot snapshot : dataSnapshot.getChildren()) {
                     final String fileId = snapshot.child(FILE_ID_KEY).getValue(String.class);
-                    final String link = snapshot.child(WEB_CONTENT_LINK).getValue(String.class);
-                    filesData.put(fileId, link);
+                    //final String link = snapshot.child(WEB_CONTENT_LINK).getValue(String.class);
+                    // filesData.put(fileId, link);
                 }
 
                 final Intent intent = new Intent(HomeActivity.this, DownloadActivity.class);
@@ -106,9 +106,8 @@ public class HomeActivity extends AppCompatActivity
             response = uploadFile.execute().get();
             final JSONObject jsonObject = new JSONObject(response);
             final String fileId = (String) jsonObject.get("id");
-            final MetaDataAndPermissions permissions = new MetaDataAndPermissions(
-                    fileId, accessToken, getString(R.string.drive_api_base_url));
-            permissions.execute();
+            //final MetaDataAndPermissions permissions = new MetaDataAndPermissions(fileId, accessToken,file);
+            // permissions.execute();
         } catch (final InterruptedException | ExecutionException | JSONException e) {
             Log.e(TAG, e.getMessage(), e.fillInStackTrace());
         }

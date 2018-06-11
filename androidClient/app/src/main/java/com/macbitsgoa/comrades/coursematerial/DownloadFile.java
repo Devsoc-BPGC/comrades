@@ -36,8 +36,11 @@ public class DownloadFile extends AsyncTask<Void, Integer, Integer> {
     private final String path;
     private final String mimeType;
 
-    DownloadFile(final Context context, final String downloadUrl, final String fName, final String mimeType) {
-        path = getExternalStorageDirectory() + "/Comrades/";
+    DownloadFile(final Context context, final String downloadUrl, final String fName,
+                 final String mimeType) {
+
+        path = getExternalStorageDirectory() +
+                context.getString(R.string.DOWNLOAD_DIRECTORY) + CourseActivity.courseId + "/";
         mNotifyManager = NotificationManagerCompat.from(context);
         this.downloadUrl = downloadUrl;
         this.fName = fName;
@@ -79,8 +82,8 @@ public class DownloadFile extends AsyncTask<Void, Integer, Integer> {
         try {
 
             final URL url = new URL(downloadUrl);
-            final URLConnection conection = url.openConnection();
-            conection.connect();
+            final URLConnection connection = url.openConnection();
+            connection.connect();
 
             File file = new File(path);
             if (!file.exists())
@@ -93,7 +96,7 @@ public class DownloadFile extends AsyncTask<Void, Integer, Integer> {
 
             final OutputStream output = new FileOutputStream(path + fName);
             byte data[] = new byte[1024];
-            int fileLength = conection.getContentLength();
+            int fileLength = connection.getContentLength();
             long total = 0;
             while ((count = input.read(data)) != -1) {
 
@@ -130,12 +133,13 @@ public class DownloadFile extends AsyncTask<Void, Integer, Integer> {
     }
 
     private void setIntentAction() {
-        final File file = new File(path);
+        final File file = new File(path + fName);
         final Intent generic = new Intent();
         generic.setAction(android.content.Intent.ACTION_VIEW);
         generic.setDataAndType(Uri.parse(file.toString()), mimeType);
 
-        final PendingIntent contentIntent = PendingIntent.getActivity(context, 0, generic, PendingIntent.FLAG_CANCEL_CURRENT);
+        final PendingIntent contentIntent = PendingIntent.getActivity(context,
+                0, generic, PendingIntent.FLAG_CANCEL_CURRENT);
         builder.setContentTitle(fName)
                 .setContentText("Download Complete.")
                 .setOngoing(false)

@@ -1,4 +1,4 @@
-package com.macbitsgoa.comrades.ref;
+package com.macbitsgoa.comrades.coursematerial;
 
 import android.os.AsyncTask;
 import android.util.Log;
@@ -11,45 +11,60 @@ import com.squareup.okhttp.Request;
 import com.squareup.okhttp.RequestBody;
 import com.squareup.okhttp.Response;
 
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 
 import static android.webkit.MimeTypeMap.getFileExtensionFromUrl;
-import static com.macbitsgoa.comrades.ref.MetaDataAndPermissions.AUTHORIZATION_FIELD_KEY;
-import static com.macbitsgoa.comrades.ref.MetaDataAndPermissions.AUTHORIZATION_FIELD_VALUE_PREFIX;
+import static com.macbitsgoa.comrades.CHC.TAG_PREFIX;
+import static com.macbitsgoa.comrades.coursematerial.MetaDataAndPermissions.AUTHORIZATION_FIELD_KEY;
+import static com.macbitsgoa.comrades.coursematerial.MetaDataAndPermissions.AUTHORIZATION_FIELD_VALUE_PREFIX;
 
 /**
  * Code to upload file.
  * @author aayushSingla
  */
 
-@SuppressWarnings("WeakerAccess")
 public class UploadFile extends AsyncTask<Void, Void, String> {
-    private static final String TAG = "MAC->" + UploadFile.class.getSimpleName();
+    private static final String TAG = TAG_PREFIX + UploadFile.class.getSimpleName();
     private final String path;
+    private String fileId;
+    private final String fName;
     private final String accessToken;
-    private final String driveUploadUrl;
 
-    UploadFile(final String path, final String accessToken, final String driveUploadUrl) {
+    public UploadFile(final String path, final String accessToken, final String fName) {
         this.path = path;
         this.accessToken = accessToken;
-        this.driveUploadUrl = driveUploadUrl;
+        this.fName = fName;
     }
 
     @Override
     protected String doInBackground(final Void... voids) {
-        return uploadFile();
+        final String response = uploadFile();
+
+        try {
+            final JSONObject jsonObject = new JSONObject(response);
+            fileId = (String) jsonObject.get("id");
+        } catch (final JSONException e) {
+            Log.e(TAG, e.getMessage(), e.fillInStackTrace());
+        }
+
+        return null;
     }
 
     private String uploadFile() {
         try {
             final File file = new File(path);
             final OkHttpClient okHttpClient = new OkHttpClient();
-
             final RequestBody requestBody = RequestBody.create(MediaType.parse(getMimeType(path)),
                     fileToBytes(file));
 
+            final String driveUploadUrl =
+                    "https://www.googleapis.com/upload/drive/v3/files?uploadType=media";
+            Log.e(TAG, String.valueOf(4));
             final Request request = new Request.Builder()
                     .url(driveUploadUrl)
                     .addHeader("Content-Type", getMimeType(path))
@@ -79,9 +94,10 @@ public class UploadFile extends AsyncTask<Void, Void, String> {
         return bytes;
     }
 
-    private static String getMimeType(final String filePath) {
+    private static String getMimeType(String filePath) {
         String type = null;
-        final String extension = getFileExtensionFromUrl(filePath);
+        final String filePath1 = filePath.replaceAll(" ", "");
+        final String extension = getFileExtensionFromUrl(filePath1);
         if (extension != null) {
             type = MimeTypeMap.getSingleton().getMimeTypeFromExtension(extension);
         }
@@ -101,6 +117,9 @@ public class UploadFile extends AsyncTask<Void, Void, String> {
         if (BuildConfig.DEBUG) {
             Log.i(TAG, "File upload result is " + result);
         }
+        Log.e(TAG, "asking for permissions");
+        final MetaDataAndPermissions mdp = new MetaDataAndPermissions(fileId, accessToken, fName);
+        mdp.execute();
     }
 
 
