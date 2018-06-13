@@ -1,6 +1,5 @@
 package com.macbitsgoa.comrades;
 
-import android.content.Intent;
 import android.view.View;
 import android.widget.TextView;
 
@@ -8,8 +7,6 @@ import com.macbitsgoa.comrades.coursematerial.CourseActivity;
 
 import androidx.recyclerview.widget.RecyclerView;
 
-import static com.macbitsgoa.comrades.coursematerial.CourseActivity.EXTRA_COURSE_ID;
-import static com.macbitsgoa.comrades.coursematerial.CourseActivity.EXTRA_COURSE_NAME;
 
 /**
  * @author Rushikesh Jogdand.
@@ -27,10 +24,7 @@ public class CourseVh extends RecyclerView.ViewHolder {
     public void populate(final Course course) {
         nameTv.setText(course.name);
         rootView.setOnClickListener(view -> {
-            final Intent courseIntent = new Intent(view.getContext(), CourseActivity.class);
-            courseIntent.putExtra(EXTRA_COURSE_ID, course.id);
-            courseIntent.putExtra(EXTRA_COURSE_NAME, course.name);
-            view.getContext().startActivity(courseIntent);
+            CourseActivity.show(rootView.getContext(), course.id, course.name);
         });
     }
 }

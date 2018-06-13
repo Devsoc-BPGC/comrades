@@ -1,6 +1,7 @@
 package com.macbitsgoa.comrades.coursematerial;
 
 import android.Manifest;
+import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
@@ -33,13 +34,14 @@ public class CourseActivity extends AppCompatActivity
         implements View.OnClickListener, ValueEventListener {
 
     public static String databaseUrl;
+    final String dbUrl =
+            "https://balmy-component-204213.firebaseio.com/courseMaterial/";
     public static final String ADD_FILE_FRAGMENT = "AddFileFragment";
     private final FirebaseDatabase databaseInstance = FirebaseDatabase.getInstance();
     private static final String TAG = TAG_PREFIX + CourseActivity.class.getSimpleName();
-    public static final String EXTRA_COURSE_ID = "courseId";
-    public static final String EXTRA_COURSE_NAME = "courseName";
     private final ArrayList<ItemCourseMaterial> materialArrayList = new ArrayList<>(0);
     public static String courseId;
+    public static String courseName;
     private MaterialAdapter materialAdapter;
     private FloatingActionButton btnAddMaterial;
 
@@ -50,17 +52,15 @@ public class CourseActivity extends AppCompatActivity
         initUi();
 
         databaseInstance
-                .getReferenceFromUrl(getResources().getString(R.string.DATABASE_URL_MATERIAL))
+                .getReferenceFromUrl(dbUrl)
                 .child(courseId).addValueEventListener(this);
         btnAddMaterial.setOnClickListener(this);
 
     }
 
     private void initUi() {
-        courseId = getIntent().getStringExtra(EXTRA_COURSE_ID);
-        databaseUrl = getString(R.string.DATABASE_URL_MATERIAL) + courseId;
+        databaseUrl = dbUrl + courseId;
         btnAddMaterial = findViewById(R.id.fab_add_material);
-        final String courseName = getIntent().getStringExtra(EXTRA_COURSE_NAME);
         final RecyclerView recyclerView = findViewById(R.id.rv_content_list);
         final Toolbar toolbar = findViewById(R.id.toolbar_course_activity);
 
@@ -133,5 +133,11 @@ public class CourseActivity extends AppCompatActivity
         startActivity(signInIntent);
     }
 
+    public static void show(final Context context, final String courseId, final String courseName) {
+        final Intent intent = new Intent(context, CourseActivity.class);
+        CourseActivity.courseId = courseId;
+        CourseActivity.courseName = courseName;
+        context.startActivity(intent);
+    }
 }
 

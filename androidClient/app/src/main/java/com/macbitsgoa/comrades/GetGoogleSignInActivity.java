@@ -128,7 +128,6 @@ public class GetGoogleSignInActivity extends Activity {
         super.onStart();
         final GoogleSignInAccount account = GoogleSignIn.getLastSignedInAccount(this);
         returnResult = getCallingActivity() != null;
-        Log.e(TAG, returnResult + "");
         if (account != null) {
             returnResult(account);
         }
@@ -147,11 +146,13 @@ public class GetGoogleSignInActivity extends Activity {
         RequestBody requestBody = null;
 
         if (authCode != null) {
+
             requestBody = new FormEncodingBuilder()
                     .add("grant_type", "authorization_code")
                     .add("client_id", getString(R.string.server_client_id))
                     .add("client_secret", getString(R.string.client_secret))
-                    .add("redirect_uri", getString(R.string.redirect_url))
+                    .add("redirect_uri",
+                            "https://balmy-component-204213.firebaseapp.com/__/auth/handler")
                     .add("code", authCode)
                     .build();
         } else {

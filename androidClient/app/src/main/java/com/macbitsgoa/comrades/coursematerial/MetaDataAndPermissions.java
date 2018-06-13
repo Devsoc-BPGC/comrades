@@ -1,7 +1,10 @@
 package com.macbitsgoa.comrades.coursematerial;
 
+import android.app.ProgressDialog;
+import android.content.Context;
 import android.os.AsyncTask;
 import android.util.Log;
+import android.widget.Toast;
 
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
@@ -19,6 +22,8 @@ import java.io.IOException;
 
 import androidx.annotation.Nullable;
 
+import static com.macbitsgoa.comrades.CHC.TAG_PREFIX;
+
 /**
  * Request google drive permissions.
  * @author aayush singla
@@ -30,11 +35,14 @@ public class MetaDataAndPermissions extends AsyncTask<Void, Void, Void> {
     public static final String AUTHORIZATION_FIELD_KEY = "Authorization";
     @SuppressWarnings("WeakerAccess")
     public static final String AUTHORIZATION_FIELD_VALUE_PREFIX = "Bearer ";
-    private static final String TAG = "MAC->" + MetaDataAndPermissions.class.getSimpleName();
+    private static final String TAG = TAG_PREFIX + MetaDataAndPermissions.class.getSimpleName();
     private final String driveApiBaseUrl = "https://www.googleapis.com/drive/v3/files/";
     private final String fileId;
     private final String accessToken;
     private final String fName;
+    private final Context context;
+    private final ProgressDialog progressDialog;
+
 
     /**
      * Default constructor.
@@ -42,11 +50,13 @@ public class MetaDataAndPermissions extends AsyncTask<Void, Void, Void> {
      * @param accessToken obtained from sign in.
      */
     @SuppressWarnings("WeakerAccess")
-    public MetaDataAndPermissions(final String fileId,
-                                  final String accessToken, final String fName) {
+    public MetaDataAndPermissions(final String fileId, final String accessToken,
+                                  final String fName, final Context context) {
+        progressDialog = new ProgressDialog(context);
         this.fileId = fileId;
         this.accessToken = accessToken;
         this.fName = fName;
+        this.context = context;
     }
 
 
@@ -71,6 +81,10 @@ public class MetaDataAndPermissions extends AsyncTask<Void, Void, Void> {
         if (BuildConfig.DEBUG) {
             Log.i(TAG, "Uploading file and granting permissions");
         }
+        progressDialog.setTitle(UploadFile.UPLOADING_FILE);
+        progressDialog.setMessage("Granting Permissions....");
+        progressDialog.setIndeterminate(true);
+        progressDialog.show();
     }
 
     @Override
@@ -78,6 +92,9 @@ public class MetaDataAndPermissions extends AsyncTask<Void, Void, Void> {
         if (BuildConfig.DEBUG) {
             Log.i(TAG, "Permissions granted and pushed to firebase");
         }
+        progressDialog.hide();
+        Toast.makeText(context, "File Uploaded", Toast.LENGTH_LONG).show();
+
     }
 
     private void getPermissions() throws JSONException {

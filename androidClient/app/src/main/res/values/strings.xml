@@ -7,12 +7,6 @@
         666225132801-iklcdj36jau98rf2v44a0v1rnguioatd.apps.googleusercontent.com
     </string>
     <string name="client_secret">NGfzk-7sJilNmFla6TZy8WrL</string>
-    <string name="redirect_url">
-        https://balmy-component-204213.firebaseapp.com/__/auth/handler
-    </string>
-    <string name="drive_upload_url">
-        https://www.googleapis.com/upload/drive/v3/files?uploadType=media</string>
-    <string name="drive_api_base_url">https://www.googleapis.com/drive/v3/files/</string>
     <string name="action_search">Search App</string>
     <string name="login_to_add_course">Please login to add course.</string>
     <string name="login_to_add_file">Please login to add material.</string>
@@ -31,9 +25,6 @@
     <string name="warn_empty_course_name">Course name should not be empty</string>
     <string name="warn_empty_file_name">File name cannot be empty</string>
     <string name="warn_select_file">Please select a file</string>
-    <string name="DOWNLOAD_DIRECTORY">/Comrades/</string>
-    <string name="DATABASE_URL_MATERIAL">
-        https://balmy-component-204213.firebaseio.com/courseMaterial/
-    </string>
+    <string name="download_directory">/Comrades/</string>
 
 </resources>

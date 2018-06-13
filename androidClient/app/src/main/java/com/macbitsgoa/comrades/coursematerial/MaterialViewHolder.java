@@ -20,9 +20,9 @@ import androidx.recyclerview.widget.RecyclerView;
  */
 
 public class MaterialViewHolder extends RecyclerView.ViewHolder {
-    public TextView tvFileName;
-    public TextView tvOwnerName;
-    public View rootView;
+    private final TextView tvFileName;
+    private final TextView tvOwnerName;
+    private final View rootView;
 
 
     public MaterialViewHolder(final View itemView) {
@@ -32,7 +32,10 @@ public class MaterialViewHolder extends RecyclerView.ViewHolder {
         tvOwnerName = itemView.findViewById(R.id.tv_owner_name);
     }
 
-    public void populate(final String fileUrl, final String fName, final String mimeType) {
+    public void populate(final String fileUrl, final String fName,
+                         final String mimeType, final String owner) {
+        tvOwnerName.setText("added by " + owner);
+        tvFileName.setText(fName);
 
         rootView.setOnClickListener(view -> {
             final Context context = rootView.getContext();
@@ -65,7 +68,7 @@ public class MaterialViewHolder extends RecyclerView.ViewHolder {
 
     }
 
-    private void handleSignInAndStorage(Context context) {
+    private void handleSignInAndStorage(final Context context) {
         final Intent intent = new Intent(context, GetGoogleSignInActivity.class);
         context.startActivity(intent);
     }

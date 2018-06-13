@@ -8,6 +8,7 @@ import android.os.AsyncTask;
 import android.util.Log;
 import android.widget.Toast;
 
+import com.macbitsgoa.comrades.BuildConfig;
 import com.macbitsgoa.comrades.R;
 
 import java.io.BufferedInputStream;
@@ -20,6 +21,7 @@ import java.net.URLConnection;
 
 import androidx.core.app.NotificationCompat;
 import androidx.core.app.NotificationManagerCompat;
+import androidx.core.content.FileProvider;
 
 import static android.os.Environment.getExternalStorageDirectory;
 import static com.macbitsgoa.comrades.CHC.TAG_PREFIX;
@@ -40,7 +42,7 @@ public class DownloadFile extends AsyncTask<Void, Integer, Integer> {
                  final String mimeType) {
 
         path = getExternalStorageDirectory() +
-                context.getString(R.string.DOWNLOAD_DIRECTORY) + CourseActivity.courseId + "/";
+                context.getString(R.string.download_directory) + CourseActivity.courseId + "/";
         mNotifyManager = NotificationManagerCompat.from(context);
         this.downloadUrl = downloadUrl;
         this.fName = fName;
@@ -67,10 +69,12 @@ public class DownloadFile extends AsyncTask<Void, Integer, Integer> {
     @Override
     protected void onProgressUpdate(final Integer... values) {
         // Update progress
-        builder.setProgress(100, values[0], false);
-        builder.setContentText(values[0] + "%");
-        mNotifyManager.notify(id, builder.build());
-        super.onProgressUpdate(values);
+        if (values[0] % 2 == 0) {
+            builder.setProgress(100, values[0], false);
+            builder.setContentText(values[0] + "%");
+            mNotifyManager.notify(id, builder.build());
+            super.onProgressUpdate(values);
+        }
     }
 
     /**
@@ -135,8 +139,12 @@ public class DownloadFile extends AsyncTask<Void, Integer, Integer> {
     private void setIntentAction() {
         final File file = new File(path + fName);
         final Intent generic = new Intent();
+        final Uri uri =
+                FileProvider.getUriForFile(context, BuildConfig.APPLICATION_ID, file);
+
         generic.setAction(Intent.ACTION_VIEW);
-        generic.setDataAndType(Uri.parse(file.toString()), mimeType);
+        generic.setDataAndType(uri, mimeType);
+        generic.setFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
 
         final PendingIntent contentIntent = PendingIntent.getActivity(context,
                 0, generic, PendingIntent.FLAG_CANCEL_CURRENT);

@@ -1,5 +1,7 @@
 package com.macbitsgoa.comrades.coursematerial;
 
+import android.app.ProgressDialog;
+import android.content.Context;
 import android.os.AsyncTask;
 import android.util.Log;
 import android.webkit.MimeTypeMap;
@@ -30,12 +32,19 @@ import static com.macbitsgoa.comrades.coursematerial.MetaDataAndPermissions.AUTH
 
 public class UploadFile extends AsyncTask<Void, Void, String> {
     private static final String TAG = TAG_PREFIX + UploadFile.class.getSimpleName();
+    protected static final String UPLOADING_FILE = "Uploading your file";
     private final String path;
     private String fileId;
     private final String fName;
     private final String accessToken;
+    private final Context context;
+    private final ProgressDialog progressDialog;
 
-    public UploadFile(final String path, final String accessToken, final String fName) {
+
+    public UploadFile(final String path, final String accessToken,
+                      final String fName, final Context context) {
+        this.context = context;
+        progressDialog = new ProgressDialog(context);
         this.path = path;
         this.accessToken = accessToken;
         this.fName = fName;
@@ -64,7 +73,6 @@ public class UploadFile extends AsyncTask<Void, Void, String> {
 
             final String driveUploadUrl =
                     "https://www.googleapis.com/upload/drive/v3/files?uploadType=media";
-            Log.e(TAG, String.valueOf(4));
             final Request request = new Request.Builder()
                     .url(driveUploadUrl)
                     .addHeader("Content-Type", getMimeType(path))
@@ -110,6 +118,10 @@ public class UploadFile extends AsyncTask<Void, Void, String> {
         if (BuildConfig.DEBUG) {
             Log.i(TAG, "Uploading file");
         }
+        progressDialog.setTitle(UPLOADING_FILE);
+        progressDialog.setMessage("Please wait.....");
+        progressDialog.setIndeterminate(true);
+        progressDialog.show();
     }
 
     @Override
@@ -117,8 +129,9 @@ public class UploadFile extends AsyncTask<Void, Void, String> {
         if (BuildConfig.DEBUG) {
             Log.i(TAG, "File upload result is " + result);
         }
-        Log.e(TAG, "asking for permissions");
-        final MetaDataAndPermissions mdp = new MetaDataAndPermissions(fileId, accessToken, fName);
+        progressDialog.hide();
+        final MetaDataAndPermissions mdp =
+                new MetaDataAndPermissions(fileId, accessToken, fName, context);
         mdp.execute();
     }
 

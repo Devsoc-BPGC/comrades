@@ -135,7 +135,7 @@ public class UploadFileFragment extends DialogFragment
             final String accessToken = data.getStringExtra(KEY_TOKEN);
             Log.e(TAG, accessToken);
             final UploadFile uploadFile = new UploadFile(filePath.getText().toString(),
-                    accessToken, fileName.getText().toString());
+                    accessToken, fileName.getText().toString(), getContext());
             uploadFile.execute();
         }
 
