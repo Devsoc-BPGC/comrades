@@ -1,7 +1,10 @@
-package com.macbitsgoa.comrades.ref;
+package com.macbitsgoa.comrades.coursematerial;
 
+import android.app.ProgressDialog;
+import android.content.Context;
 import android.os.AsyncTask;
 import android.util.Log;
+import android.widget.Toast;
 
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
@@ -16,12 +19,10 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.IOException;
-import java.util.HashMap;
-import java.util.Iterator;
 
-import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
+import static com.macbitsgoa.comrades.CHC.TAG_PREFIX;
 
 /**
  * Request google drive permissions.
@@ -34,24 +35,30 @@ public class MetaDataAndPermissions extends AsyncTask<Void, Void, Void> {
     public static final String AUTHORIZATION_FIELD_KEY = "Authorization";
     @SuppressWarnings("WeakerAccess")
     public static final String AUTHORIZATION_FIELD_VALUE_PREFIX = "Bearer ";
-    private static final String TAG = "MAC->" + MetaDataAndPermissions.class.getSimpleName();
-    @NonNull
-    private final String driveApiBaseUrl;
+    private static final String TAG = TAG_PREFIX + MetaDataAndPermissions.class.getSimpleName();
+    private final String driveApiBaseUrl = "https://www.googleapis.com/drive/v3/files/";
     private final String fileId;
     private final String accessToken;
+    private final String fName;
+    private final Context context;
+    private final ProgressDialog progressDialog;
+    private final String extension;
+
 
     /**
      * Default constructor.
      * @param fileId id of the file.
      * @param accessToken obtained from sign in.
-     * @param driveApiBaseUrl base url of google drive api.
      */
     @SuppressWarnings("WeakerAccess")
-    public MetaDataAndPermissions(final String fileId, final String accessToken,
-                                  @NonNull final String driveApiBaseUrl) {
+    public MetaDataAndPermissions(final String fileId, final String accessToken, final String fName,
+                                  final Context context, final String extension) {
+        progressDialog = new ProgressDialog(context);
         this.fileId = fileId;
         this.accessToken = accessToken;
-        this.driveApiBaseUrl = driveApiBaseUrl;
+        this.fName = fName;
+        this.context = context;
+        this.extension = extension;
     }
 
 
@@ -76,6 +83,10 @@ public class MetaDataAndPermissions extends AsyncTask<Void, Void, Void> {
         if (BuildConfig.DEBUG) {
             Log.i(TAG, "Uploading file and granting permissions");
         }
+        progressDialog.setTitle(UploadFile.UPLOADING_FILE);
+        progressDialog.setMessage("Granting Permissions....");
+        progressDialog.setIndeterminate(true);
+        progressDialog.show();
     }
 
     @Override
@@ -83,6 +94,9 @@ public class MetaDataAndPermissions extends AsyncTask<Void, Void, Void> {
         if (BuildConfig.DEBUG) {
             Log.i(TAG, "Permissions granted and pushed to firebase");
         }
+        progressDialog.hide();
+        Toast.makeText(context, "File Uploaded", Toast.LENGTH_LONG).show();
+
     }
 
     private void getPermissions() throws JSONException {
@@ -97,7 +111,8 @@ public class MetaDataAndPermissions extends AsyncTask<Void, Void, Void> {
                 jsonPermission.toString());
 
         final Request permission = new Request.Builder()
-                .addHeader(AUTHORIZATION_FIELD_KEY, AUTHORIZATION_FIELD_VALUE_PREFIX + accessToken)
+                .addHeader(AUTHORIZATION_FIELD_KEY,
+                        AUTHORIZATION_FIELD_VALUE_PREFIX + accessToken)
                 .url(driveApiBaseUrl + fileId + "/permissions")
                 .post(requestBody)
                 .build();
@@ -129,25 +144,19 @@ public class MetaDataAndPermissions extends AsyncTask<Void, Void, Void> {
 
 
     private void pushToFirebase(final JSONObject jsonObject) throws JSONException {
-        final DatabaseReference dbRef = FirebaseDatabase.getInstance().getReference().child(fileId);
-        final String webLink = (String) jsonObject.get(HomeActivity.WEB_CONTENT_LINK);
-        final HashMap<String, String> hashMap = jsonToMap(jsonObject.toString());
-        dbRef.child(HomeActivity.FILE_ID_KEY).setValue(fileId);
-        dbRef.child("meta-data").setValue(hashMap);
-        dbRef.child(HomeActivity.WEB_CONTENT_LINK).setValue(webLink);
+        final DatabaseReference dbRef = FirebaseDatabase.getInstance()
+                .getReferenceFromUrl(CourseActivity.databaseUrl);
+        final JSONObject ownerObject = (JSONObject) jsonObject.getJSONArray("owners").get(0);
+        final String owner = (String) ownerObject.get("displayName");
+
+        final ItemCourseMaterial itemCourseMaterial = new ItemCourseMaterial();
+        itemCourseMaterial.setAddedBy(owner);
+        itemCourseMaterial.setFileName(fName);
+        itemCourseMaterial.setExtension(extension);
+        itemCourseMaterial.setId(fileId);
+        itemCourseMaterial.setLink(jsonObject.get("webContentLink").toString());
+        itemCourseMaterial.setMimeType(jsonObject.get("mimeType").toString());
+        dbRef.child(fileId).setValue(itemCourseMaterial);
     }
 
-
-    private static HashMap<String, String> jsonToMap(final String t) throws JSONException {
-        final HashMap<String, String> map = new HashMap<>(0);
-        final JSONObject jObject = new JSONObject(t);
-        final Iterator<?> keys = jObject.keys();
-
-        while (keys.hasNext()) {
-            final String key = (String) keys.next();
-            final String value = jObject.getString(key);
-            map.put(key, value);
-        }
-        return map;
-    }
 }

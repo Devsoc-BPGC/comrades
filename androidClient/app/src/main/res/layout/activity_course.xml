@@ -5,15 +5,16 @@
     android:id="@+id/cl_main_activity"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context="com.macbitsgoa.comrades.CourseActivity">
+    tools:context="com.macbitsgoa.comrades.coursematerial.CourseActivity">
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/rv_content_list"
+        android:layout_marginTop="?android:attr/actionBarSize"
         android:layout_width="match_parent"
         android:layout_height="match_parent" />
 
     <com.google.android.material.floatingactionbutton.FloatingActionButton
-        android:id="@+id/fab_add_course"
+        android:id="@+id/fab_add_material"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="end|bottom"
@@ -23,11 +24,12 @@
         android:src="@drawable/ic_add" />
 
     <androidx.appcompat.widget.Toolbar
+        android:id="@+id/toolbar_course_activity"
         android:layout_width="match_parent"
         android:layout_height="?android:attr/actionBarSize"
         android:background="?android:attr/colorPrimary"
         android:elevation="4dp"
-        android:theme="@style/ThemeOverlay.AppCompat.ActionBar"
+        android:theme="@style/AppTheme.ToolBarStyle"
         app:layout_scrollFlags="enterAlways|scroll"
         app:popupTheme="@style/ThemeOverlay.AppCompat.Light" />
 

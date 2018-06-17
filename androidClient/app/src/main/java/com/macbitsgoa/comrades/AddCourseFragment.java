@@ -2,13 +2,10 @@ package com.macbitsgoa.comrades;
 
 import android.annotation.SuppressLint;
 import android.app.Dialog;
-import android.content.DialogInterface;
 import android.os.Bundle;
 import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
-import android.view.ViewGroup;
-import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -30,6 +27,7 @@ public class AddCourseFragment extends DialogFragment {
     public Dialog onCreateDialog(final Bundle savedInstanceState) {
         final LayoutInflater inflater = getActivity().getLayoutInflater();
         @SuppressLint("InflateParams") final View rootView = inflater.inflate(R.layout.dialog_add_course, null);
+
         return new AlertDialog.Builder(getActivity())
                 .setView(rootView)
                 .setPositiveButton(getString(R.string.add_course), (dialogInterface, i) -> {

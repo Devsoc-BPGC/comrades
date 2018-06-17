@@ -5,4 +5,5 @@ package com.macbitsgoa.comrades;
  */
 public final class FirebaseKeys {
     public static final String COURSES = "courses";
+    public static final String COURSE_MATERIAL = "courseMaterial";
 }
