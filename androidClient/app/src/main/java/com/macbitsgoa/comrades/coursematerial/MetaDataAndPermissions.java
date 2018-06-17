@@ -42,6 +42,7 @@ public class MetaDataAndPermissions extends AsyncTask<Void, Void, Void> {
     private final String fName;
     private final Context context;
     private final ProgressDialog progressDialog;
+    private final String extension;
 
 
     /**
@@ -50,13 +51,14 @@ public class MetaDataAndPermissions extends AsyncTask<Void, Void, Void> {
      * @param accessToken obtained from sign in.
      */
     @SuppressWarnings("WeakerAccess")
-    public MetaDataAndPermissions(final String fileId, final String accessToken,
-                                  final String fName, final Context context) {
+    public MetaDataAndPermissions(final String fileId, final String accessToken, final String fName,
+                                  final Context context, final String extension) {
         progressDialog = new ProgressDialog(context);
         this.fileId = fileId;
         this.accessToken = accessToken;
         this.fName = fName;
         this.context = context;
+        this.extension = extension;
     }
 
 
@@ -150,6 +152,7 @@ public class MetaDataAndPermissions extends AsyncTask<Void, Void, Void> {
         final ItemCourseMaterial itemCourseMaterial = new ItemCourseMaterial();
         itemCourseMaterial.setAddedBy(owner);
         itemCourseMaterial.setFileName(fName);
+        itemCourseMaterial.setExtension(extension);
         itemCourseMaterial.setId(fileId);
         itemCourseMaterial.setLink(jsonObject.get("webContentLink").toString());
         itemCourseMaterial.setMimeType(jsonObject.get("mimeType").toString());

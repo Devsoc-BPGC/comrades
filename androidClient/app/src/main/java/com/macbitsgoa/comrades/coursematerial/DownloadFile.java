@@ -37,9 +37,10 @@ public class DownloadFile extends AsyncTask<Void, Integer, Integer> {
     private final Context context;
     private final String path;
     private final String mimeType;
+    private final String extension;
 
     DownloadFile(final Context context, final String downloadUrl, final String fName,
-                 final String mimeType) {
+                 final String mimeType, final String extension) {
 
         path = getExternalStorageDirectory() +
                 context.getString(R.string.download_directory) + CourseActivity.courseId + "/";
@@ -48,6 +49,7 @@ public class DownloadFile extends AsyncTask<Void, Integer, Integer> {
         this.fName = fName;
         this.context = context;
         this.mimeType = mimeType;
+        this.extension = extension;
 
         builder = new NotificationCompat.Builder(context, "progress");
         builder.setContentTitle("Download in progress")
@@ -63,18 +65,17 @@ public class DownloadFile extends AsyncTask<Void, Integer, Integer> {
         // Displays the progress bar for the first time.
         Toast.makeText(context, "Download Started", Toast.LENGTH_LONG).show();
         builder.setProgress(100, 0, false);
+        builder.setPriority(NotificationCompat.PRIORITY_HIGH);
         mNotifyManager.notify(id, builder.build());
     }
 
     @Override
     protected void onProgressUpdate(final Integer... values) {
+        super.onProgressUpdate(values);
         // Update progress
-        if (values[0] % 2 == 0) {
             builder.setProgress(100, values[0], false);
             builder.setContentText(values[0] + "%");
             mNotifyManager.notify(id, builder.build());
-            super.onProgressUpdate(values);
-        }
     }
 
     /**
@@ -98,7 +99,7 @@ public class DownloadFile extends AsyncTask<Void, Integer, Integer> {
 
             // Output stream to write file
 
-            final OutputStream output = new FileOutputStream(path + fName);
+            final OutputStream output = new FileOutputStream(path + fName + extension);
             byte data[] = new byte[1024];
             int fileLength = connection.getContentLength();
             long total = 0;
@@ -137,7 +138,7 @@ public class DownloadFile extends AsyncTask<Void, Integer, Integer> {
     }
 
     private void setIntentAction() {
-        final File file = new File(path + fName);
+        final File file = new File(path + fName + extension);
         final Intent generic = new Intent();
         final Uri uri =
                 FileProvider.getUriForFile(context, BuildConfig.APPLICATION_ID, file);

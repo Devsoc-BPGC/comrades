@@ -13,7 +13,11 @@ public class ItemCourseMaterial {
     private String id;
     private String link;
     private String mimeType;
+    private String extension;
 
+    public String getExtension() {
+        return extension;
+    }
 
     public ArrayList<String> getDownloadedBy() {
         return downloadedBy;
@@ -57,6 +61,10 @@ public class ItemCourseMaterial {
 
     public void setMimeType(String mimeType) {
         this.mimeType = mimeType;
+    }
+
+    public void setExtension(String extension) {
+        this.extension = extension;
     }
 
     public void setDownloadedBy(ArrayList<String> downloadedBy) {

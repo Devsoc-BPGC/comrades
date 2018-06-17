@@ -32,10 +32,9 @@ public class MaterialViewHolder extends RecyclerView.ViewHolder {
         tvOwnerName = itemView.findViewById(R.id.tv_owner_name);
     }
 
-    public void populate(final String fileUrl, final String fName,
-                         final String mimeType, final String owner) {
-        tvOwnerName.setText("added by " + owner);
-        tvFileName.setText(fName);
+    public void populate(ItemCourseMaterial object) {
+        tvOwnerName.setText("added by " + object.getAddedBy());
+        tvFileName.setText(object.getFileName());
 
         rootView.setOnClickListener(view -> {
             final Context context = rootView.getContext();
@@ -50,7 +49,8 @@ public class MaterialViewHolder extends RecyclerView.ViewHolder {
 
             if (signedIn && storagePermission) {
                 final DownloadFile downloadFile =
-                        new DownloadFile(context, fileUrl, fName, mimeType);
+                        new DownloadFile(context, object.getLink(), object.getFileName(),
+                                object.getMimeType(), object.getExtension());
                 downloadFile.execute();
             } else if (signedIn) {
                 Snackbar.make(rootView, context.getString(R.string.storage_permission_needed), Snackbar.LENGTH_LONG)

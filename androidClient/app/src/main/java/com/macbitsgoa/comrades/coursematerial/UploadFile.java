@@ -131,8 +131,19 @@ public class UploadFile extends AsyncTask<Void, Void, String> {
         }
         progressDialog.hide();
         final MetaDataAndPermissions mdp =
-                new MetaDataAndPermissions(fileId, accessToken, fName, context);
+                new MetaDataAndPermissions(fileId, accessToken, fName, context, getFileExtension(path));
         mdp.execute();
+    }
+
+    private String getFileExtension(final String path) {
+        final File file = new File(path);
+        if (file == null) {
+            return "";
+        }
+        final String name = file.getName();
+        final int i = name.lastIndexOf('.');
+        final String ext = i > 0 ? name.substring(i + 1) : "";
+        return "." + ext;
     }
 
 

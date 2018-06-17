@@ -34,7 +34,7 @@ public class CourseActivity extends AppCompatActivity
         implements View.OnClickListener, ValueEventListener {
 
     public static String databaseUrl;
-    final String dbUrl =
+    private final String dbUrl =
             "https://balmy-component-204213.firebaseio.com/courseMaterial/";
     public static final String ADD_FILE_FRAGMENT = "AddFileFragment";
     private final FirebaseDatabase databaseInstance = FirebaseDatabase.getInstance();

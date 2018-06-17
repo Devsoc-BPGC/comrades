@@ -31,7 +31,7 @@ public class MaterialAdapter extends RecyclerView.Adapter<MaterialViewHolder> {
     @Override
     public void onBindViewHolder(final MaterialViewHolder holder, final int position) {
         final ItemCourseMaterial obj = materialArrayList.get(position);
-        holder.populate(obj.getLink(), obj.getFileName(), obj.getMimeType(), obj.getAddedBy());
+        holder.populate(obj);
     }
 
     @Override
