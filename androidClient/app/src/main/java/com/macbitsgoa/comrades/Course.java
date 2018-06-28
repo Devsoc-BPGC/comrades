@@ -2,9 +2,6 @@ package com.macbitsgoa.comrades;
 
 import com.google.firebase.database.Exclude;
 
-import java.util.HashMap;
-import java.util.Map;
-
 /**
  * Model class course.
  *

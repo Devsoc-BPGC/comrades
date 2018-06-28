@@ -1,10 +1,7 @@
 package com.macbitsgoa.comrades.coursematerial;
 
-import android.app.ProgressDialog;
-import android.content.Context;
 import android.os.AsyncTask;
 import android.util.Log;
-import android.widget.Toast;
 
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
@@ -26,6 +23,7 @@ import static com.macbitsgoa.comrades.CHC.TAG_PREFIX;
 
 /**
  * Request google drive permissions.
+ *
  * @author aayush singla
  */
 
@@ -40,24 +38,21 @@ public class MetaDataAndPermissions extends AsyncTask<Void, Void, Void> {
     private final String fileId;
     private final String accessToken;
     private final String fName;
-    private final Context context;
-    private final ProgressDialog progressDialog;
     private final String extension;
 
 
     /**
      * Default constructor.
-     * @param fileId id of the file.
+     *
+     * @param fileId      id of the file.
      * @param accessToken obtained from sign in.
      */
     @SuppressWarnings("WeakerAccess")
     public MetaDataAndPermissions(final String fileId, final String accessToken, final String fName,
-                                  final Context context, final String extension) {
-        progressDialog = new ProgressDialog(context);
+                                  final String extension) {
         this.fileId = fileId;
         this.accessToken = accessToken;
         this.fName = fName;
-        this.context = context;
         this.extension = extension;
     }
 
@@ -83,10 +78,6 @@ public class MetaDataAndPermissions extends AsyncTask<Void, Void, Void> {
         if (BuildConfig.DEBUG) {
             Log.i(TAG, "Uploading file and granting permissions");
         }
-        progressDialog.setTitle(UploadFile.UPLOADING_FILE);
-        progressDialog.setMessage("Granting Permissions....");
-        progressDialog.setIndeterminate(true);
-        progressDialog.show();
     }
 
     @Override
@@ -94,9 +85,6 @@ public class MetaDataAndPermissions extends AsyncTask<Void, Void, Void> {
         if (BuildConfig.DEBUG) {
             Log.i(TAG, "Permissions granted and pushed to firebase");
         }
-        progressDialog.hide();
-        Toast.makeText(context, "File Uploaded", Toast.LENGTH_LONG).show();
-
     }
 
     private void getPermissions() throws JSONException {

@@ -33,11 +33,6 @@ public class UploadFileFragment extends DialogFragment
     private StorageChooser chooser;
 
 
-    public static UploadFileFragment newInstance() {
-        return new UploadFileFragment();
-    }
-
-
     @Override
     public Dialog onCreateDialog(final Bundle savedInstanceState) {
         // Inflate the layout for this fragment
@@ -135,7 +130,7 @@ public class UploadFileFragment extends DialogFragment
             final String accessToken = data.getStringExtra(KEY_TOKEN);
             Log.e(TAG, accessToken);
             final UploadFile uploadFile = new UploadFile(filePath.getText().toString(),
-                    accessToken, fileName.getText().toString(), getContext());
+                    accessToken, fileName.getText().toString());
             uploadFile.execute();
         }
 

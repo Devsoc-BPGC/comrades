@@ -18,7 +18,6 @@ import androidx.recyclerview.widget.RecyclerView;
 /**
  * @author aayush singla
  */
-
 public class MaterialViewHolder extends RecyclerView.ViewHolder {
     private final TextView tvFileName;
     private final TextView tvOwnerName;
@@ -49,8 +48,7 @@ public class MaterialViewHolder extends RecyclerView.ViewHolder {
 
             if (signedIn && storagePermission) {
                 final DownloadFile downloadFile =
-                        new DownloadFile(context, object.getLink(), object.getFileName(),
-                                object.getMimeType(), object.getExtension());
+                        new DownloadFile(object.getLink(), object.getFileName(), object.getExtension());
                 downloadFile.execute();
             } else if (signedIn) {
                 Snackbar.make(rootView, context.getString(R.string.storage_permission_needed), Snackbar.LENGTH_LONG)
@@ -68,7 +66,7 @@ public class MaterialViewHolder extends RecyclerView.ViewHolder {
 
     }
 
-    private void handleSignInAndStorage(final Context context) {
+    private static void handleSignInAndStorage(final Context context) {
         final Intent intent = new Intent(context, GetGoogleSignInActivity.class);
         context.startActivity(intent);
     }
