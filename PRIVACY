@@ -1,0 +1,13 @@
+The app does not collect any user data before user signs in (using the BITS 
+Pilani, Goa Campus gmail account).
+
+When user signs in using the BITS Pilani, Goa Campus gmail account following
+user data is accquired from the gmail account and saved on the server:
+1. Display Name
+2. email
+3. Account Id unique both to the account and the app.
+4. Photo Url
+
+This data is saved forever on the server (even when user signs out). This is 
+required to maintain consistency for the content genereated by the user.
+

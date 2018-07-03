@@ -22,11 +22,14 @@
 
     <com.google.android.material.chip.Chip
         android:id="@+id/chip_course_code"
-        style="@style/Widget.MaterialComponents.Chip.Action"
+        style="@style/Widget.MaterialComponents.Chip.Entry"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginBottom="4dp"
+        android:layout_marginBottom="12dp"
         android:layout_marginStart="8dp"
+        app:closeIconEnabled="false"
+        android:checkable="false"
+        android:clickable="false"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/tv_course_name"
@@ -35,7 +38,7 @@
     <View
         android:layout_width="0dp"
         android:layout_height="1px"
-        android:background="#ff000000"
+        android:background="#757575"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent" />

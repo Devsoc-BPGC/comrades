@@ -10,5 +10,8 @@ import com.macbitsgoa.comrades.persistance.DataRepository
 class AddCourseVm(application: Application) : AndroidViewModel(application) {
     private val repo: DataRepository = DataRepository(application)
 
+    /**
+     * Creates course as per parameters and signed in user as author.
+     */
     fun createCourse(name: String, code: String) = repo.createCourse(name, code)
 }

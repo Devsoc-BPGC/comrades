@@ -1,15 +1,12 @@
 package com.macbitsgoa.comrades.persistance
 
-import android.annotation.SuppressLint
 import android.app.Application
 import android.content.SharedPreferences
 import android.os.AsyncTask
 import android.util.Log
 import androidx.lifecycle.LiveData
 import com.google.firebase.database.DataSnapshot
-import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.DatabaseReference
-import com.google.firebase.database.ValueEventListener
 import com.google.firebase.messaging.FirebaseMessaging
 import com.google.gson.Gson
 import com.macbitsgoa.comrades.*
@@ -22,56 +19,37 @@ class DataRepository(application: Application) {
     private val dao: DataAccessObject = Database.getInstance(application).dao
     val courses: LiveData<List<Course>> = dao.courses
     protected val tag = TAG_PREFIX + DataRepository::class.java.simpleName
-    protected val usersRef: DatabaseReference = firebaseRootRef.child(FirebaseKeys.USERS)
-    private val coursesRef: DatabaseReference = firebaseRootRef.child(FirebaseKeys.COURSES)
+    protected val usersRef: DatabaseReference = firebaseRootRef.child(USERS)
+    private val coursesRef: DatabaseReference = firebaseRootRef.child(COURSES)
     protected val sharedPref: SharedPreferences = defaultPref(application)
 
     init {
         if (!sharedPref.getBoolean(coursesAdded, false)) {
             val authors = mutableSetOf<String>()
             val courses = mutableSetOf<Course>()
-            coursesRef.addValueEventListener(object : ValueEventListener {
-                override fun onCancelled(p0: DatabaseError) {
-                    Log.e(tag, p0.message, p0.toException())
-                }
-
-                override fun onDataChange(p0: DataSnapshot) {
-                    p0.children.forEach {
+            coursesRef.addValueEventListener(object : FbListener() {
+                override fun onDataChange(snapshot: DataSnapshot) {
+                    snapshot.children.forEach {
                         val course: Course = it.getValue(Course::class.java) ?: return@forEach
-                        course.isFollowing = false
                         courses.add(course)
                         authors.add(course.addedById)
-                        if (BuildConfig.DEBUG) {
-                            Log.i(tag, "addedById")
-                        }
                     }
 
-                    FirebaseMessaging.getInstance().subscribeToTopic(FirebaseKeys.TOPIC_COURSE_UPDATES)
                     authors.forEach {
-                        usersRef.child(it).addValueEventListener(object : ValueEventListener {
-                            override fun onCancelled(p0: DatabaseError) {
-                                Log.e(tag, p0.message, p0.toException())
-                            }
-
-                            @SuppressLint("ApplySharedPref")
-                            override fun onDataChange(p0: DataSnapshot) {
-                                val person: Person = p0.getValue(Person::class.java) ?: return
+                        usersRef.child(it).addValueEventListener(object : FbListener() {
+                            override fun onDataChange(p: DataSnapshot) {
+                                val person: Person = p.getValue(Person::class.java) ?: return
                                 insertLocally(person)
                                 authors.remove(person.id)
-                                if (BuildConfig.DEBUG) {
-                                    Log.i(tag, "added person ${person.name} remaining ${authors.size}, empty = ${authors.isEmpty()}")
-                                }
                                 if (authors.isEmpty()) {
                                     // all authors added, now foreign key constraint should not fail
                                     courses.forEach {
                                         insertLocally(it)
-                                        if (BuildConfig.DEBUG) {
-                                            Log.i(tag, "added course ${it.name}")
-                                        }
                                     }
                                     sharedPref.edit()
                                             .putBoolean(coursesAdded, true)
-                                            .commit()
+                                            .apply()
+                                    FirebaseMessaging.getInstance().subscribeToTopic(TOPIC_COURSE_UPDATES)
                                 }
                             }
                         })
@@ -81,31 +59,42 @@ class DataRepository(application: Application) {
         }
     }
 
-    // only fetches from local db, so make sure all required people are fetched
-    // and subscribed to
+    /**
+     * Fetches the [Person] from local db.
+     */
     fun getPerson(id: String): LiveData<Person> = dao.getPerson(id)
 
 
-    // only fetches from local db, so make sure all courses are fetched and
-    // subscribed to
+    /**
+     * Fetches the [Material]s from local db.
+     */
     fun getMaterialsOfCourse(courseId: String): LiveData<List<Material>> =
             dao.getMaterials(courseId)
 
+    /**
+     * Add the [Person] to local db.
+     */
     fun insertLocally(person: Person) {
         InsertPerson(dao).execute(person)
         FirebaseMessaging.getInstance().subscribeToTopic("user${person.id}")
     }
 
+    /**
+     * Add the [Course] to local db.
+     */
     fun insertLocally(course: Course) {
         InsertCourse(dao).execute(course)
         if (course.isFollowing) {
-            FirebaseMessaging.getInstance().subscribeToTopic("course${course.id}")
+            FirebaseMessaging.getInstance().subscribeToTopic(getTopicForCourse(course))
         } else {
-            FirebaseMessaging.getInstance().unsubscribeFromTopic("course${course.id}")
+            FirebaseMessaging.getInstance().unsubscribeFromTopic(getTopicForCourse(course))
         }
     }
 
-    // course and author for this material are subscribed to, right?
+    /**
+     * Add the [Material] to local db.
+     * Course and author for this material are subscribed to, right?
+     */
     fun insertLocally(material: Material) {
         InsertMaterial(dao).execute(material)
     }
@@ -131,16 +120,25 @@ class DataRepository(application: Application) {
         }
     }
 
+    /**
+     * Removes user from shared pref.
+     */
     fun signOut() {
         sharedPref.edit().remove(selfKey).apply()
     }
 
+    /**
+     * Add user to shared pref, local db and firebase.
+     */
     fun registerSelf(self: Person) {
         sharedPref.edit().putString(selfKey, Gson().toJson(self)).apply()
         usersRef.child(self.id).setValue(self)
         insertLocally(self)
     }
 
+    /**
+     * Creates course and saves the data to relevant places.
+     */
     fun createCourse(code: String, name: String) {
         val author: Person = Gson().fromJson(sharedPref.getString(selfKey, ""), Person::class.java)
         val course = Course()

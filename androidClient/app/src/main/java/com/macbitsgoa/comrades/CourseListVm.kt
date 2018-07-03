@@ -18,15 +18,27 @@ class CourseListVm(application: Application) : AndroidViewModel(application) {
     protected val repo: DataRepository = DataRepository(application)
     val courseList: LiveData<List<Course>> = repo.courses
 
+    /**
+     * Registers the user. This must be done before any user activity such as
+     * downloading, uploading or course creation.
+     */
     @SuppressLint("ApplySharedPref")
     fun registerSelf(account: GoogleSignInAccount) {
         val self = Person()
         self.name = account.displayName
-        self.email = account.email!!
+        self.email = account.email!! // should not be null as email scope is requested at login
         self.photoUrl = account.photoUrl.toString()
-        self.id = account.id!!
+        self.id = account.id!! // should not be null as accountId scope is requested at login
         repo.registerSelf(self)
     }
 
+    /**
+     * Unregister the user. This DOES NOT remove the user data from server database.
+     * Currently (3-July-2018) following data is persisted for ever:
+     * 1. Display Name
+     * 2. Email
+     * 3. Photo Url as provided by Google Account
+     * 4. Account id unique to account - app combo.
+     */
     fun signOut() = repo.signOut()
 }

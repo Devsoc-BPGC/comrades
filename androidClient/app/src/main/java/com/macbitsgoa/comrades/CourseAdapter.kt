@@ -13,6 +13,9 @@ class CourseAdapter : RecyclerView.Adapter<CourseVh>() {
 
     private var courses: List<Course> = ArrayList(0)
 
+    /**
+     * Update the course list.
+     */
     fun setCourses(c: MutableList<com.macbitsgoa.comrades.persistance.Course>) {
         courses = c
         notifyDataSetChanged()

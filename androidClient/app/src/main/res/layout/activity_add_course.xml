@@ -25,7 +25,7 @@
                 android:id="@+id/et_course_name"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:hint="Course Name"
+                android:hint="@string/course_name_hint"
                 android:inputType="textCapWords" />
 
         </com.google.android.material.textfield.TextInputLayout>
@@ -45,7 +45,7 @@
                 android:layout_marginTop="4dp"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:hint="Stream Code"
+                android:hint="@string/stream_code_hint"
                 android:inputType="textCapCharacters"
                 app:layout_constraintTop_toBottomOf="@id/et_course_name" />
 
@@ -65,7 +65,7 @@
                 android:layout_marginTop="4dp"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:hint="Course Number"
+                android:hint="@string/course_number_hint"
                 android:inputType="textCapCharacters" />
 
         </com.google.android.material.textfield.TextInputLayout>

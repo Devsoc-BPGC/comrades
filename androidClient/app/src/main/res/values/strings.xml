@@ -26,4 +26,7 @@
     <string name="warn_empty_file_name">File name cannot be empty</string>
     <string name="warn_select_file">Please select a file</string>
     <string name="download_directory">/Comrades/</string>
+    <string name="course_number_hint">Course Number (ex - F111)</string>
+    <string name="stream_code_hint">Stream Code (ex - CS)</string>
+    <string name="course_name_hint">Course Name (ex - Computer Programming)</string>
 </resources>
