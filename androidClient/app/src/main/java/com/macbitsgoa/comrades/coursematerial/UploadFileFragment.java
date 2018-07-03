@@ -19,7 +19,7 @@ import androidx.fragment.app.DialogFragment;
 import androidx.fragment.app.Fragment;
 
 import static android.app.Activity.RESULT_OK;
-import static com.macbitsgoa.comrades.CHC.TAG_PREFIX;
+import static com.macbitsgoa.comrades.CHCKt.TAG_PREFIX;
 import static com.macbitsgoa.comrades.GetGoogleSignInActivity.KEY_TOKEN;
 
 public class UploadFileFragment extends DialogFragment

@@ -19,7 +19,7 @@ import java.io.FileInputStream;
 import java.io.IOException;
 
 import static android.webkit.MimeTypeMap.getFileExtensionFromUrl;
-import static com.macbitsgoa.comrades.CHC.TAG_PREFIX;
+import static com.macbitsgoa.comrades.CHCKt.TAG_PREFIX;
 import static com.macbitsgoa.comrades.coursematerial.MetaDataAndPermissions.AUTHORIZATION_FIELD_KEY;
 import static com.macbitsgoa.comrades.coursematerial.MetaDataAndPermissions.AUTHORIZATION_FIELD_VALUE_PREFIX;
 

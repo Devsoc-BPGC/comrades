@@ -26,5 +26,4 @@
     <string name="warn_empty_file_name">File name cannot be empty</string>
     <string name="warn_select_file">Please select a file</string>
     <string name="download_directory">/Comrades/</string>
-
 </resources>

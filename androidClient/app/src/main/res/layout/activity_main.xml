@@ -9,9 +9,9 @@
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/rv_course_list"
-        android:layout_marginTop="?android:attr/actionBarSize"
         android:layout_width="match_parent"
-        android:layout_height="match_parent" />
+        android:layout_height="match_parent"
+        android:layout_marginTop="?android:attr/actionBarSize" />
 
     <com.google.android.material.floatingactionbutton.FloatingActionButton
         android:id="@+id/fab_add_course"
@@ -32,8 +32,8 @@
         android:elevation="4dp"
         android:foregroundTint="@color/colorPrimaryDark"
         android:theme="@style/AppTheme.ToolBarStyle"
-        app:theme="@style/AppTheme.ToolBarStyle"
+        app:layout_scrollFlags="enterAlways|scroll"
         app:popupTheme="@style/AppTheme"
-        app:layout_scrollFlags="enterAlways|scroll" />
+        app:theme="@style/AppTheme.ToolBarStyle" />
 
 </androidx.coordinatorlayout.widget.CoordinatorLayout>

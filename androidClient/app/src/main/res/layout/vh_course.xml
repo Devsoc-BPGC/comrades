@@ -1,18 +1,42 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content"
-    android:orientation="horizontal"
-    android:weightSum="100">
+    android:layout_height="wrap_content">
 
     <TextView
         android:id="@+id/tv_course_name"
-        android:textSize="21sp"
-        android:layout_margin="4dp"
-        android:padding="4dp"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_weight="100"
+        android:layout_margin="4dp"
+        android:drawablePadding="4dp"
+        android:padding="4dp"
+        android:textColor="#ff000000"
+        android:textSize="21sp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
         tools:text="Mechanics Oscillations and Waves" />
-</LinearLayout>
+
+    <com.google.android.material.chip.Chip
+        android:id="@+id/chip_course_code"
+        style="@style/Widget.MaterialComponents.Chip.Action"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="4dp"
+        android:layout_marginStart="8dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/tv_course_name"
+        tools:text="PHY - F111" />
+
+    <View
+        android:layout_width="0dp"
+        android:layout_height="1px"
+        android:background="#ff000000"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent" />
+</androidx.constraintlayout.widget.ConstraintLayout>

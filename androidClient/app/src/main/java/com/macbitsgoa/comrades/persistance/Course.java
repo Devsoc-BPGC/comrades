@@ -2,7 +2,10 @@ package com.macbitsgoa.comrades.persistance;
 
 import com.google.firebase.database.Exclude;
 
+import javax.annotation.Nullable;
+
 import androidx.annotation.NonNull;
+import androidx.lifecycle.LiveData;
 import androidx.room.Entity;
 import androidx.room.ForeignKey;
 import androidx.room.Ignore;
@@ -18,7 +21,8 @@ import static androidx.room.ForeignKey.RESTRICT;
         foreignKeys = @ForeignKey(entity = Person.class,
                 parentColumns = "id",
                 childColumns = "addedById",
-                onDelete = RESTRICT))
+                onDelete = RESTRICT,
+        onUpdate = 1))
 public class Course {
     @NonNull
     public String name;
@@ -32,9 +36,10 @@ public class Course {
     @NonNull
     public String addedById;
 
+    // Handy attribute. You will have to populate this manually.
     @Ignore
     @Exclude
-    public Person addedBy;
+    public LiveData<Person> addedBy;
 
     @Exclude
     public boolean isFollowing;

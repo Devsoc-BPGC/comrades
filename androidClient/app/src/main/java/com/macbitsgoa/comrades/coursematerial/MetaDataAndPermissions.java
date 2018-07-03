@@ -19,7 +19,7 @@ import java.io.IOException;
 
 import androidx.annotation.Nullable;
 
-import static com.macbitsgoa.comrades.CHC.TAG_PREFIX;
+import static com.macbitsgoa.comrades.CHCKt.TAG_PREFIX;
 
 /**
  * Request google drive permissions.

@@ -15,7 +15,7 @@ import java.net.URLConnection;
 import java.util.Locale;
 
 import static android.os.Environment.getExternalStorageDirectory;
-import static com.macbitsgoa.comrades.CHC.TAG_PREFIX;
+import static com.macbitsgoa.comrades.CHCKt.TAG_PREFIX;
 import static com.macbitsgoa.comrades.ComradesConstants.DOWNLOAD_DIRECTORY;
 
 public class DownloadFile extends AsyncTask<Void, Integer, Integer> {

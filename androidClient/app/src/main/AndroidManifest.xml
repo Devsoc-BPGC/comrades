@@ -19,14 +19,12 @@
         tools:ignore="GoogleAppIndexingWarning">
         <provider
             android:name="androidx.core.content.FileProvider"
-            android:grantUriPermissions="true"
+            android:authorities="${applicationId}"
             android:exported="false"
-            android:authorities="${applicationId}">
-
+            android:grantUriPermissions="true">
             <meta-data
                 android:name="android.support.FILE_PROVIDER_PATHS"
                 android:resource="@xml/file_provider_paths" />
-
         </provider>
 
         <activity android:name=".MainActivity">
@@ -36,11 +34,20 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-
-        <activity android:name=".coursematerial.CourseActivity">
-
-        </activity>
+        <activity android:name=".coursematerial.CourseActivity" />
         <activity android:name=".GetGoogleSignInActivity" />
+        <activity
+            android:name=".AddCourseActivity"
+            android:excludeFromRecents="true"
+            android:theme="@style/Theme.MaterialComponents.Light.Dialog.Alert" />
+
+        <service
+            android:name=".FcmReceiverService"
+            android:exported="false">
+            <intent-filter>
+                <action android:name="com.google.firebase.MESSAGING_EVENT"/>
+            </intent-filter>
+        </service>
     </application>
 
 </manifest>

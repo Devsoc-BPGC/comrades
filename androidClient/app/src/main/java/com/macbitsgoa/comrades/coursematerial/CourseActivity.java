@@ -28,22 +28,29 @@ import androidx.fragment.app.FragmentTransaction;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import static com.macbitsgoa.comrades.CHC.TAG_PREFIX;
+import static com.macbitsgoa.comrades.CHCKt.TAG_PREFIX;
 
 public class CourseActivity extends AppCompatActivity
         implements View.OnClickListener, ValueEventListener {
 
-    public static String databaseUrl;
-    private final String dbUrl =
-            "https://balmy-component-204213.firebaseio.com/courseMaterial/";
     public static final String ADD_FILE_FRAGMENT = "AddFileFragment";
-    private final FirebaseDatabase databaseInstance = FirebaseDatabase.getInstance();
     private static final String TAG = TAG_PREFIX + CourseActivity.class.getSimpleName();
-    private final ArrayList<ItemCourseMaterial> materialArrayList = new ArrayList<>(0);
+    public static String databaseUrl;
     public static String courseId;
     public static String courseName;
+    private final String dbUrl =
+            "https://balmy-component-204213.firebaseio.com/courseMaterial/";
+    private final FirebaseDatabase databaseInstance = FirebaseDatabase.getInstance();
+    private final ArrayList<ItemCourseMaterial> materialArrayList = new ArrayList<>(0);
     private MaterialAdapter materialAdapter;
     private FloatingActionButton btnAddMaterial;
+
+    public static void show(final Context context, final String courseId, final String courseName) {
+        final Intent intent = new Intent(context, CourseActivity.class);
+        CourseActivity.courseId = courseId;
+        CourseActivity.courseName = courseName;
+        context.startActivity(intent);
+    }
 
     @Override
     protected void onCreate(final Bundle savedInstanceState) {
@@ -113,6 +120,12 @@ public class CourseActivity extends AppCompatActivity
         ft.addToBackStack(ADD_FILE_FRAGMENT);
     }
 
+    private void handleSignInAndStorage() {
+        final Intent signInIntent =
+                new Intent(CourseActivity.this, GetGoogleSignInActivity.class);
+        startActivity(signInIntent);
+    }
+
     @Override
     public void onDataChange(final DataSnapshot dataSnapshot) {
         materialArrayList.clear();
@@ -125,19 +138,6 @@ public class CourseActivity extends AppCompatActivity
     @Override
     public void onCancelled(final DatabaseError databaseError) {
         Log.e(TAG, databaseError.getCode() + databaseError.getMessage());
-    }
-
-    private void handleSignInAndStorage() {
-        final Intent signInIntent =
-                new Intent(CourseActivity.this, GetGoogleSignInActivity.class);
-        startActivity(signInIntent);
-    }
-
-    public static void show(final Context context, final String courseId, final String courseName) {
-        final Intent intent = new Intent(context, CourseActivity.class);
-        CourseActivity.courseId = courseId;
-        CourseActivity.courseName = courseName;
-        context.startActivity(intent);
     }
 }
 

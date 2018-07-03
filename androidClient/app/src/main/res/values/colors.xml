@@ -5,4 +5,5 @@
     <color name="colorAccent">#FF4081</color>
     <color name="colorAccentContrast">#ffffffff</color>
     <color name="colorPrimaryContrast">#ffffffff</color>
+    <color name="colorAccentFaint">#ffcdd2</color>
 </resources>

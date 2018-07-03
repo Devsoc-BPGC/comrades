@@ -33,7 +33,7 @@ import androidx.appcompat.app.AlertDialog;
 import static android.Manifest.permission.READ_EXTERNAL_STORAGE;
 import static androidx.core.content.PermissionChecker.PERMISSION_DENIED;
 import static androidx.core.content.PermissionChecker.PERMISSION_GRANTED;
-import static com.macbitsgoa.comrades.CHC.TAG_PREFIX;
+import static com.macbitsgoa.comrades.CHCKt.TAG_PREFIX;
 
 
 /**
@@ -50,12 +50,12 @@ import static com.macbitsgoa.comrades.CHC.TAG_PREFIX;
  */
 
 public class GetGoogleSignInActivity extends Activity {
+    public static final String KEY_TOKEN = "token";
     private static final String TAG = TAG_PREFIX + GetGoogleSignInActivity.class.getSimpleName();
     private static final int RC_SIGN_IN = 0;
-    public static final String KEY_TOKEN = "token";
-    private boolean returnResult;
     private static final int ERROR_CODE_PERMISSION_DENIED = 12501;
     private static final int RC_PERM_REQ_EXT_STORAGE = 7;
+    private boolean returnResult;
 
     @Override
     protected void onCreate(final Bundle savedInstanceState) {
@@ -73,6 +73,35 @@ public class GetGoogleSignInActivity extends Activity {
         final Intent signInIntent = mGoogleSignInClient.getSignInIntent();
         startActivityForResult(signInIntent, RC_SIGN_IN);
 
+    }
+
+    /**
+     * This method checks onStart of the activity if the user has already signed in for
+     * any other feature in the app.
+     */
+    @Override
+    protected void onStart() {
+        super.onStart();
+        final GoogleSignInAccount account = GoogleSignIn.getLastSignedInAccount(this);
+        returnResult = getCallingActivity() != null;
+        if (account != null) {
+            returnResult(account);
+        }
+    }
+
+    @Override
+    public void onRequestPermissionsResult(final int requestCode,
+                                           @NonNull final String[] permissions,
+                                           @NonNull final int[] grantResults) {
+        if (requestCode == RC_PERM_REQ_EXT_STORAGE) {
+            if (grantResults.length > 0 && grantResults[0] == PERMISSION_DENIED) {
+                Toast.makeText(this, "Permission Denied!, Retrying.",
+                        Toast.LENGTH_SHORT).show();
+                askStoragePermission();
+            } else if (grantResults.length > 0 && grantResults[0] == PERMISSION_GRANTED) {
+                finish();
+            }
+        }
     }
 
     @Override
@@ -117,20 +146,6 @@ public class GetGoogleSignInActivity extends Activity {
         askStoragePermission();
         finish();
 
-    }
-
-    /**
-     * This method checks onStart of the activity if the user has already signed in for
-     * any other feature in the app.
-     */
-    @Override
-    protected void onStart() {
-        super.onStart();
-        final GoogleSignInAccount account = GoogleSignIn.getLastSignedInAccount(this);
-        returnResult = getCallingActivity() != null;
-        if (account != null) {
-            returnResult(account);
-        }
     }
 
     private String firebaseAuthWithGoogle(final GoogleSignInAccount account) {
@@ -192,21 +207,6 @@ public class GetGoogleSignInActivity extends Activity {
             alert.show();
         } else {
             requestPermissions(new String[]{READ_EXTERNAL_STORAGE}, RC_PERM_REQ_EXT_STORAGE);
-        }
-    }
-
-    @Override
-    public void onRequestPermissionsResult(final int requestCode,
-                                           @NonNull final String[] permissions,
-                                           @NonNull final int[] grantResults) {
-        if (requestCode == RC_PERM_REQ_EXT_STORAGE) {
-            if (grantResults.length > 0 && grantResults[0] == PERMISSION_DENIED) {
-                Toast.makeText(this, "Permission Denied!, Retrying.",
-                        Toast.LENGTH_SHORT).show();
-                askStoragePermission();
-            } else if (grantResults.length > 0 && grantResults[0] == PERMISSION_GRANTED) {
-                finish();
-            }
         }
     }
 

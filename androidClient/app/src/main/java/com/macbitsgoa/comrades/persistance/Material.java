@@ -6,6 +6,7 @@ import java.text.SimpleDateFormat;
 import java.util.Locale;
 
 import androidx.annotation.NonNull;
+import androidx.lifecycle.LiveData;
 import androidx.room.Entity;
 import androidx.room.ForeignKey;
 import androidx.room.Ignore;
@@ -74,9 +75,10 @@ public class Material {
     @NonNull
     public String authorId;
 
+    // Handy attribute. You will have to populate this manually.
     @Ignore
     @Exclude
-    public Person author;
+    public LiveData<Person> author;
 
     /**
      * refer {@link #dateFormat}
