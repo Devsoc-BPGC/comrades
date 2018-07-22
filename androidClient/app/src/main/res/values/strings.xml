@@ -29,4 +29,5 @@
     <string name="course_number_hint">Course Number (ex - F111)</string>
     <string name="stream_code_hint">Stream Code (ex - CS)</string>
     <string name="course_name_hint">Course Name (ex - Computer Programming)</string>
+    <string name="download_status_waiting">waiting</string>
 </resources>

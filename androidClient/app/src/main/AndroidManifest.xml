@@ -45,8 +45,13 @@
             android:name=".FcmReceiverService"
             android:exported="false">
             <intent-filter>
-                <action android:name="com.google.firebase.MESSAGING_EVENT"/>
+                <action android:name="com.google.firebase.MESSAGING_EVENT" />
             </intent-filter>
+        </service>
+        <service
+            android:name="com.macbitsgoa.comrades.coursematerial.DownloadService"
+            android:enabled="true">
+
         </service>
     </application>
 

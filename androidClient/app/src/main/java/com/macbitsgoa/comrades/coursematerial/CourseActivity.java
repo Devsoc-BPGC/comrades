@@ -1,8 +1,10 @@
 package com.macbitsgoa.comrades.coursematerial;
 
 import android.Manifest;
+import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.util.Log;
@@ -15,16 +17,19 @@ import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
+import com.macbitsgoa.comrades.BuildConfig;
 import com.macbitsgoa.comrades.GetGoogleSignInActivity;
 import com.macbitsgoa.comrades.R;
 
 import java.util.ArrayList;
+import java.util.Objects;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import androidx.fragment.app.DialogFragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
+import androidx.localbroadcastmanager.content.LocalBroadcastManager;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -41,9 +46,10 @@ public class CourseActivity extends AppCompatActivity
     private final String dbUrl =
             "https://balmy-component-204213.firebaseio.com/courseMaterial/";
     private final FirebaseDatabase databaseInstance = FirebaseDatabase.getInstance();
-    private final ArrayList<ItemCourseMaterial> materialArrayList = new ArrayList<>(0);
+    private ArrayList<ItemCourseMaterial> materialArrayList = new ArrayList<>(0);
     private MaterialAdapter materialAdapter;
     private FloatingActionButton btnAddMaterial;
+    private BroadcastReceiver broadcastReceiver;
 
     public static void show(final Context context, final String courseId, final String courseName) {
         final Intent intent = new Intent(context, CourseActivity.class);
@@ -53,22 +59,77 @@ public class CourseActivity extends AppCompatActivity
     }
 
     @Override
-    protected void onCreate(final Bundle savedInstanceState) {
+    protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_course);
+
+        receiveDownloadMessage();
         initUi();
 
         databaseInstance
                 .getReferenceFromUrl(dbUrl)
                 .child(courseId).addValueEventListener(this);
         btnAddMaterial.setOnClickListener(this);
+    }
+
+    private void receiveDownloadMessage() {
+        broadcastReceiver = new BroadcastReceiver() {
+            @Override
+            public void onReceive(Context context, Intent intent) {
+                Bundle resultData = intent.getExtras();
+                if (resultData != null) {
+                    String itemId = resultData.getString("id");
+                    int resultCode = resultData.getInt("resultCode");
+                    switch (resultCode) {
+                        // download starting
+                        case 0:
+                            for (int i = 0; i < materialArrayList.size(); i++) {
+                                if (Objects.equals(materialArrayList.get(i).getId(), itemId)) {
+                                    materialArrayList.get(i).setDownloadStatus("Downloading");
+                                    materialAdapter.notifyItemChanged(i);
+                                    break;
+                                }
+                            }
+                            break;
+
+                        //updating progress
+                        case 1:
+                            int progress = resultData.getInt("progress");
+                            for (int i = 0; i < materialArrayList.size(); i++) {
+                                if (Objects.equals(materialArrayList.get(i).getId(), itemId)) {
+                                    materialArrayList.get(i).setProgress(progress);
+                                    materialAdapter.notifyItemChanged(i);
+                                    Log.e(TAG, "progress updated");
+                                    break;
+                                }
+                            }
+                            break;
+
+                        //download successful
+                        case 2:
+                            for (int i = 0; i < materialArrayList.size(); i++) {
+                                if (Objects.equals(materialArrayList.get(i).getId(), itemId)) {
+                                    materialArrayList.get(i).setDownloadStatus("click to open");
+                                    materialAdapter.notifyItemChanged(i);
+                                    break;
+                                }
+                            }
+                            break;
+                        default:
+                            if (BuildConfig.DEBUG)
+                                Log.e(TAG, "Downloading Failed");
+                            break;
+                    }
+                }
+            }
+        };
 
     }
 
     private void initUi() {
         databaseUrl = dbUrl + courseId;
         btnAddMaterial = findViewById(R.id.fab_add_material);
-        final RecyclerView recyclerView = findViewById(R.id.rv_content_list);
+        RecyclerView recyclerView = findViewById(R.id.rv_content_list);
         final Toolbar toolbar = findViewById(R.id.toolbar_course_activity);
 
         toolbar.inflateMenu(R.menu.course_activity_toolbar);
@@ -81,6 +142,7 @@ public class CourseActivity extends AppCompatActivity
         linearLayoutManager =
                 new LinearLayoutManager(this, RecyclerView.VERTICAL, false);
         materialAdapter = new MaterialAdapter(materialArrayList);
+
         recyclerView.setLayoutManager(linearLayoutManager);
         recyclerView.setAdapter(materialAdapter);
     }
@@ -139,5 +201,28 @@ public class CourseActivity extends AppCompatActivity
     public void onCancelled(final DatabaseError databaseError) {
         Log.e(TAG, databaseError.getCode() + databaseError.getMessage());
     }
+
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        if (BuildConfig.DEBUG) {
+            Log.v(TAG, "onResume");
+        }
+        // Register broadcast receiver
+        LocalBroadcastManager.getInstance(this)
+                .registerReceiver(broadcastReceiver, new IntentFilter(DownloadService.ACTION));
+    }
+
+    @Override
+    public void onPause() {
+        super.onPause();
+        if (BuildConfig.DEBUG) {
+            Log.v(TAG, "onPause");
+        }
+        // Unregister broadcast receiver
+        LocalBroadcastManager.getInstance(this).unregisterReceiver(broadcastReceiver);
+    }
+
 }
 

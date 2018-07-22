@@ -58,6 +58,7 @@ dependencies {
     kapt "androidx.room:room-compiler:$room_version"
     implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlin_version"
     implementation 'com.google.code.gson:gson:2.8.5'
+    implementation 'com.github.lzyzsd:circleprogress:1.2.1'
 }
 apply plugin: 'com.google.gms.google-services'
 repositories {

@@ -39,6 +39,7 @@ public class MetaDataAndPermissions extends AsyncTask<Void, Void, Void> {
     private final String accessToken;
     private final String fName;
     private final String extension;
+    private final Long fileSize;
 
 
     /**
@@ -49,11 +50,12 @@ public class MetaDataAndPermissions extends AsyncTask<Void, Void, Void> {
      */
     @SuppressWarnings("WeakerAccess")
     public MetaDataAndPermissions(final String fileId, final String accessToken, final String fName,
-                                  final String extension) {
+                                  final String extension, final Long fileSize) {
         this.fileId = fileId;
         this.accessToken = accessToken;
         this.fName = fName;
         this.extension = extension;
+        this.fileSize = fileSize;
     }
 
 
@@ -142,6 +144,9 @@ public class MetaDataAndPermissions extends AsyncTask<Void, Void, Void> {
         itemCourseMaterial.setFileName(fName);
         itemCourseMaterial.setExtension(extension);
         itemCourseMaterial.setId(fileId);
+        itemCourseMaterial.setFileSize(fileSize);
+        itemCourseMaterial.setDownloadStatus(null);
+        itemCourseMaterial.setFilePath(null);
         itemCourseMaterial.setLink(jsonObject.get("webContentLink").toString());
         itemCourseMaterial.setMimeType(jsonObject.get("mimeType").toString());
         dbRef.child(fileId).setValue(itemCourseMaterial);
