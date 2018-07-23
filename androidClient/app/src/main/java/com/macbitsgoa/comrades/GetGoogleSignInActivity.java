@@ -84,7 +84,7 @@ public class GetGoogleSignInActivity extends Activity {
         super.onStart();
         final GoogleSignInAccount account = GoogleSignIn.getLastSignedInAccount(this);
         returnResult = getCallingActivity() != null;
-        if (account != null) {
+        if (account != null && account.getServerAuthCode() != null) {
             returnResult(account);
         }
     }

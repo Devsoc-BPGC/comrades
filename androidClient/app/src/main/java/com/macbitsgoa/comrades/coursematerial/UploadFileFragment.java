@@ -9,29 +9,33 @@ import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.codekidlabs.storagechooser.StorageChooser;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
+import com.macbitsgoa.comrades.BuildConfig;
 import com.macbitsgoa.comrades.GetGoogleSignInActivity;
 import com.macbitsgoa.comrades.R;
+
+import java.net.URISyntaxException;
 
 import androidx.appcompat.app.AlertDialog;
 import androidx.fragment.app.DialogFragment;
 import androidx.fragment.app.Fragment;
 
+import static android.app.Activity.RESULT_CANCELED;
 import static android.app.Activity.RESULT_OK;
 import static com.macbitsgoa.comrades.CHCKt.TAG_PREFIX;
 import static com.macbitsgoa.comrades.GetGoogleSignInActivity.KEY_TOKEN;
 
 public class UploadFileFragment extends DialogFragment
-        implements View.OnClickListener, StorageChooser.OnSelectListener {
-    private static final String TAG = TAG_PREFIX + CourseActivity.class.getSimpleName();
+        implements View.OnClickListener {
+    private static final String TAG = TAG_PREFIX + UploadFileFragment.class.getSimpleName();
     private static final int SIGN_IN_REQUEST_CODE = 10001;
+    private static final int REQUEST_CHOOSER = 1;
     private Dialog.OnClickListener positiveClickListener;
     private EditText fileName;
-    private FloatingActionButton fabAddFile;
+    private FloatingActionButton fabAdd;
+    private FloatingActionButton fabAddDoc;
+    private FloatingActionButton fabAddImage;
     private TextView filePath;
-    private StorageChooser chooser;
-
 
     @Override
     public Dialog onCreateDialog(final Bundle savedInstanceState) {
@@ -42,8 +46,9 @@ public class UploadFileFragment extends DialogFragment
         initUi(view);
 
         setPositiveClick();
-        fabAddFile.setOnClickListener(this);
-        chooser.setOnSelectListener(this);
+        fabAdd.setOnClickListener(this);
+        fabAddDoc.setOnClickListener(this);
+        fabAddImage.setOnClickListener(this);
 
         return new AlertDialog.Builder(getActivity())
                 .setView(view)
@@ -61,17 +66,11 @@ public class UploadFileFragment extends DialogFragment
      * @param view rootView to display
      */
     private void initUi(final View view) {
-        fabAddFile = view.findViewById(R.id.fab_select_file);
+        fabAdd = view.findViewById(R.id.fab_all_files);
+        fabAddDoc = view.findViewById(R.id.fab_doc);
+        fabAddImage = view.findViewById(R.id.fab_image);
         fileName = view.findViewById(R.id.et_file_name);
         filePath = view.findViewById(R.id.tv_file_path);
-
-        chooser = new StorageChooser.Builder()
-                .withActivity(getActivity())
-                .withFragmentManager(getActivity().getFragmentManager())
-                .withMemoryBar(true)
-                .allowCustomPath(true)
-                .setType(StorageChooser.FILE_PICKER)
-                .build();
 
     }
 
@@ -102,17 +101,34 @@ public class UploadFileFragment extends DialogFragment
      */
     @Override
     public void onClick(final View view) {
-        chooser.show();
-    }
+        switch (view.getId()) {
+            case R.id.fab_image:
+                Intent imageIntent = new Intent();
+                imageIntent.setType("image/*");
+                imageIntent.putExtra(Intent.EXTRA_ALLOW_MULTIPLE, false);
+                imageIntent.setAction(Intent.ACTION_GET_CONTENT);
+                startActivityForResult(Intent.createChooser(imageIntent, "Select Picture"), REQUEST_CHOOSER);
+                break;
 
-    /**
-     * Callback after the user chooses file.
-     *
-     * @param path path of the file selected by the user.
-     */
-    @Override
-    public void onSelect(final String path) {
-        filePath.setText(path);
+            case R.id.fab_doc:
+                Intent fileIntent = new Intent(Intent.ACTION_GET_CONTENT);
+                fileIntent.addCategory(Intent.CATEGORY_OPENABLE);
+                fileIntent.setType("application/pdf");
+                startActivityForResult(Intent.createChooser(fileIntent, "Select Pdf"), REQUEST_CHOOSER);
+                break;
+
+            case R.id.fab_all_files:
+                Intent intent = new Intent(Intent.ACTION_GET_CONTENT);
+                intent.addCategory(Intent.CATEGORY_OPENABLE);
+                intent.setType("*/*");
+                startActivityForResult(Intent.createChooser(intent, "Select File"), REQUEST_CHOOSER);
+                break;
+            default:
+                if (BuildConfig.DEBUG) {
+                    Log.e(TAG, "Invalid onClickListener");
+                }
+                break;
+        }
     }
 
     /**
@@ -128,10 +144,19 @@ public class UploadFileFragment extends DialogFragment
 
         if (requestCode == SIGN_IN_REQUEST_CODE && resultCode == RESULT_OK) {
             final String accessToken = data.getStringExtra(KEY_TOKEN);
-            Log.e(TAG, accessToken);
-            final UploadFile uploadFile = new UploadFile(filePath.getText().toString(),
+            Intent uploadIntent = UploadService.makeUploadIntent(getContext(), filePath.getText().toString(),
                     accessToken, fileName.getText().toString());
-            uploadFile.execute();
+            Toast.makeText(getContext(), "Upload Started.Check NotificationBar for progress.",
+                    Toast.LENGTH_LONG).show();
+            getActivity().startService(uploadIntent);
+        } else if (requestCode == REQUEST_CHOOSER && resultCode == RESULT_OK) {
+            try {
+                filePath.setText(PathUtil.getPath(getContext(), data.getData()));
+            } catch (URISyntaxException e) {
+                Log.e(TAG, e.getMessage());
+            }
+        } else if (resultCode == RESULT_CANCELED) {
+            Toast.makeText(getContext(), "No File Selected", Toast.LENGTH_LONG).show();
         }
 
     }

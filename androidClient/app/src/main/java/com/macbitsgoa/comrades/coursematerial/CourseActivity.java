@@ -116,8 +116,9 @@ public class CourseActivity extends AppCompatActivity
                             }
                             break;
                         default:
-                            if (BuildConfig.DEBUG)
+                            if (BuildConfig.DEBUG) {
                                 Log.e(TAG, "Downloading Failed");
+                            }
                             break;
                     }
                 }
@@ -142,7 +143,6 @@ public class CourseActivity extends AppCompatActivity
         linearLayoutManager =
                 new LinearLayoutManager(this, RecyclerView.VERTICAL, false);
         materialAdapter = new MaterialAdapter(materialArrayList);
-
         recyclerView.setLayoutManager(linearLayoutManager);
         recyclerView.setAdapter(materialAdapter);
     }

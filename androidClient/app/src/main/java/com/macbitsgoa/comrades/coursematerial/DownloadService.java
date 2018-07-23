@@ -137,10 +137,10 @@ public class DownloadService extends IntentService {
      * @param fileSize    size of the file to download
      * @return return an Intent with all data.
      */
-    public static Intent makeIntent(final Context context, final String downloadUrl,
-                                    final String fileName, final String extension,
-                                    final String filePath,
-                                    String itemId, Long fileSize) {
+    public static Intent makeDownloadIntent(final Context context, final String downloadUrl,
+                                            final String fileName, final String extension,
+                                            final String filePath,
+                                            String itemId, Long fileSize) {
         Intent intent = new Intent(context, DownloadService.class);
         intent.putExtra(KEY_ITEM_ID, itemId);
         intent.putExtra(KEY_DOWNLOAD_URL, downloadUrl);

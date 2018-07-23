@@ -44,7 +44,7 @@ public class MaterialViewHolder extends RecyclerView.ViewHolder {
     /**
      * updates the view in recycler with the data and sets onClick listener to it.
      *
-     * @param data: object of class @{@link ItemCourseMaterial}
+     * @param data  object of class @{@link ItemCourseMaterial}
      */
     public void populate(ItemCourseMaterial data) {
         tvOwnerName.setText("added by " + data.getAddedBy());
@@ -75,7 +75,7 @@ public class MaterialViewHolder extends RecyclerView.ViewHolder {
                 } else {
                     tvDownloadStatus.setText(R.string.download_status_waiting);
                     final Intent downloadIntent =
-                            DownloadService.makeIntent(itemView.getContext(), data.getLink(),
+                            DownloadService.makeDownloadIntent(itemView.getContext(), data.getLink(),
                                     data.getFileName(), data.getExtension(), data.getFilePath(),
                                     data.getId(), data.getFileSize());
                     itemView.getContext().startService(downloadIntent);
