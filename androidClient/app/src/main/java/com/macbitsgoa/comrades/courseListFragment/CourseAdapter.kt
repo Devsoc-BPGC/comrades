@@ -1,8 +1,9 @@
-package com.macbitsgoa.comrades
+package com.macbitsgoa.comrades.courseListFragment
 
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
+import com.macbitsgoa.comrades.R
 import com.macbitsgoa.comrades.persistance.Course
 import java.util.*
 

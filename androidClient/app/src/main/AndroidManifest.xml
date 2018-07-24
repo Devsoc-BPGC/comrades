@@ -28,17 +28,10 @@
                 android:resource="@xml/file_provider_paths" />
         </provider>
 
-        <activity android:name=".MainActivity">
-            <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
-
-                <category android:name="android.intent.category.LAUNCHER" />
-            </intent-filter>
-        </activity>
         <activity android:name=".coursematerial.CourseActivity" />
         <activity android:name=".GetGoogleSignInActivity" />
         <activity
-            android:name=".AddCourseActivity"
+            android:name=".courseListFragment.AddCourseActivity"
             android:excludeFromRecents="true"
             android:theme="@style/Theme.MaterialComponents.Light.Dialog.Alert" />
 
@@ -50,11 +43,21 @@
             </intent-filter>
         </service>
         <service
-            android:name="com.macbitsgoa.comrades.coursematerial.DownloadService"
+            android:name=".coursematerial.DownloadService"
             android:enabled="true">
 
         </service>
         <service android:name=".coursematerial.UploadService" />
+
+        <activity
+            android:name=".HomeActivity"
+            android:label="@string/title_activity_home">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
     </application>
 
 </manifest>

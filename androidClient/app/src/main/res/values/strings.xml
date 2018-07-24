@@ -30,4 +30,11 @@
     <string name="stream_code_hint">Stream Code (ex - CS)</string>
     <string name="course_name_hint">Course Name (ex - Computer Programming)</string>
     <string name="download_status_waiting">waiting</string>
+    <string name="title_activity_home">HomeActivity</string>
+    <string name="title_home">Home</string>
+    <string name="title_courses">All Courses</string>
+    <string name="title_profile">My Profile</string>
+
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
 </resources>

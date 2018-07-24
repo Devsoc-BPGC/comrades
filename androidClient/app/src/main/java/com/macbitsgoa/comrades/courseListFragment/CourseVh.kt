@@ -1,9 +1,10 @@
-package com.macbitsgoa.comrades
+package com.macbitsgoa.comrades.courseListFragment
 
 import android.view.View
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.chip.Chip
+import com.macbitsgoa.comrades.R
 import com.macbitsgoa.comrades.coursematerial.CourseActivity
 import com.macbitsgoa.comrades.persistance.Course
 

@@ -1,4 +1,4 @@
-package com.macbitsgoa.comrades
+package com.macbitsgoa.comrades.courseListFragment
 
 import android.content.Intent
 import android.os.Bundle
@@ -9,12 +9,13 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.ViewModelProviders
 import com.google.android.material.textfield.TextInputEditText
 import com.google.android.material.textfield.TextInputLayout
+import com.macbitsgoa.comrades.R
 
 /**
  * Always launch by this method.
  */
-fun launchCourseChooser(source: MainActivity) {
-    source.startActivity(Intent(source, AddCourseActivity::class.java))
+fun launchCourseChooser(source: CourseListFragment) {
+    source.startActivity(Intent(source.activity, AddCourseActivity::class.java))
 }
 
 /**

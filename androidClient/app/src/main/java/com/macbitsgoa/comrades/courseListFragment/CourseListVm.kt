@@ -1,4 +1,4 @@
-package com.macbitsgoa.comrades
+package com.macbitsgoa.comrades.courseListFragment
 
 import android.annotation.SuppressLint
 import android.app.Application
@@ -11,7 +11,7 @@ import com.macbitsgoa.comrades.persistance.Person
 
 @Suppress("ProtectedInFinal")
 /**
- * For use by [MainActivity]
+ * For use by [CourseListFragment]
  * @author Rushikesh Jogdand.
  */
 class CourseListVm(application: Application) : AndroidViewModel(application) {

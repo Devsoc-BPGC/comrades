@@ -1,4 +1,4 @@
-package com.macbitsgoa.comrades
+package com.macbitsgoa.comrades.courseListFragment
 
 import android.app.Application
 import androidx.lifecycle.AndroidViewModel
