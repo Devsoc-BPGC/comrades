@@ -9,6 +9,8 @@ import android.content.Intent;
 import android.util.Log;
 import android.webkit.MimeTypeMap;
 
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.macbitsgoa.comrades.R;
@@ -238,6 +240,8 @@ public class UploadService extends IntentService {
         final String owner = (String) ownerObject.get("displayName");
 
         final ItemCourseMaterial itemCourseMaterial = new ItemCourseMaterial();
+        FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
+        itemCourseMaterial.setAddedById(user.getUid());
         itemCourseMaterial.setAddedBy(owner);
         itemCourseMaterial.setFileName(fName);
         itemCourseMaterial.setExtension(getFileExtension(path));

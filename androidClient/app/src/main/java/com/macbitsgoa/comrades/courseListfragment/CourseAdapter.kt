@@ -1,4 +1,4 @@
-package com.macbitsgoa.comrades.courseListFragment
+package com.macbitsgoa.comrades.courseListfragment
 
 import android.view.LayoutInflater
 import android.view.ViewGroup

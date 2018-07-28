@@ -1,4 +1,4 @@
-package com.macbitsgoa.comrades.courseListFragment
+package com.macbitsgoa.comrades.courseListfragment
 
 import android.view.View
 import android.widget.TextView

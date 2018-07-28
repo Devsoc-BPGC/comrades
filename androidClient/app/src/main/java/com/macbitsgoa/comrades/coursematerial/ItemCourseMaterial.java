@@ -13,6 +13,7 @@ import static com.macbitsgoa.comrades.ComradesConstants.DOWNLOAD_DIRECTORY;
 
 public class ItemCourseMaterial {
     private String addedBy;
+    private String addedById;
     private ArrayList<String> downloadedBy;
     private String fileName;
     private String id;
@@ -86,12 +87,20 @@ public class ItemCourseMaterial {
         return filePath;
     }
 
+    public String getAddedById() {
+        return addedById;
+    }
+
     public int getProgress() {
         return progress;
     }
 
     public void setAddedBy(String addedBy) {
         this.addedBy = addedBy;
+    }
+
+    public void setAddedById(String addedById) {
+        this.addedById = addedById;
     }
 
     public void setFileName(String fileName) {

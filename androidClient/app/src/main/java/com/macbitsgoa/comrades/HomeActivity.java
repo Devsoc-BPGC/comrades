@@ -6,15 +6,17 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.widget.Toast;
 
+import com.facebook.drawee.backends.pipeline.Fresco;
 import com.google.android.gms.auth.api.Auth;
 import com.google.android.gms.auth.api.signin.GoogleSignIn;
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
-import com.macbitsgoa.comrades.courseListFragment.CourseListFragment;
-import com.macbitsgoa.comrades.courseListFragment.CourseListVm;
-import com.macbitsgoa.comrades.homeFragment.HomeFragment;
-import com.macbitsgoa.comrades.recentsFragment.ProfileFragment;
+import com.google.firebase.auth.FirebaseAuth;
+import com.macbitsgoa.comrades.courseListfragment.CourseListFragment;
+import com.macbitsgoa.comrades.courseListfragment.CourseListVm;
+import com.macbitsgoa.comrades.homefragment.HomeFragment;
+import com.macbitsgoa.comrades.profilefragment.ProfileFragment;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.FragmentManager;
@@ -22,11 +24,12 @@ import androidx.lifecycle.ViewModelProviders;
 
 public class HomeActivity extends AppCompatActivity {
 
-    GoogleApiClient mGoogleApiClient;
+    private GoogleApiClient mGoogleApiClient;
+    private FragmentManager fragmentManager = getSupportFragmentManager();
+    public static BottomNavigationView navigation;
 
     private BottomNavigationView.OnNavigationItemSelectedListener mOnNavigationItemSelectedListener
             = item -> {
-        FragmentManager fragmentManager = getSupportFragmentManager();
         switch (item.getItemId()) {
             case R.id.navigation_home:
                 fragmentManager.beginTransaction().replace(R.id.container_fragment,
@@ -47,10 +50,16 @@ public class HomeActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        Fresco.initialize(this);
         setContentView(R.layout.activity_home);
         setSupportActionBar(findViewById(R.id.toolbar_main_act));
-        BottomNavigationView navigation = findViewById(R.id.navigation);
+        navigation = findViewById(R.id.navigation);
         navigation.setOnNavigationItemSelectedListener(mOnNavigationItemSelectedListener);
+
+        if (savedInstanceState != null)
+            navigation.setSelectedItemId(savedInstanceState.getInt("bottomNav"));
+        else
+            navigation.setSelectedItemId(R.id.navigation_home);
     }
 
     @Override
@@ -61,6 +70,7 @@ public class HomeActivity extends AppCompatActivity {
         final MenuItem signOut = menu.findItem(R.id.action_sign_out);
         signOut.setVisible(signedIn);
         signOut.setOnMenuItemClickListener(menuItem -> {
+            FirebaseAuth.getInstance().signOut();
             Auth.GoogleSignInApi.signOut(mGoogleApiClient).setResultCallback(status -> {
                 invalidateOptionsMenu();
                 ViewModelProviders.of(HomeActivity.this).get(CourseListVm.class).signOut();
@@ -89,5 +99,11 @@ public class HomeActivity extends AppCompatActivity {
     protected void onResume() {
         super.onResume();
         invalidateOptionsMenu();
+    }
+
+    @Override
+    public void onSaveInstanceState(Bundle savedInstanceState) {
+        super.onSaveInstanceState(savedInstanceState);
+        savedInstanceState.putInt("bottomNav", navigation.getSelectedItemId());
     }
 }

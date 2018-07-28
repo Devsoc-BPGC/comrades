@@ -6,4 +6,5 @@
     <color name="colorAccentContrast">#ffffffff</color>
     <color name="colorPrimaryContrast">#ffffffff</color>
     <color name="colorAccentFaint">#ffcdd2</color>
+    <color name="grey">#808080</color>
 </resources>

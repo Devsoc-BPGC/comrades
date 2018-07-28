@@ -62,7 +62,10 @@ public class CourseActivity extends AppCompatActivity
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_course);
-
+        if (savedInstanceState != null) {
+            courseId = savedInstanceState.getString("courseId");
+            courseName = savedInstanceState.getString("courseName");
+        }
         receiveDownloadMessage();
         initUi();
 
@@ -209,6 +212,8 @@ public class CourseActivity extends AppCompatActivity
         if (BuildConfig.DEBUG) {
             Log.v(TAG, "onResume");
         }
+        Log.e(TAG, courseId);
+        Log.e(TAG, courseName);
         // Register broadcast receiver
         LocalBroadcastManager.getInstance(this)
                 .registerReceiver(broadcastReceiver, new IntentFilter(DownloadService.ACTION));
@@ -223,6 +228,14 @@ public class CourseActivity extends AppCompatActivity
         // Unregister broadcast receiver
         LocalBroadcastManager.getInstance(this).unregisterReceiver(broadcastReceiver);
     }
+
+    @Override
+    public void onSaveInstanceState(Bundle savedInstanceState) {
+        super.onSaveInstanceState(savedInstanceState);
+        savedInstanceState.putString("courseId", courseId);
+        savedInstanceState.putString("courseName", courseName);
+    }
+
 
 }
 

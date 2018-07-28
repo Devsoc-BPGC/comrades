@@ -16,6 +16,10 @@ import com.google.android.gms.common.api.ApiException;
 import com.google.android.gms.common.api.Scope;
 import com.google.android.gms.tasks.Task;
 import com.google.api.services.drive.DriveScopes;
+import com.google.firebase.auth.AuthCredential;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.auth.GoogleAuthProvider;
 import com.squareup.okhttp.FormEncodingBuilder;
 import com.squareup.okhttp.OkHttpClient;
 import com.squareup.okhttp.Request;
@@ -56,10 +60,12 @@ public class GetGoogleSignInActivity extends Activity {
     private static final int ERROR_CODE_PERMISSION_DENIED = 12501;
     private static final int RC_PERM_REQ_EXT_STORAGE = 7;
     private boolean returnResult;
+    private FirebaseAuth firebaseAuth;
 
     @Override
     protected void onCreate(final Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        firebaseAuth = FirebaseAuth.getInstance();
         final GoogleSignInOptions gso = new GoogleSignInOptions
                 .Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
                 .requestScopes(new Scope(DriveScopes.DRIVE))
@@ -82,9 +88,10 @@ public class GetGoogleSignInActivity extends Activity {
     @Override
     protected void onStart() {
         super.onStart();
+        FirebaseUser currentUser = firebaseAuth.getCurrentUser();
         final GoogleSignInAccount account = GoogleSignIn.getLastSignedInAccount(this);
         returnResult = getCallingActivity() != null;
-        if (account != null && account.getServerAuthCode() != null) {
+        if (currentUser != null && account.getServerAuthCode() != null) {
             returnResult(account);
         }
     }
@@ -120,8 +127,8 @@ public class GetGoogleSignInActivity extends Activity {
     private void handleSignInResult(final Task<GoogleSignInAccount> completedTask) {
         try {
             final GoogleSignInAccount account = completedTask.getResult(ApiException.class);
+            firebaseAuthWithGoogle(account);
             // Signed in successfully, show authenticated UI.
-            returnResult(account);
         } catch (final ApiException e) {
             // The ApiException status code indicates the detailed failure reason.
             // Please refer to the GoogleSignInStatusCodes class reference for more information.
@@ -138,8 +145,8 @@ public class GetGoogleSignInActivity extends Activity {
 
     private void returnResult(final GoogleSignInAccount account) {
         final Intent intent = new Intent();
-        if (returnResult && account != null) {
-            final String accessToken = firebaseAuthWithGoogle(account);
+        if (returnResult && account.getServerAuthCode() != null) {
+            final String accessToken = getTemporaryToken(account.getServerAuthCode());
             intent.putExtra(KEY_TOKEN, accessToken);
         }
         setResult(RESULT_OK, intent);
@@ -148,14 +155,13 @@ public class GetGoogleSignInActivity extends Activity {
 
     }
 
-    private String firebaseAuthWithGoogle(final GoogleSignInAccount account) {
+    private String getTemporaryToken(final String authCode) {
         final StrictMode.ThreadPolicy policy = new StrictMode
                 .ThreadPolicy.Builder()
                 .permitAll()
                 .build();
         StrictMode.setThreadPolicy(policy);
 
-        final String authCode = account.getServerAuthCode();
 
         final OkHttpClient client = new OkHttpClient();
         RequestBody requestBody = null;
@@ -210,5 +216,20 @@ public class GetGoogleSignInActivity extends Activity {
         }
     }
 
-
+    public void firebaseAuthWithGoogle(GoogleSignInAccount account) {
+        AuthCredential credential = GoogleAuthProvider.getCredential(account.getIdToken(), null);
+        firebaseAuth.signInWithCredential(credential)
+                .addOnCompleteListener(this, task -> {
+                    if (task.isSuccessful()) {
+                        // Sign in success, update UI with the signed-in user's information
+                        returnResult(account);
+                    } else {
+                        // If sign in fails, display a message to the user.
+                        Toast.makeText(GetGoogleSignInActivity.this, "SignIn failed",
+                                Toast.LENGTH_LONG).show();
+                        // ...
+                    }
+                });
+    }
 }
+
