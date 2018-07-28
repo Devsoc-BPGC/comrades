@@ -55,8 +55,11 @@ public class HomeActivity extends AppCompatActivity {
         setSupportActionBar(findViewById(R.id.toolbar_main_act));
         navigation = findViewById(R.id.navigation);
         navigation.setOnNavigationItemSelectedListener(mOnNavigationItemSelectedListener);
-        fragmentManager.beginTransaction().replace(R.id.container_fragment,
-                HomeFragment.newInstance()).commit();
+
+        if (savedInstanceState != null)
+            navigation.setSelectedItemId(savedInstanceState.getInt("bottomNav"));
+        else
+            navigation.setSelectedItemId(R.id.navigation_home);
     }
 
     @Override
@@ -96,5 +99,11 @@ public class HomeActivity extends AppCompatActivity {
     protected void onResume() {
         super.onResume();
         invalidateOptionsMenu();
+    }
+
+    @Override
+    public void onSaveInstanceState(Bundle savedInstanceState) {
+        super.onSaveInstanceState(savedInstanceState);
+        savedInstanceState.putInt("bottomNav", navigation.getSelectedItemId());
     }
 }
