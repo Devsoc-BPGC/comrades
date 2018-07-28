@@ -1,4 +1,4 @@
-package com.macbitsgoa.comrades.homeFragment;
+package com.macbitsgoa.comrades.homefragment;
 
 
 import android.os.Bundle;

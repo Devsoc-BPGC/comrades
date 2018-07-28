@@ -13,10 +13,10 @@ import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.firebase.auth.FirebaseAuth;
-import com.macbitsgoa.comrades.courseListFragment.CourseListFragment;
-import com.macbitsgoa.comrades.courseListFragment.CourseListVm;
-import com.macbitsgoa.comrades.homeFragment.HomeFragment;
-import com.macbitsgoa.comrades.profileFragment.ProfileFragment;
+import com.macbitsgoa.comrades.courseListfragment.CourseListFragment;
+import com.macbitsgoa.comrades.courseListfragment.CourseListVm;
+import com.macbitsgoa.comrades.homefragment.HomeFragment;
+import com.macbitsgoa.comrades.profilefragment.ProfileFragment;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.FragmentManager;

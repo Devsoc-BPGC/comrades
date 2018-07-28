@@ -31,7 +31,7 @@
         <activity android:name=".coursematerial.CourseActivity" />
         <activity android:name=".GetGoogleSignInActivity" />
         <activity
-            android:name=".courseListFragment.AddCourseActivity"
+            android:name=".courseListfragment.AddCourseActivity"
             android:excludeFromRecents="true"
             android:theme="@style/Theme.MaterialComponents.Light.Dialog.Alert" />
 

@@ -1,7 +1,8 @@
-package com.macbitsgoa.comrades.profileFragment;
+package com.macbitsgoa.comrades.profilefragment;
 
 
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -20,22 +21,24 @@ import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import static com.macbitsgoa.comrades.CHCKt.TAG_PREFIX;
+
 
 /**
  * A simple {@link Fragment} subclass.
  */
 public class ProfileFragment extends Fragment {
-
-    public static Fragment newInstance() {
-        return new ProfileFragment();
-    }
-
     private TextView tvUserName;
     private TextView tvUserAuthority;
     private TextView tvScore;
     private TextView tvUploads;
     private SimpleDraweeView tvUserImage;
-    private RecyclerView recyclerView;
+    private static final String TAG = TAG_PREFIX + ProfileFragment.class.getSimpleName();
+
+
+    public static Fragment newInstance() {
+        return new ProfileFragment();
+    }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -59,7 +62,7 @@ public class ProfileFragment extends Fragment {
 
                         @Override
                         public void onCancelled(DatabaseError databaseError) {
-
+                            Log.e(TAG, databaseError.getMessage());
                         }
                     });
 
@@ -72,7 +75,7 @@ public class ProfileFragment extends Fragment {
         tvScore = view.findViewById(R.id.tv_score);
         tvUploads = view.findViewById(R.id.tv_uploads);
         tvUserImage = view.findViewById(R.id.userImage);
-        recyclerView = view.findViewById(R.id.rv_profile);
+        RecyclerView recyclerView = view.findViewById(R.id.rv_profile);
         recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
         recyclerView.setAdapter(new ProfileAdapter());
     }

@@ -1,4 +1,4 @@
-package com.macbitsgoa.comrades.profileFragment;
+package com.macbitsgoa.comrades.profilefragment;
 
 import android.view.LayoutInflater;
 import android.view.View;

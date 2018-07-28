@@ -1,4 +1,4 @@
-package com.macbitsgoa.comrades.profileFragment;
+package com.macbitsgoa.comrades.profilefragment;
 
 /**
  * @author aayush singla

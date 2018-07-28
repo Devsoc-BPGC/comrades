@@ -1,4 +1,4 @@
-package com.macbitsgoa.comrades.courseListFragment;
+package com.macbitsgoa.comrades.courseListfragment;
 
 import android.Manifest;
 import android.content.Context;
@@ -20,7 +20,7 @@ import androidx.lifecycle.ViewModelProviders;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import static com.macbitsgoa.comrades.courseListFragment.AddCourseActivityKt.launchCourseChooser;
+import static com.macbitsgoa.comrades.courseListfragment.AddCourseActivityKt.launchCourseChooser;
 
 public class CourseListFragment extends Fragment {
 

@@ -1,4 +1,4 @@
-package com.macbitsgoa.comrades.profileFragment;
+package com.macbitsgoa.comrades.profilefragment;
 
 import android.view.View;
 import android.widget.TextView;
@@ -11,18 +11,12 @@ import androidx.recyclerview.widget.RecyclerView;
  * @author aayush singla
  */
 
-public class ProfileViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
+public class ProfileViewHolder extends RecyclerView.ViewHolder {
     public TextView tvProfile;
 
     public ProfileViewHolder(View view) {
         super(view);
         tvProfile = view.findViewById(R.id.tv_list);
-        view.setOnClickListener(this);
     }
 
-
-    @Override
-    public void onClick(View view) {
-
-    }
 }
