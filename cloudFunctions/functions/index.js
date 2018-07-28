@@ -133,3 +133,22 @@ exports.notifyMaterialUpdate = functions.database.ref('/materials/{id}')
            
         });
     })    
+    
+    exports.newUserAdded = functions.auth.user().onCreate((user) => {
+
+        admin.database().ref(`/users/${user.uid}`).set({
+            name:user.displayName,
+            email:user.email,
+            id:user.uid,
+            photoUrl:user.photoURL,
+            score:0,
+            uploads:0,
+            authority:"User"
+        })
+
+        return admin.database().ref(`/stats/`).once('value').then((snapshot)=>{
+            var total_users = snapshot.val().totalUsers;
+            return admin.database().ref(`/stats/totalUsers`).set(total_users+1);
+        })
+
+    });

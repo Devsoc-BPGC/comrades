@@ -12,6 +12,7 @@ import com.google.android.gms.auth.api.signin.GoogleSignIn;
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
+import com.google.firebase.auth.FirebaseAuth;
 import com.macbitsgoa.comrades.courseListFragment.CourseListFragment;
 import com.macbitsgoa.comrades.courseListFragment.CourseListVm;
 import com.macbitsgoa.comrades.homeFragment.HomeFragment;
@@ -66,6 +67,7 @@ public class HomeActivity extends AppCompatActivity {
         final MenuItem signOut = menu.findItem(R.id.action_sign_out);
         signOut.setVisible(signedIn);
         signOut.setOnMenuItemClickListener(menuItem -> {
+            FirebaseAuth.getInstance().signOut();
             Auth.GoogleSignInApi.signOut(mGoogleApiClient).setResultCallback(status -> {
                 invalidateOptionsMenu();
                 ViewModelProviders.of(HomeActivity.this).get(CourseListVm.class).signOut();
