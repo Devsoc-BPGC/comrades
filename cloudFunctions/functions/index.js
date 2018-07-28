@@ -116,7 +116,7 @@ exports.notifyMaterialUpdate = functions.database.ref('/materials/{id}')
                         addedBy:newItem.addedBy,
                         fileName:newItem.fileName,
                         fileId:newItem.id,
-                        courseId:newItem.fileName,
+                        courseId:course,
                         courseName:courseName,
                         timeStamp:admin.database.ServerValue.TIMESTAMP,
                         message:`${newItem.addedBy} added a new file ${newItem.fileName} to the course ${courseName}`,

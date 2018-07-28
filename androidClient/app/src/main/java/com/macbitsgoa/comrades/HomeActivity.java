@@ -6,6 +6,7 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.widget.Toast;
 
+import com.facebook.drawee.backends.pipeline.Fresco;
 import com.google.android.gms.auth.api.Auth;
 import com.google.android.gms.auth.api.signin.GoogleSignIn;
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
@@ -14,7 +15,7 @@ import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.macbitsgoa.comrades.courseListFragment.CourseListFragment;
 import com.macbitsgoa.comrades.courseListFragment.CourseListVm;
 import com.macbitsgoa.comrades.homeFragment.HomeFragment;
-import com.macbitsgoa.comrades.recentsFragment.ProfileFragment;
+import com.macbitsgoa.comrades.profileFragment.ProfileFragment;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.FragmentManager;
@@ -22,11 +23,12 @@ import androidx.lifecycle.ViewModelProviders;
 
 public class HomeActivity extends AppCompatActivity {
 
-    GoogleApiClient mGoogleApiClient;
+    private GoogleApiClient mGoogleApiClient;
+    private FragmentManager fragmentManager = getSupportFragmentManager();
+    public static BottomNavigationView navigation;
 
     private BottomNavigationView.OnNavigationItemSelectedListener mOnNavigationItemSelectedListener
             = item -> {
-        FragmentManager fragmentManager = getSupportFragmentManager();
         switch (item.getItemId()) {
             case R.id.navigation_home:
                 fragmentManager.beginTransaction().replace(R.id.container_fragment,
@@ -47,10 +49,13 @@ public class HomeActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        Fresco.initialize(this);
         setContentView(R.layout.activity_home);
         setSupportActionBar(findViewById(R.id.toolbar_main_act));
-        BottomNavigationView navigation = findViewById(R.id.navigation);
+        navigation = findViewById(R.id.navigation);
         navigation.setOnNavigationItemSelectedListener(mOnNavigationItemSelectedListener);
+        fragmentManager.beginTransaction().replace(R.id.container_fragment,
+                HomeFragment.newInstance()).commit();
     }
 
     @Override

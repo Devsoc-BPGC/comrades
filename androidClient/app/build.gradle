@@ -48,6 +48,7 @@ dependencies {
     implementation 'com.google.firebase:firebase-auth:16.0.2'
     implementation 'com.google.firebase:firebase-messaging:17.1.0'
     implementation 'com.google.android.gms:play-services-auth:15.0.1'
+    implementation 'com.facebook.fresco:fresco:1.10.0'
     implementation group: 'com.squareup.okhttp', name: 'okhttp', version: '2.7.5'
     def lifecycle_version = "2.0.0-beta01"
     implementation "androidx.lifecycle:lifecycle-extensions:$lifecycle_version"

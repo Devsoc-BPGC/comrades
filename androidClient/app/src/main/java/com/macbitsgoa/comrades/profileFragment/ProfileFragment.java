@@ -1,4 +1,4 @@
-package com.macbitsgoa.comrades.recentsFragment;
+package com.macbitsgoa.comrades.profileFragment;
 
 
 import android.os.Bundle;
