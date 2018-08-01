@@ -30,4 +30,9 @@
         <item name="actionMenuTextColor">@color/colorPrimaryContrast</item>
     </style>
 
+    <style name="animation">
+        <item name="android:windowEnterAnimation">@animator/popup_show</item>
+        <item name="android:windowExitAnimation">@animator/popup_hide</item>
+    </style>
+
 </resources>

@@ -22,4 +22,10 @@ public class Person {
 
     @NonNull
     public String id;
+
+    @NonNull
+    public Long score;
+
+    @NonNull
+    public Long uploads;
 }

@@ -3,7 +3,7 @@ package com.macbitsgoa.comrades.homefragment;
 import android.view.View;
 import android.widget.TextView;
 
-import com.facebook.drawee.view.SimpleDraweeView;
+import com.macbitsgoa.comrades.MySimpleDraweeView;
 import com.macbitsgoa.comrades.R;
 import com.macbitsgoa.comrades.coursematerial.CourseActivity;
 
@@ -22,8 +22,8 @@ import static com.macbitsgoa.comrades.HomeActivity.navigation;
 public class RecentViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
     private TextView tvUpdate;
     private TextView tvDateTime;
-    private SimpleDraweeView imageCreator;
     private ItemRecent obj;
+    private MySimpleDraweeView imageCreator;
 
     public RecentViewHolder(View view) {
         super(view);
@@ -35,6 +35,7 @@ public class RecentViewHolder extends RecyclerView.ViewHolder implements View.On
 
     public void populate(ItemRecent obj) {
         this.obj = obj;
+        imageCreator.setParam(obj.getAddedById());
         tvUpdate.setText(obj.getMessage());
         SimpleDateFormat sfd = new SimpleDateFormat("dd-MM-yyyy HH:mm");
         tvDateTime.setText(sfd.format(new Date(obj.getTimeStamp())));

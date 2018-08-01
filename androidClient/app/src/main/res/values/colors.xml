@@ -2,6 +2,8 @@
 <resources>
     <color name="colorPrimary">#3F51B5</color>
     <color name="colorPrimaryDark">#303F9F</color>
+    <color name="black">#000000</color>
+    <color name="transparent_black">#e80a0a0a</color>
     <color name="colorAccent">#FF4081</color>
     <color name="colorAccentContrast">#ffffffff</color>
     <color name="colorPrimaryContrast">#ffffffff</color>

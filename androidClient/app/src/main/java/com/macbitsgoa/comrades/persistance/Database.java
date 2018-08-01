@@ -9,7 +9,7 @@ import androidx.room.RoomDatabase;
 /**
  * @author Rushikesh Jogdand.
  */
-@androidx.room.Database(entities = {Person.class, Course.class, Material.class},
+@androidx.room.Database(entities = {Person.class, Course.class, Material.class,},
         version = 1)
 public abstract class Database extends RoomDatabase {
     @SuppressWarnings("WeakerAccess")
