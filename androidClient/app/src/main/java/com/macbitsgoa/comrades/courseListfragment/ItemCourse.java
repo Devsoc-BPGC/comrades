@@ -10,7 +10,6 @@ public class ItemCourse {
     private String id;
     private String name;
 
-
     // Getter Methods
 
     public String getAddedById() {

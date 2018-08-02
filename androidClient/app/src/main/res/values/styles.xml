@@ -31,8 +31,8 @@
     </style>
 
     <style name="animation">
-        <item name="android:windowEnterAnimation">@animator/popup_show</item>
-        <item name="android:windowExitAnimation">@animator/popup_hide</item>
+        <item name="android:windowEnterAnimation">@anim/popup_show</item>
+        <item name="android:windowExitAnimation">@anim/popup_hide</item>
     </style>
 
 </resources>

@@ -5,32 +5,41 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
 import com.google.android.gms.auth.api.signin.GoogleSignIn;
 import com.google.android.material.snackbar.Snackbar;
+import com.google.firebase.database.ChildEventListener;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.FirebaseDatabase;
 import com.macbitsgoa.comrades.GetGoogleSignInActivity;
 import com.macbitsgoa.comrades.R;
+
+import java.util.ArrayList;
+import java.util.Objects;
 
 import androidx.coordinatorlayout.widget.CoordinatorLayout;
 import androidx.fragment.app.DialogFragment;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
-import androidx.lifecycle.ViewModelProviders;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import static com.macbitsgoa.comrades.CHCKt.TAG_PREFIX;
 
 
-public class CourseListFragment extends Fragment {
+public class CourseListFragment extends Fragment implements ChildEventListener {
 
     private static final String ADD_COURSE_FRAGMENT = "addCourseFragment";
-    private final CourseAdapter courseAdapter = new CourseAdapter();
+    ArrayList<ItemCourse> arrayList = new ArrayList<>();
+    private final CourseAdapter courseAdapter = new CourseAdapter(arrayList);
     private CoordinatorLayout rootCl;
-
+    private final static String TAG = TAG_PREFIX + CourseListFragment.class.getSimpleName();
     public static Fragment newInstance() {
         return new CourseListFragment();
     }
@@ -44,8 +53,7 @@ public class CourseListFragment extends Fragment {
         final RecyclerView coursesRv = view.findViewById(R.id.rv_course_list);
         coursesRv.setLayoutManager(new LinearLayoutManager(getContext()));
         coursesRv.setAdapter(courseAdapter);
-        CourseListVm viewModel = ViewModelProviders.of(this).get(CourseListVm.class);
-        viewModel.getCourseList().observe(this, courseAdapter::setCourses);
+        FirebaseDatabase.getInstance().getReference("/courses/").addChildEventListener(this);
         return view;
     }
 
@@ -73,7 +81,7 @@ public class CourseListFragment extends Fragment {
                             handleSignInAndStorage(getContext()))
                     .show();
         } else {
-            Snackbar.make(rootCl, getString(R.string.login_to_download_file),
+            Snackbar.make(rootCl, getString(R.string.login_to_add_course),
                     Snackbar.LENGTH_LONG)
                     .setAction(getString(R.string.login), v ->
                             handleSignInAndStorage(getContext()))
@@ -86,4 +94,47 @@ public class CourseListFragment extends Fragment {
         context.startActivity(intent);
     }
 
+    @Override
+    public void onChildAdded(DataSnapshot dataSnapshot, String s) {
+        arrayList.add(dataSnapshot.getValue(ItemCourse.class));
+        courseAdapter.notifyDataSetChanged();
+    }
+
+    @Override
+    public void onChildChanged(DataSnapshot dataSnapshot, String s) {
+        ItemCourse itemCourse = dataSnapshot.getValue(ItemCourse.class);
+        for (int i = 0; i < arrayList.size(); i++) {
+            if (Objects.equals(arrayList.get(i).getId(), itemCourse.getId())) {
+                arrayList.remove(i);
+                arrayList.add(i, itemCourse);
+                courseAdapter.notifyDataSetChanged();
+                Log.e(TAG, "Child Updated");
+                break;
+            }
+        }
+    }
+
+    @Override
+    public void onChildRemoved(DataSnapshot dataSnapshot) {
+        ItemCourse itemCourse = dataSnapshot.getValue(ItemCourse.class);
+        for (int i = 0; i < arrayList.size(); i++) {
+            if (Objects.equals(arrayList.get(i).getId(), itemCourse.getId())) {
+                arrayList.remove(i);
+                courseAdapter.notifyDataSetChanged();
+                Log.e(TAG, "Child Removed");
+                break;
+            }
+        }
+    }
+
+    @Override
+    public void onChildMoved(DataSnapshot dataSnapshot, String s) {
+        Log.e(TAG, "Child Moved");
+
+    }
+
+    @Override
+    public void onCancelled(DatabaseError databaseError) {
+        Log.e(TAG, databaseError.getMessage());
+    }
 }

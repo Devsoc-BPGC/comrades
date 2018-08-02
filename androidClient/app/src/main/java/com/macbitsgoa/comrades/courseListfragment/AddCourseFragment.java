@@ -85,8 +85,8 @@ public class AddCourseFragment extends DialogFragment implements TextWatcher {
                 ItemCourse itemCourse = new ItemCourse();
                 itemCourse.setId(key);
                 itemCourse.setAddedById(FirebaseAuth.getInstance().getCurrentUser().getUid());
-                itemCourse.setName(courseName.toUpperCase());
-                itemCourse.setCode((streamId + courseNumber).toUpperCase());
+                itemCourse.setName(courseName);
+                itemCourse.setCode((streamId + "-" + courseNumber));
                 dbr.setValue(itemCourse);
             }
         };
