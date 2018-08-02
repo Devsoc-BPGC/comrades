@@ -15,15 +15,19 @@ import com.macbitsgoa.comrades.GetGoogleSignInActivity;
 import com.macbitsgoa.comrades.R;
 
 import androidx.coordinatorlayout.widget.CoordinatorLayout;
+import androidx.fragment.app.DialogFragment;
 import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentManager;
+import androidx.fragment.app.FragmentTransaction;
 import androidx.lifecycle.ViewModelProviders;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import static com.macbitsgoa.comrades.courseListfragment.AddCourseActivityKt.launchCourseChooser;
+
 
 public class CourseListFragment extends Fragment {
 
+    private static final String ADD_COURSE_FRAGMENT = "addCourseFragment";
     private final CourseAdapter courseAdapter = new CourseAdapter();
     private CoordinatorLayout rootCl;
 
@@ -56,7 +60,11 @@ public class CourseListFragment extends Fragment {
                             == PackageManager.PERMISSION_GRANTED;
         }
         if (signedIn && storagePermission) {
-            launchCourseChooser(this);
+            final FragmentManager fm = getActivity().getSupportFragmentManager();
+            final FragmentTransaction ft = fm.beginTransaction();
+            final DialogFragment addCourseFragment = new AddCourseFragment();
+            addCourseFragment.show(ft, ADD_COURSE_FRAGMENT);
+
 
         } else if (signedIn) {
             Snackbar.make(rootCl, getString(R.string.storage_permission_needed),

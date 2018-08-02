@@ -4,7 +4,8 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    tools:context="com.macbitsgoa.comrades.courseListfragment.AddCourseActivity">
+    android:theme="@style/Theme.MaterialComponents.Light.Dialog"
+    tools:context="com.macbitsgoa.comrades.courseListfragment.AddCourseFragment">
 
     <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
         xmlns:app="http://schemas.android.com/apk/res-auto"
@@ -69,28 +70,6 @@
                 android:inputType="textCapCharacters" />
 
         </com.google.android.material.textfield.TextInputLayout>
-
-        <com.google.android.material.button.MaterialButton
-            android:id="@+id/btn_add_course"
-            style="@style/Widget.MaterialComponents.Button.TextButton"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="@string/add_course"
-            android:layout_marginTop="4dp"
-            app:layout_constraintEnd_toStartOf="@id/btn_cancel"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/til_stream_code" />
-
-        <com.google.android.material.button.MaterialButton
-            android:id="@+id/btn_cancel"
-            style="@style/Widget.MaterialComponents.Button.TextButton"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="@string/cancel"
-            android:layout_marginTop="4dp"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toEndOf="@id/btn_add_course"
-            app:layout_constraintTop_toBottomOf="@id/til_course_number" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 
