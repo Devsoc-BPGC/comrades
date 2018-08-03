@@ -212,8 +212,6 @@ public class CourseActivity extends AppCompatActivity
         if (BuildConfig.DEBUG) {
             Log.v(TAG, "onResume");
         }
-        Log.e(TAG, courseId);
-        Log.e(TAG, courseName);
         // Register broadcast receiver
         LocalBroadcastManager.getInstance(this)
                 .registerReceiver(broadcastReceiver, new IntentFilter(DownloadService.ACTION));

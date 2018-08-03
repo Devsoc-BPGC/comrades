@@ -18,6 +18,8 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.FirebaseDatabase;
 import com.macbitsgoa.comrades.GetGoogleSignInActivity;
 import com.macbitsgoa.comrades.R;
+import com.macbitsgoa.comrades.notification.NotificationVm;
+import com.macbitsgoa.comrades.notification.SubscribedCourses;
 
 import java.util.ArrayList;
 import java.util.Objects;
@@ -27,6 +29,7 @@ import androidx.fragment.app.DialogFragment;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
+import androidx.lifecycle.ViewModelProviders;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -36,17 +39,31 @@ import static com.macbitsgoa.comrades.CHCKt.TAG_PREFIX;
 public class CourseListFragment extends Fragment implements ChildEventListener {
 
     private static final String ADD_COURSE_FRAGMENT = "addCourseFragment";
-    ArrayList<ItemCourse> arrayList = new ArrayList<>();
-    private final CourseAdapter courseAdapter = new CourseAdapter(arrayList);
+    private ArrayList<ItemCourse> arrayList = new ArrayList<>();
+    private ArrayList<SubscribedCourses> subscribedCourses = new ArrayList<>(0);
+    private CourseAdapter courseAdapter;
     private CoordinatorLayout rootCl;
     private final static String TAG = TAG_PREFIX + CourseListFragment.class.getSimpleName();
+
     public static Fragment newInstance() {
         return new CourseListFragment();
     }
 
     @Override
+    public void onCreate(Bundle bundle) {
+        super.onCreate(bundle);
+        NotificationVm notificationVm = ViewModelProviders.of(this).get(NotificationVm.class);
+        notificationVm.getAll().observe(this, courses -> {
+            subscribedCourses.clear();
+            subscribedCourses.addAll(courses);
+        });
+
+    }
+
+    @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         super.onCreateView(inflater, container, savedInstanceState);
+        courseAdapter = new CourseAdapter(arrayList, subscribedCourses);
         View view = inflater.inflate(R.layout.fragment_course_list, container, false);
         view.findViewById(R.id.fab_add_course).setOnClickListener(v -> handleAddCourse());
         rootCl = view.findViewById(R.id.cl_main_activity);

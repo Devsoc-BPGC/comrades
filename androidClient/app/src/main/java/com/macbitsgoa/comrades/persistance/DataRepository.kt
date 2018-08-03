@@ -93,7 +93,7 @@ class DataRepository(application: Application) {
 
     /**
      * Add the [Material] to local db.
-     * Course and author for this material are subscribed to, right?
+     * SubscribedCourses and author for this material are subscribed to, right?
      */
     fun insertLocally(material: Material) {
         InsertMaterial(dao).execute(material)

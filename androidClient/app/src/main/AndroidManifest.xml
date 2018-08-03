@@ -41,9 +41,7 @@
         </service>
         <service
             android:name=".coursematerial.DownloadService"
-            android:enabled="true">
-
-        </service>
+            android:enabled="true"></service>
         <service android:name=".coursematerial.UploadService" />
 
         <activity
@@ -55,6 +53,9 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+        <activity
+            android:name=".notification.NotificationSettings"
+            android:label="@string/title_activity_notification_settings"></activity>
     </application>
 
 </manifest>

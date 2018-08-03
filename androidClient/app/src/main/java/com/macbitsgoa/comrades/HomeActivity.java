@@ -1,6 +1,8 @@
 package com.macbitsgoa.comrades;
 
+import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
@@ -21,6 +23,8 @@ import com.macbitsgoa.comrades.profilefragment.ProfileFragment;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.FragmentManager;
 import androidx.lifecycle.ViewModelProviders;
+
+import static com.macbitsgoa.comrades.notification.NotificationSettings.SETTINGS;
 
 public class HomeActivity extends AppCompatActivity {
 
@@ -99,8 +103,15 @@ public class HomeActivity extends AppCompatActivity {
     protected void onResume() {
         super.onResume();
         invalidateOptionsMenu();
+        SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(getBaseContext());
+        Boolean previousStarted = preferences.getBoolean("Previously Started", false);
+        if (!previousStarted) {
+            SharedPreferences.Editor edit = preferences.edit();
+            edit.putBoolean(SETTINGS, true);
+            edit.putBoolean("Previously Started", Boolean.TRUE);
+            edit.apply();
+        }
     }
-
     @Override
     public void onSaveInstanceState(Bundle savedInstanceState) {
         super.onSaveInstanceState(savedInstanceState);
