@@ -45,6 +45,8 @@ public class CourseActivity extends AppCompatActivity
     public static String courseName;
     private final String dbUrl =
             "https://balmy-component-204213.firebaseio.com/courseMaterial/";
+    public static final String KEY_COURSE_ID = "courseId";
+    public static final String KEY_COURSE_NAME = "courseName";
     private final FirebaseDatabase databaseInstance = FirebaseDatabase.getInstance();
     private ArrayList<ItemCourseMaterial> materialArrayList = new ArrayList<>(0);
     private MaterialAdapter materialAdapter;
@@ -53,6 +55,8 @@ public class CourseActivity extends AppCompatActivity
 
     public static void show(final Context context, final String courseId, final String courseName) {
         final Intent intent = new Intent(context, CourseActivity.class);
+        intent.putExtra(KEY_COURSE_NAME, courseName);
+        intent.putExtra(KEY_COURSE_ID, courseId);
         CourseActivity.courseId = courseId;
         CourseActivity.courseName = courseName;
         context.startActivity(intent);
@@ -212,6 +216,10 @@ public class CourseActivity extends AppCompatActivity
         if (BuildConfig.DEBUG) {
             Log.v(TAG, "onResume");
         }
+        if (getIntent().getStringExtra(KEY_COURSE_ID) != null)
+            courseId = getIntent().getStringExtra(KEY_COURSE_ID);
+        if (getIntent().getStringExtra(KEY_COURSE_NAME) != null)
+            courseName = getIntent().getStringExtra(KEY_COURSE_NAME);
         // Register broadcast receiver
         LocalBroadcastManager.getInstance(this)
                 .registerReceiver(broadcastReceiver, new IntentFilter(DownloadService.ACTION));

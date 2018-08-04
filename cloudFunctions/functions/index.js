@@ -125,7 +125,26 @@ exports.newMaterialAdded = functions.database.ref(`/courseMaterial/{courseId}/{i
 
                 admin.database().ref(`/users/${newItem.addedById}/score`).set(current_score + 10);
                 admin.database().ref(`/stats/totalUploads`).set(total_uploads + 1);
-                return admin.database().ref(`/users/${newItem.addedById}/uploads`).set(number_uploads + 1);
+                admin.database().ref(`/users/${newItem.addedById}/uploads`).set(number_uploads + 1);
+            
+                msg={
+                    data: {
+                    	addedById: newItem.addedById,
+		                courseId: course,
+		                courseName: courseName,
+		                type:"material_added",
+                        msg:`${newItem.addedBy} added a new file to ${courseName}`
+                    },
+                    topic: `${course}`
+                }
+
+                return admin.messaging().send(msg).then((response) => {
+                    console.log(`Successfully sent /materials/${newItem.id} update:`, response);
+                    return 0;
+                }).catch((error) => {
+                    console.log(`Error sending /materials/${newItem.id} update:`, error);
+                    throw error;
+                });
             })
 
 

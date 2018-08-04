@@ -2,6 +2,7 @@ package com.macbitsgoa.comrades
 
 import com.macbitsgoa.comrades.persistance.Course
 
+const val FCM_TYPE_MATERIAL_ADDED = "material_added"
 const val FCM_TYPE_MATERIAL_UPDATE = "materialUpdate"
 const val FCM_TYPE_USER_UPDATE = "userUpdate"
 const val FCM_TYPE_COURSE_UPDATE = "courseUpdate"

@@ -8,6 +8,7 @@ import android.widget.ImageButton;
 import android.widget.TextView;
 
 import com.google.android.material.chip.Chip;
+import com.google.firebase.messaging.FirebaseMessaging;
 import com.macbitsgoa.comrades.R;
 import com.macbitsgoa.comrades.coursematerial.CourseActivity;
 import com.macbitsgoa.comrades.notification.NotificationVm;
@@ -70,10 +71,12 @@ public class CourseVh extends RecyclerView.ViewHolder {
             NotificationVm notificationVm = ViewModelProviders.of((AppCompatActivity) itemView.getContext()).get(NotificationVm.class);
             if (subscribed) {
                 subscribed = false;
+                FirebaseMessaging.getInstance().unsubscribeFromTopic(course.getId());
                 notificationVm.delete(subscribedCourse);
                 subscribeButton.setImageResource(R.drawable.ic_notifications_none_black_24dp);
             } else {
                 subscribed = true;
+                FirebaseMessaging.getInstance().subscribeToTopic(course.getId());
                 notificationVm.insert(subscribedCourse);
                 subscribeButton.setImageResource(R.drawable.ic_notifications_active_black_24dp);
             }

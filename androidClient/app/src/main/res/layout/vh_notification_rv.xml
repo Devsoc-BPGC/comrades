@@ -1,31 +1,31 @@
 <?xml version="1.0" encoding="utf-8"?>
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
-    android:layout_marginRight="4dp"
-    android:layout_marginLeft="4dp"
-    android:layout_marginTop="4dp"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:orientation="horizontal"
+    android:layout_margin="4dp"
+    android:weightSum="1"
     android:elevation="2dp"
-    android:backgroundTint="#FFF"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content">
+    android:layout_height="wrap_content"
+    android:backgroundTint="#FFF">
 
     <TextView
         android:id="@+id/tv_name"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_gravity="start|center"
-        android:layout_marginEnd="120dp"
-        android:padding="4dp"
-        android:textColor="@android:color/black"
+        android:padding="10dp"
         android:textSize="18sp"
-        tools:text="Mechanics,Waves and Oscillations" />
+        android:textColor="@android:color/black"
+        android:layout_margin="10dp"
+        android:layout_weight="1"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content" />
 
-    <Button
+
+    <com.facebook.drawee.view.SimpleDraweeView
         android:id="@+id/button_unsubscribe"
-        android:layout_width="wrap_content"
-        android:theme="@style/Widget.AppCompat.Button"
-        android:textSize="14sp"
-        android:layout_height="wrap_content"
-        android:text="@string/unsubscribe"
-        android:layout_gravity="end|center" />
-</FrameLayout>
+        android:layout_width="40dp"
+        android:padding="10dp"
+        android:layout_margin="10dp"
+        android:layout_height="40dp"
+        android:layout_gravity="center"
+        app:placeholderImage="@drawable/ic_notifications_off_black_24dp" />
+</LinearLayout>
