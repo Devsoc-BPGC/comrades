@@ -15,6 +15,7 @@ import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
+import com.macbitsgoa.comrades.BuildConfig;
 import com.macbitsgoa.comrades.R;
 
 import androidx.fragment.app.Fragment;
@@ -48,7 +49,8 @@ public class ProfileFragment extends Fragment {
         FirebaseUser firebaseUser = FirebaseAuth.getInstance().getCurrentUser();
         initUI(view);
         if (firebaseUser != null)
-            FirebaseDatabase.getInstance().getReference("/users/").child(firebaseUser.getUid())
+            FirebaseDatabase.getInstance().getReference().child(BuildConfig.BUILD_TYPE)
+                    .child("/users/").child(firebaseUser.getUid())
                     .addValueEventListener(new ValueEventListener() {
                         @Override
                         public void onDataChange(DataSnapshot dataSnapshot) {

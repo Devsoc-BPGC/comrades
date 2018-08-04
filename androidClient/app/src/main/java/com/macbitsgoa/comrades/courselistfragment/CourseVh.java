@@ -1,4 +1,4 @@
-package com.macbitsgoa.comrades.courseListfragment;
+package com.macbitsgoa.comrades.courselistfragment;
 
 import android.util.Log;
 import android.view.View;
@@ -9,6 +9,7 @@ import android.widget.TextView;
 
 import com.google.android.material.chip.Chip;
 import com.google.firebase.messaging.FirebaseMessaging;
+import com.macbitsgoa.comrades.BuildConfig;
 import com.macbitsgoa.comrades.R;
 import com.macbitsgoa.comrades.coursematerial.CourseActivity;
 import com.macbitsgoa.comrades.notification.NotificationVm;
@@ -38,7 +39,7 @@ public class CourseVh extends RecyclerView.ViewHolder {
         subscribeButton = itemView.findViewById(R.id.notification_icon);
     }
 
-    void populate(ItemCourse course, List<SubscribedCourses> subscribedCourses) {
+    public void populate(ItemCourse course, List<SubscribedCourses> subscribedCourses) {
 
         for (int i = 0; i < subscribedCourses.size(); i++) {
             if (Objects.equals(course.getId(), subscribedCourses.get(i).getId())) {
@@ -71,12 +72,12 @@ public class CourseVh extends RecyclerView.ViewHolder {
             NotificationVm notificationVm = ViewModelProviders.of((AppCompatActivity) itemView.getContext()).get(NotificationVm.class);
             if (subscribed) {
                 subscribed = false;
-                FirebaseMessaging.getInstance().unsubscribeFromTopic(course.getId());
+                FirebaseMessaging.getInstance().unsubscribeFromTopic(BuildConfig.BUILD_TYPE + course.getId());
                 notificationVm.delete(subscribedCourse);
                 subscribeButton.setImageResource(R.drawable.ic_notifications_none_black_24dp);
             } else {
                 subscribed = true;
-                FirebaseMessaging.getInstance().subscribeToTopic(course.getId());
+                FirebaseMessaging.getInstance().subscribeToTopic(BuildConfig.BUILD_TYPE + course.getId());
                 notificationVm.insert(subscribedCourse);
                 subscribeButton.setImageResource(R.drawable.ic_notifications_active_black_24dp);
             }

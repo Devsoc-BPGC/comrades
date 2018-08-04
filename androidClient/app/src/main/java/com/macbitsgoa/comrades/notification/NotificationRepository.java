@@ -23,7 +23,7 @@ public class NotificationRepository {
         courseList = notificationDao.getAll();
     }
 
-    LiveData<List<SubscribedCourses>> getAll() {
+    private LiveData<List<SubscribedCourses>> getAll() {
         return courseList;
     }
 

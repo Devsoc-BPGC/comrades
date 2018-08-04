@@ -76,7 +76,7 @@ class DataRepository(application: Application) {
      */
     fun insertLocally(person: Person) {
         InsertPerson(dao).execute(person)
-        FirebaseMessaging.getInstance().subscribeToTopic("user${person.id}")
+        FirebaseMessaging.getInstance().subscribeToTopic(BuildConfig.BUILD_TYPE + "User${person.id}")
     }
 
     /**
@@ -149,7 +149,7 @@ class DataRepository(application: Application) {
         course.addedById = author.id
         // author is already added to db, isn't it?
         insertLocally(course)
-        FirebaseMessaging.getInstance().subscribeToTopic("course${course.id}")
+        FirebaseMessaging.getInstance().subscribeToTopic(BuildConfig.BUILD_TYPE + "Course${course.id}")
                 .addOnCompleteListener {
                     if (BuildConfig.DEBUG) {
                         Log.i(tag, "Subscription to topic course${course.id} isSuccessful: ${it.isSuccessful}")

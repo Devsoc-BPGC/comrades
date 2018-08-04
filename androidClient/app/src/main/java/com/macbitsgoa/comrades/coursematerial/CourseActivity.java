@@ -44,7 +44,7 @@ public class CourseActivity extends AppCompatActivity
     public static String courseId;
     public static String courseName;
     private final String dbUrl =
-            "https://balmy-component-204213.firebaseio.com/courseMaterial/";
+            "https://balmy-component-204213.firebaseio.com/" + BuildConfig.BUILD_TYPE + "/courseMaterial/";
     public static final String KEY_COURSE_ID = "courseId";
     public static final String KEY_COURSE_NAME = "courseName";
     private final FirebaseDatabase databaseInstance = FirebaseDatabase.getInstance();
@@ -144,7 +144,6 @@ public class CourseActivity extends AppCompatActivity
         toolbar.setNavigationIcon(getResources().getDrawable(R.drawable.ic_arrow_back));
         toolbar.setTitle(courseName);
         toolbar.setNavigationOnClickListener(view -> onBackPressed());
-
 
         final LinearLayoutManager linearLayoutManager;
         linearLayoutManager =

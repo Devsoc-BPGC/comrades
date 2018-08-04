@@ -11,6 +11,7 @@ import com.google.firebase.database.ChildEventListener;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.FirebaseDatabase;
+import com.macbitsgoa.comrades.BuildConfig;
 import com.macbitsgoa.comrades.R;
 
 import java.util.ArrayList;
@@ -46,7 +47,8 @@ public class HomeFragment extends Fragment implements ChildEventListener {
         LinearLayoutManager linearLayoutManager = new LinearLayoutManager(getContext());
         recentRv.setLayoutManager(linearLayoutManager);
         recentRv.setAdapter(recentAdapter);
-        FirebaseDatabase.getInstance().getReference("/recents/").orderByChild("timeStamp")
+        FirebaseDatabase.getInstance().getReference().child(BuildConfig.BUILD_TYPE)
+                .child("/recents/").orderByChild("timeStamp")
                 .limitToLast(25).addChildEventListener(this);
         return view;
     }

@@ -1,4 +1,4 @@
-package com.macbitsgoa.comrades.courseListfragment;
+package com.macbitsgoa.comrades.courselistfragment;
 
 import android.app.Dialog;
 import android.os.Bundle;
@@ -11,6 +11,7 @@ import com.google.android.material.textfield.TextInputLayout;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.macbitsgoa.comrades.BuildConfig;
 import com.macbitsgoa.comrades.R;
 
 import java.util.Objects;
@@ -80,7 +81,8 @@ public class AddCourseFragment extends DialogFragment implements TextWatcher {
                 allFieldsSet = false;
             }
             if (allFieldsSet) {
-                DatabaseReference dbr = FirebaseDatabase.getInstance().getReference("/courses/").push();
+                DatabaseReference dbr = FirebaseDatabase.getInstance().getReference()
+                        .child(BuildConfig.BUILD_TYPE).child("/courses/").push();
                 String key = dbr.getKey();
                 ItemCourse itemCourse = new ItemCourse();
                 itemCourse.setId(key);
@@ -96,12 +98,12 @@ public class AddCourseFragment extends DialogFragment implements TextWatcher {
     @Override
 
     public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
-
+        //Empty Method
     }
 
     @Override
     public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
-
+        //Empty Method
     }
 
     @Override

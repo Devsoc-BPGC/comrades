@@ -60,7 +60,8 @@ public class MySimpleDraweeView extends SimpleDraweeView implements View.OnClick
         popupWindow.setAnimationStyle(R.style.animation);
         popupWindow.showAtLocation(getRootView(),
                 Gravity.CENTER, 0, 0);
-        FirebaseDatabase.getInstance().getReference("/users/" + uuid)
+        FirebaseDatabase.getInstance().getReference().child(BuildConfig.BUILD_TYPE)
+                .child("/users/" + uuid)
                 .addListenerForSingleValueEvent(new ValueEventListener() {
                     @Override
                     public void onDataChange(DataSnapshot dataSnapshot) {

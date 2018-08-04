@@ -14,6 +14,7 @@ import com.google.firebase.database.ValueEventListener
 const val TAG_PREFIX = "mac."
 const val BITS_EMAIL_SUFFIX = ".bits-pilani.ac.in"
 val firebaseRootRef: DatabaseReference = FirebaseDatabase.getInstance().reference
+        .child(BuildConfig.BUILD_TYPE)
 
 /**
  * [ValueEventListener] logging the error and delegating the user to implement

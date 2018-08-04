@@ -23,7 +23,7 @@ public class NotificationSettings extends AppCompatActivity implements CompoundB
     public static String SETTINGS = "NotificationSetting";
     private ArrayList<SubscribedCourses> course = new ArrayList<>(0);
     private NotificationAdapter notificationAdapter;
-    LinearLayout viewNotificationsOff;
+    private LinearLayout viewNotificationsOff;
 
 
     @Override

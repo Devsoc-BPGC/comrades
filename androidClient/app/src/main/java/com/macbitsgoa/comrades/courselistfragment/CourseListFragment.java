@@ -1,4 +1,4 @@
-package com.macbitsgoa.comrades.courseListfragment;
+package com.macbitsgoa.comrades.courselistfragment;
 
 import android.Manifest;
 import android.content.Context;
@@ -16,6 +16,7 @@ import com.google.firebase.database.ChildEventListener;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.FirebaseDatabase;
+import com.macbitsgoa.comrades.BuildConfig;
 import com.macbitsgoa.comrades.GetGoogleSignInActivity;
 import com.macbitsgoa.comrades.R;
 import com.macbitsgoa.comrades.notification.NotificationVm;
@@ -70,7 +71,8 @@ public class CourseListFragment extends Fragment implements ChildEventListener {
         final RecyclerView coursesRv = view.findViewById(R.id.rv_course_list);
         coursesRv.setLayoutManager(new LinearLayoutManager(getContext()));
         coursesRv.setAdapter(courseAdapter);
-        FirebaseDatabase.getInstance().getReference("/courses/").addChildEventListener(this);
+        FirebaseDatabase.getInstance().getReference().child(BuildConfig.BUILD_TYPE)
+                .child("/courses/").addChildEventListener(this);
         return view;
     }
 

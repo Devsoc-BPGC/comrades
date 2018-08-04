@@ -15,8 +15,8 @@ import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.firebase.auth.FirebaseAuth;
-import com.macbitsgoa.comrades.courseListfragment.CourseListFragment;
-import com.macbitsgoa.comrades.courseListfragment.CourseListVm;
+import com.macbitsgoa.comrades.courselistfragment.CourseListFragment;
+import com.macbitsgoa.comrades.courselistfragment.CourseListVm;
 import com.macbitsgoa.comrades.homefragment.HomeFragment;
 import com.macbitsgoa.comrades.profilefragment.ProfileFragment;
 

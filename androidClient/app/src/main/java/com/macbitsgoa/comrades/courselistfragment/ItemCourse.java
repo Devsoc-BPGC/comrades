@@ -1,4 +1,4 @@
-package com.macbitsgoa.comrades.courseListfragment;
+package com.macbitsgoa.comrades.courselistfragment;
 
 /**
  * @author aayush
