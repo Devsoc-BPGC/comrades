@@ -1,44 +1,55 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.cardview.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:orientation="horizontal"
+    android:layout_marginLeft="4dp"
+    android:layout_marginRight="4dp"
+    android:layout_marginTop="4dp"
+    app:cardElevation="3dp"
+    app:cardCornerRadius="0dp"
+    app:cardBackgroundColor="@color/colorAccentContrast"
     android:layout_width="match_parent"
     android:layout_height="wrap_content">
 
-    <com.facebook.drawee.view.SimpleDraweeView
-        android:id="@+id/image_creator"
-        android:layout_width="60dp"
-        android:layout_height="60dp"
-        android:padding="10dp"
-        android:layout_margin="10dp"
-        app:roundAsCircle="true" />
-
     <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:orientation="vertical">
+        android:layout_height="wrap_content"
+        android:orientation="horizontal">
 
-        <TextView
-            android:id="@+id/tv_update"
-            tools:text="Aayush Singla added a new file abc to the course"
-            android:textColor="@android:color/black"
-            android:layout_width="wrap_content"
-            android:layout_height="0dp"
-            android:textSize="16sp"
-            android:layout_weight="1"
-            android:padding="5dp"
-            android:layout_margin="2dp" />
+        <com.macbitsgoa.comrades.MySimpleDraweeView
+            android:id="@+id/image_creator"
+            android:layout_width="70dp"
+            android:layout_height="70dp"
+            android:padding="10dp"
+            android:layout_margin="10dp"
+            app:roundAsCircle="true" />
 
-        <TextView
-            android:id="@+id/timeStamp"
-            tools:text="27/12/2018"
-            android:padding="1dp"
-            android:textSize="12sp"
-            android:layout_margin="1dp"
-            android:layout_width="wrap_content"
+        <LinearLayout
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:textColor="@android:color/black"
-            android:layout_gravity="end" />
+            android:orientation="vertical">
+
+            <TextView
+                android:id="@+id/tv_update"
+                tools:text="Aayush Singla added a new file abc to the course"
+                android:textColor="@android:color/black"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textSize="16sp"
+                android:padding="5dp"
+                android:layout_margin="2dp" />
+
+            <TextView
+                android:id="@+id/timeStamp"
+                tools:text="27/12/2018"
+                android:padding="2dp"
+                android:textSize="12sp"
+                android:layout_margin="4dp"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textColor="@android:color/black"
+                android:layout_gravity="end" />
+        </LinearLayout>
     </LinearLayout>
-</LinearLayout>
+</androidx.cardview.widget.CardView>

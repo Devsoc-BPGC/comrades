@@ -10,7 +10,8 @@
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
 
     <application
-        android:allowBackup="false"
+        android:name=".Comrades"
+        android:allowBackup="true"
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
         android:roundIcon="@mipmap/ic_launcher_round"
@@ -30,10 +31,6 @@
 
         <activity android:name=".coursematerial.CourseActivity" />
         <activity android:name=".GetGoogleSignInActivity" />
-        <activity
-            android:name=".courseListfragment.AddCourseActivity"
-            android:excludeFromRecents="true"
-            android:theme="@style/Theme.MaterialComponents.Light.Dialog.Alert" />
 
         <service
             android:name=".FcmReceiverService"
@@ -57,6 +54,11 @@
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
+        </activity>
+        <activity
+            android:name=".notification.NotificationSettings"
+            android:label="@string/title_activity_notification_settings">
+
         </activity>
     </application>
 

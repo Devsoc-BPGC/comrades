@@ -5,13 +5,16 @@ apply plugin: 'kotlin-kapt'
 android {
     compileSdkVersion 28
     defaultConfig {
-        applicationId "com.macbitsgoa.student_companion"
+        applicationId "com.macbitsgoa.comrades"
         minSdkVersion 21
         targetSdkVersion 28
         versionCode 1
         versionName "1.0"
     }
     buildTypes {
+        debug{
+            applicationIdSuffix ".debug"
+        }
         release {
             postprocessing {
                 removeUnusedCode true

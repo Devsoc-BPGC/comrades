@@ -2,6 +2,9 @@ package com.macbitsgoa.comrades.persistance;
 
 import android.content.Context;
 
+import com.macbitsgoa.comrades.notification.NotificationDao;
+import com.macbitsgoa.comrades.notification.SubscribedCourses;
+
 import androidx.annotation.NonNull;
 import androidx.room.Room;
 import androidx.room.RoomDatabase;
@@ -9,7 +12,7 @@ import androidx.room.RoomDatabase;
 /**
  * @author Rushikesh Jogdand.
  */
-@androidx.room.Database(entities = {Person.class, Course.class, Material.class},
+@androidx.room.Database(entities = {Person.class, Course.class, Material.class, SubscribedCourses.class},
         version = 1)
 public abstract class Database extends RoomDatabase {
     @SuppressWarnings("WeakerAccess")
@@ -28,4 +31,7 @@ public abstract class Database extends RoomDatabase {
     }
 
     public abstract DataAccessObject getDao();
+
+    public abstract NotificationDao getNotificationDao();
+
 }
