@@ -14,6 +14,7 @@ import com.macbitsgoa.comrades.BuildConfig;
 import com.macbitsgoa.comrades.GetGoogleSignInActivity;
 import com.macbitsgoa.comrades.R;
 
+import java.io.File;
 import java.net.URISyntaxException;
 
 import androidx.appcompat.app.AlertDialog;
@@ -35,7 +36,8 @@ public class UploadFileFragment extends DialogFragment
     private FloatingActionButton fabAdd;
     private FloatingActionButton fabAddDoc;
     private FloatingActionButton fabAddImage;
-    private TextView filePath;
+    private TextView file;
+    private String filePath;
 
     @Override
     public Dialog onCreateDialog(final Bundle savedInstanceState) {
@@ -70,13 +72,13 @@ public class UploadFileFragment extends DialogFragment
         fabAddDoc = view.findViewById(R.id.fab_doc);
         fabAddImage = view.findViewById(R.id.fab_image);
         fileName = view.findViewById(R.id.et_file_name);
-        filePath = view.findViewById(R.id.tv_file_path);
+        file = view.findViewById(R.id.tv_file_path);
 
     }
 
     private void setPositiveClick() {
         positiveClickListener = (dialogInterface, i) -> {
-            if (filePath.getText().length() == 0) {
+            if (file.getText().length() == 0) {
                 Toast.makeText(getContext(), R.string.warn_select_file, Toast.LENGTH_LONG).show();
                 return;
             }
@@ -143,14 +145,16 @@ public class UploadFileFragment extends DialogFragment
 
         if (requestCode == SIGN_IN_REQUEST_CODE && resultCode == RESULT_OK) {
             final String accessToken = data.getStringExtra(KEY_TOKEN);
-            Intent uploadIntent = UploadService.makeUploadIntent(getContext(), filePath.getText().toString(),
+            Intent uploadIntent = UploadService.makeUploadIntent(getContext(), filePath,
                     accessToken, fileName.getText().toString());
             Toast.makeText(getContext(), "Upload Started.Check NotificationBar for progress.",
                     Toast.LENGTH_LONG).show();
             getActivity().startService(uploadIntent);
         } else if (requestCode == REQUEST_CHOOSER && resultCode == RESULT_OK) {
             try {
-                filePath.setText(PathUtil.getPath(getContext(), data.getData()));
+                filePath = PathUtil.getPath(getContext(), data.getData());
+                File tempFile = new File(filePath);
+                file.setText(tempFile.getName());
             } catch (URISyntaxException e) {
                 Log.e(TAG, e.getMessage());
             }

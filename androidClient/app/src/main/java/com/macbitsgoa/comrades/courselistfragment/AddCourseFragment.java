@@ -53,10 +53,9 @@ public class AddCourseFragment extends DialogFragment implements TextWatcher {
 
         AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
         builder.setView(view);
-        builder.setPositiveButton("Add SubscribedCourses", positiveClickListener)
+        builder.setPositiveButton("Add Course", positiveClickListener)
                 .setNegativeButton("Cancel", (dialogInterface, i) -> {
                 });
-
         return builder.create();
     }
 

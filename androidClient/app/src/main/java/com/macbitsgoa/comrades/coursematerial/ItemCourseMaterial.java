@@ -20,6 +20,9 @@ public class ItemCourseMaterial {
     private String link;
     private String mimeType;
     private String extension;
+    private String thumbnailLink;
+    private String iconLink;
+
     private int progress = 0;
     private String filePath;
     private String downloadStatus; /* "not available","waiting","ongoing","finished"*/
@@ -143,6 +146,21 @@ public class ItemCourseMaterial {
         this.filePath = filePath;
     }
 
+    public String getThumbnailLink() {
+        return thumbnailLink;
+    }
+
+    public void setThumbnailLink(String thumbnailLink) {
+        this.thumbnailLink = thumbnailLink;
+    }
+
+    public String getIconLink() {
+        return iconLink;
+    }
+
+    public void setIconLink(String iconLink) {
+        this.iconLink = iconLink;
+    }
 
 
 }
