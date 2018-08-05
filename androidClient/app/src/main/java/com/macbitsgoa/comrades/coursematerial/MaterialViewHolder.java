@@ -8,12 +8,13 @@ import android.net.Uri;
 import android.view.View;
 import android.widget.TextView;
 
-import com.github.lzyzsd.circleprogress.DonutProgress;
+import com.facebook.drawee.view.SimpleDraweeView;
 import com.google.android.gms.auth.api.signin.GoogleSignIn;
 import com.google.android.material.snackbar.Snackbar;
 import com.macbitsgoa.comrades.BuildConfig;
 import com.macbitsgoa.comrades.GetGoogleSignInActivity;
 import com.macbitsgoa.comrades.R;
+import com.mikhaellopez.circularprogressbar.CircularProgressBar;
 
 import java.io.File;
 
@@ -28,14 +29,15 @@ public class MaterialViewHolder extends RecyclerView.ViewHolder {
     private final TextView tvFileName;
     private final TextView tvOwnerName;
     private final View rootView;
-    private final DonutProgress donutProgress;
+    private final CircularProgressBar donutProgress;
     private final TextView tvDownloadStatus;
-
+    private final SimpleDraweeView iconDraweeView;
 
     public MaterialViewHolder(final View itemView) {
         super(itemView);
         rootView = itemView;
         tvFileName = itemView.findViewById(R.id.tv_file_name);
+        iconDraweeView = itemView.findViewById(R.id.icon);
         tvOwnerName = itemView.findViewById(R.id.tv_owner_name);
         donutProgress = itemView.findViewById(R.id.donut_progress);
         tvDownloadStatus = itemView.findViewById(R.id.status);
@@ -49,12 +51,14 @@ public class MaterialViewHolder extends RecyclerView.ViewHolder {
     public void populate(ItemCourseMaterial data) {
         tvOwnerName.setText("added by " + data.getAddedBy());
         tvFileName.setText(data.getFileName());
+        if (data.getIconLink() != null)
+            iconDraweeView.setImageURI(data.getIconLink());
 
         if (data.getFileAvailable()) {
-            donutProgress.setDonut_progress("100");
+            donutProgress.setProgress(100);
             tvDownloadStatus.setText("click to open");
         } else {
-            donutProgress.setDonut_progress(String.valueOf(data.getProgress()));
+            donutProgress.setProgress(data.getProgress());
             tvDownloadStatus.setText(data.getDownloadStatus());
         }
 

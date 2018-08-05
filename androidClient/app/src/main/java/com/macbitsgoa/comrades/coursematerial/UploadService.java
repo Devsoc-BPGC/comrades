@@ -6,6 +6,7 @@ import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
+import android.media.RingtoneManager;
 import android.util.Log;
 import android.webkit.MimeTypeMap;
 
@@ -82,7 +83,6 @@ public class UploadService extends IntentService {
             fileId = (String) jsonObject.get("id");
             getPermissions();
             final JSONObject metaData = getMetadata();
-
             if (metaData == null) {
                 Log.e(TAG, "Received null metadata, returning");
                 return;
@@ -103,6 +103,7 @@ public class UploadService extends IntentService {
                 "Thanks for Contributing");
         mBuilder.setProgress(0, 0, false);
         mBuilder.setOngoing(false);
+        mBuilder.setSound(RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION));
         mNotificationManager.notify(NOTIFICATION_ID, mBuilder.build());
     }
 
@@ -238,7 +239,14 @@ public class UploadService extends IntentService {
                 .getReferenceFromUrl(CourseActivity.databaseUrl);
         final JSONObject ownerObject = (JSONObject) jsonObject.getJSONArray("owners").get(0);
         final String owner = (String) ownerObject.get("displayName");
-
+        final Boolean hasThumbnaill = (Boolean) jsonObject.get("hasThumbnail");
+        String thumbnailLink;
+        if (hasThumbnaill)
+            thumbnailLink = (String) jsonObject.get("thumbnailLink");
+        else
+            thumbnailLink = (String) jsonObject.get("iconLink");
+        String iconLink = (String) jsonObject.get("iconLink");
+        iconLink = iconLink.replace("16", "128");
         final ItemCourseMaterial itemCourseMaterial = new ItemCourseMaterial();
         FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
         itemCourseMaterial.setAddedById(user.getUid());
@@ -246,6 +254,8 @@ public class UploadService extends IntentService {
         itemCourseMaterial.setFileName(fName);
         itemCourseMaterial.setExtension(getFileExtension(path));
         itemCourseMaterial.setId(fileId);
+        itemCourseMaterial.setThumbnailLink(thumbnailLink);
+        itemCourseMaterial.setIconLink(iconLink);
         itemCourseMaterial.setFileSize(fileSize);
         itemCourseMaterial.setDownloadStatus(null);
         itemCourseMaterial.setFilePath(null);

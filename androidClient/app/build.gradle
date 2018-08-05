@@ -1,6 +1,8 @@
 apply plugin: 'com.android.application'
 apply plugin: 'kotlin-android'
 apply plugin: 'kotlin-kapt'
+apply plugin: 'io.fabric'
+
 
 android {
     compileSdkVersion 28
@@ -43,6 +45,7 @@ dependencies {
     implementation('com.google.api-client:google-api-client-android:1.23.0') {
         exclude group: 'org.apache.httpcomponents'
     }
+    implementation 'com.crashlytics.sdk.android:crashlytics:2.9.3'
     implementation('com.google.apis:google-api-services-drive:v3-rev117-1.23.0') {
         exclude group: 'org.apache.httpcomponents'
     }
@@ -64,7 +67,7 @@ dependencies {
     kapt "androidx.room:room-compiler:$room_version"
     implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlin_version"
     implementation 'com.google.code.gson:gson:2.8.5'
-    implementation 'com.github.lzyzsd:circleprogress:1.2.1'
+    implementation 'com.mikhaellopez:circularprogressbar:2.0.0'
 }
 apply plugin: 'com.google.gms.google-services'
 repositories {

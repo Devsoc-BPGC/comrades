@@ -37,6 +37,7 @@ import androidx.appcompat.app.AlertDialog;
 import static android.Manifest.permission.READ_EXTERNAL_STORAGE;
 import static androidx.core.content.PermissionChecker.PERMISSION_DENIED;
 import static androidx.core.content.PermissionChecker.PERMISSION_GRANTED;
+import static com.macbitsgoa.comrades.CHCKt.BITS_EMAIL_SUFFIX;
 import static com.macbitsgoa.comrades.CHCKt.TAG_PREFIX;
 
 
@@ -60,6 +61,7 @@ public class GetGoogleSignInActivity extends Activity {
     private static final int ERROR_CODE_PERMISSION_DENIED = 12501;
     private static final int RC_PERM_REQ_EXT_STORAGE = 7;
     private boolean returnResult;
+    private GoogleSignInClient mGoogleSignInClient;
     private FirebaseAuth firebaseAuth;
 
     @Override
@@ -74,7 +76,7 @@ public class GetGoogleSignInActivity extends Activity {
                 .requestEmail()
                 .build();
         // Build a GoogleSignI\nClient with the options specified by gso.
-        final GoogleSignInClient mGoogleSignInClient = GoogleSignIn.getClient(this, gso);
+        mGoogleSignInClient = GoogleSignIn.getClient(this, gso);
 
         final Intent signInIntent = mGoogleSignInClient.getSignInIntent();
         startActivityForResult(signInIntent, RC_SIGN_IN);
@@ -127,7 +129,14 @@ public class GetGoogleSignInActivity extends Activity {
     private void handleSignInResult(final Task<GoogleSignInAccount> completedTask) {
         try {
             final GoogleSignInAccount account = completedTask.getResult(ApiException.class);
-            firebaseAuthWithGoogle(account);
+            if (account.getEmail().endsWith(BITS_EMAIL_SUFFIX)) {
+                firebaseAuthWithGoogle(account);
+            } else {
+                mGoogleSignInClient.signOut();
+                Toast.makeText(this, "Please use your BITS mail", Toast.LENGTH_LONG).show();
+                finish();
+            }
+
             // Signed in successfully, show authenticated UI.
         } catch (final ApiException e) {
             // The ApiException status code indicates the detailed failure reason.
