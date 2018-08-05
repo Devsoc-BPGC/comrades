@@ -1,11 +1,13 @@
 package com.macbitsgoa.comrades.profilefragment;
 
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.facebook.drawee.view.SimpleDraweeView;
@@ -17,6 +19,8 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 import com.macbitsgoa.comrades.BuildConfig;
 import com.macbitsgoa.comrades.R;
+import com.macbitsgoa.comrades.ranks.RankActivity;
+import com.macbitsgoa.comrades.ranks.UserObject;
 
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -33,6 +37,7 @@ public class ProfileFragment extends Fragment {
     private TextView tvUserAuthority;
     private TextView tvScore;
     private TextView tvUploads;
+    private TextView tvRank;
     private SimpleDraweeView tvUserImage;
     private static final String TAG = TAG_PREFIX + ProfileFragment.class.getSimpleName();
 
@@ -59,6 +64,7 @@ public class ProfileFragment extends Fragment {
                             tvUserAuthority.setText(obj.getAuthority());
                             tvScore.setText(String.valueOf(obj.getScore()));
                             tvUploads.setText(String.valueOf(obj.getUploads()));
+                            tvRank.setText(String.valueOf(obj.getRank()));
                             tvUserImage.setImageURI(obj.getPhotoUrl());
                         }
 
@@ -75,8 +81,11 @@ public class ProfileFragment extends Fragment {
         tvUserName = view.findViewById(R.id.tv_user_name);
         tvUserAuthority = view.findViewById(R.id.tv_user_authority);
         tvScore = view.findViewById(R.id.tv_score);
+        tvRank = view.findViewById(R.id.tv_rank);
         tvUploads = view.findViewById(R.id.tv_uploads);
         tvUserImage = view.findViewById(R.id.userImage);
+        LinearLayout rankList = view.findViewById(R.id.rankList);
+        rankList.setOnClickListener(view1 -> startActivity(new Intent(getContext(), RankActivity.class)));
         RecyclerView recyclerView = view.findViewById(R.id.rv_profile);
         recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
         recyclerView.setAdapter(new ProfileAdapter());

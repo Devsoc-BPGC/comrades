@@ -1,18 +1,18 @@
-//import * as admin from 'firebase-admin'
-const functions = require('firebase-functions');
+//import * as admin from "firebase-admin"
+const functions = require("firebase-functions");
 const admin = require("firebase-admin");
 let db;
 
 admin.initializeApp(functions.config().firebase);
 db = admin.database();
 
-exports.notifyDebugUserUpdate = functions.database.ref('/debug/users/{id}')
+exports.notifyDebugUserUpdate = functions.database.ref("/debug/users/{id}")
     .onUpdate((snapshot) => {
         const newData = snapshot.after.val();
         if (newData === null) return;
         const msg = {
             data: {
-                type: 'userUpdate',
+                type: "userUpdate",
                 value: JSON.stringify(newData)
             },
             topic: `debugUser${newData.id}`
@@ -26,13 +26,13 @@ exports.notifyDebugUserUpdate = functions.database.ref('/debug/users/{id}')
         });
     });
 
-exports.notifyDebugCourseUpdate = functions.database.ref('/debug/courses/{id}')
+exports.notifyDebugCourseUpdate = functions.database.ref("/debug/courses/{id}")
     .onUpdate((snapshot) => {
         const newData = snapshot.after.val();
         if (newData === null) return;
         const msg = {
             data: {
-                type: 'courseUpdate',
+                type: "courseUpdate",
                 value: JSON.stringify(newData)
             },
             topic: `debugCourseUpdates`
@@ -46,13 +46,13 @@ exports.notifyDebugCourseUpdate = functions.database.ref('/debug/courses/{id}')
         });
     });
 
-exports.notifyDebugMaterialUpdate = functions.database.ref('/debug/materials/{id}')
+exports.notifyDebugMaterialUpdate = functions.database.ref("/debug/materials/{id}")
     .onUpdate((snapshot) => {
         const newData = snapshot.after.val();
         if (newData === null) return;
         const msg = {
             data: {
-                type: 'materialUpdate',
+                type: "materialUpdate",
                 value: JSON.stringify(newData)
             },
             topic: `debugCourse${newData.courseId}`
@@ -70,10 +70,10 @@ exports.notifyDebugMaterialUpdate = functions.database.ref('/debug/materials/{id
 exports.newDebugCourseAdded = functions.database.ref(`/debug/courses/{courseId}/`).onCreate((snapshot, context) => {
     const newItem = snapshot.val();
 
-    return admin.database().ref(`/debug/stats/`).once('value').then((snapshot, context) => {
+    return admin.database().ref(`/debug/stats/`).once("value").then((snapshot, context) => {
         var total_courses = snapshot.val().totalCourses;
 
-        return admin.database().ref(`/debug/users/${newItem.addedById}/`).once('value').then((snapshot, context) => {
+        return admin.database().ref(`/debug/users/${newItem.addedById}/`).once("value").then((snapshot, context) => {
             var creator_photo = snapshot.val().photoUrl;
             var user_name = snapshot.val().name;
 
@@ -99,13 +99,13 @@ exports.newDebugCourseAdded = functions.database.ref(`/debug/courses/{courseId}/
 exports.newDebugMaterialAdded = functions.database.ref(`/debug/courseMaterial/{courseId}/{id}/`).onCreate((snapshot, context) => {
     const newItem = snapshot.val();
     const course = context.params.courseId;
-    return admin.database().ref(`/debug/courses/${course}/`).once('value').then((snapshot) => {
+    return admin.database().ref(`/debug/courses/${course}/`).once("value").then((snapshot) => {
         var courseName = snapshot.val().name;
 
-        return admin.database().ref(`/debug/stats/`).once('value').then((snapshot, context) => {
+        return admin.database().ref(`/debug/stats/`).once("value").then((snapshot, context) => {
             var total_uploads = snapshot.val().totalUploads;
 
-            return admin.database().ref(`/debug/users/${newItem.addedById}/`).once('value').then((snapshot, context) => {
+            return admin.database().ref(`/debug/users/${newItem.addedById}/`).once("value").then((snapshot, context) => {
                 var creator_photo = snapshot.val().photoUrl;
                 var current_score = snapshot.val().score;
                 var number_uploads = snapshot.val().uploads;
@@ -153,13 +153,13 @@ exports.newDebugMaterialAdded = functions.database.ref(`/debug/courseMaterial/{c
     });
 })
 
-exports.notifyReleaseUserUpdate = functions.database.ref('/release/users/{id}')
+exports.notifyReleaseUserUpdate = functions.database.ref("/release/users/{id}")
     .onUpdate((snapshot) => {
         const newData = snapshot.after.val();
         if (newData === null) return;
         const msg = {
             data: {
-                type: 'userUpdate',
+                type: "userUpdate",
                 value: JSON.stringify(newData)
             },
             topic: `releaseUser${newData.id}`
@@ -173,13 +173,13 @@ exports.notifyReleaseUserUpdate = functions.database.ref('/release/users/{id}')
         });
     });
 
-exports.notifyReleaseCourseUpdate = functions.database.ref('/release/courses/{id}')
+exports.notifyReleaseCourseUpdate = functions.database.ref("/release/courses/{id}")
     .onUpdate((snapshot) => {
         const newData = snapshot.after.val();
         if (newData === null) return;
         const msg = {
             data: {
-                type: 'courseUpdate',
+                type: "courseUpdate",
                 value: JSON.stringify(newData)
             },
             topic: `releaseCourseUpdates`
@@ -193,13 +193,13 @@ exports.notifyReleaseCourseUpdate = functions.database.ref('/release/courses/{id
         });
     });
 
-exports.notifyReleaseMaterialUpdate = functions.database.ref('/release/materials/{id}')
+exports.notifyReleaseMaterialUpdate = functions.database.ref("/release/materials/{id}")
     .onUpdate((snapshot) => {
         const newData = snapshot.after.val();
         if (newData === null) return;
         const msg = {
             data: {
-                type: 'materialUpdate',
+                type: "materialUpdate",
                 value: JSON.stringify(newData)
             },
             topic: `releaseCourse${newData.courseId}`
@@ -217,10 +217,10 @@ exports.notifyReleaseMaterialUpdate = functions.database.ref('/release/materials
 exports.newReleaseCourseAdded = functions.database.ref(`/release/courses/{courseId}/`).onCreate((snapshot, context) => {
     const newItem = snapshot.val();
 
-    return admin.database().ref(`/release/stats/`).once('value').then((snapshot, context) => {
+    return admin.database().ref(`/release/stats/`).once("value").then((snapshot, context) => {
         var total_courses = snapshot.val().totalCourses;
 
-        return admin.database().ref(`/release/users/${newItem.addedById}/`).once('value').then((snapshot, context) => {
+        return admin.database().ref(`/release/users/${newItem.addedById}/`).once("value").then((snapshot, context) => {
             var creator_photo = snapshot.val().photoUrl;
             var user_name = snapshot.val().name;
 
@@ -246,13 +246,13 @@ exports.newReleaseCourseAdded = functions.database.ref(`/release/courses/{course
 exports.newReleaseMaterialAdded = functions.database.ref(`/release/courseMaterial/{courseId}/{id}/`).onCreate((snapshot, context) => {
     const newItem = snapshot.val();
     const course = context.params.courseId;
-    return admin.database().ref(`/release/courses/${course}/`).once('value').then((snapshot) => {
+    return admin.database().ref(`/release/courses/${course}/`).once("value").then((snapshot) => {
         var courseName = snapshot.val().name;
 
-        return admin.database().ref(`/release/stats/`).once('value').then((snapshot, context) => {
+        return admin.database().ref(`/release/stats/`).once("value").then((snapshot, context) => {
             var total_uploads = snapshot.val().totalUploads;
 
-            return admin.database().ref(`/release/users/${newItem.addedById}/`).once('value').then((snapshot, context) => {
+            return admin.database().ref(`/release/users/${newItem.addedById}/`).once("value").then((snapshot, context) => {
                 var creator_photo = snapshot.val().photoUrl;
                 var current_score = snapshot.val().score;
                 var number_uploads = snapshot.val().uploads;
@@ -303,28 +303,118 @@ exports.newReleaseMaterialAdded = functions.database.ref(`/release/courseMateria
 
 exports.newUserAdded = functions.auth.user().onCreate((user) => {
 
-    admin.database().ref(`/debug/users/${user.uid}`).set({
-        name: user.displayName,
-        email: user.email,
-        id: user.uid,
-        photoUrl: user.photoURL,
-        score: 0,
-        uploads: 0,
-        authority: "User"
-    })
-    
-    admin.database().ref(`/release/users/${user.uid}`).set({
-        name: user.displayName,
-        email: user.email,
-        id: user.uid,
-        photoUrl: user.photoURL,
-        score: 0,
-        uploads: 0,
-        authority: "User"
-    })
-    return admin.database().ref(`/release/stats/`).once('value').then((snapshot) => {
-        var total_users = snapshot.val().totalUsers;
-        return admin.database().ref(`/release/stats/totalUsers`).set(total_users + 1);
-    })
+    return admin.database().ref(`/debug/users/`).once("value").then((snapshot)=>{
+        
 
+        admin.database().ref(`/debug/users/${user.uid}`).set({
+            name: user.displayName,
+            email: user.email,
+            id: user.uid,
+            photoUrl: user.photoURL,
+            score: 0,
+            uploads: 0,
+            rank:snapshot.numChildren()+1,
+            authority: "User"
+        })
+        
+        return admin.database().ref(`/release/users/`).once("value").then((snapshot)=>{
+        
+
+            admin.database().ref(`/release/users/${user.uid}`).set({
+                name: user.displayName,
+                email: user.email,
+                id: user.uid,
+                photoUrl: user.photoURL,
+                score: 0,
+                uploads: 0,
+                rank:snapshot.numChildren()+1,
+                authority: "User"
+            })
+            
+            return admin.database().ref(`/release/stats/`).once("value").then((snapshot) => {
+                var total_users = snapshot.val().totalUsers;
+                return admin.database().ref(`/release/stats/totalUsers`).set(total_users + 1);
+            });
+        
+        })
+        
+        
+        
+    })    
+    
 });
+
+exports.debugRanks = functions.database.ref("/debug/users/{uuid}/score")
+    .onUpdate((snapshot,context) => {
+        function upgradeRank(score,rank,uuid){
+            return admin.database().ref(`/debug/users/`).once("value").then((snapshot)=>{
+                var rankToFind=rank-1;
+                var foundChild;
+                snapshot.forEach(function(child) {
+                    if(child.val().rank===rankToFind){
+                        foundChild=child.val();
+                        return true;
+                    }
+                });
+                if(foundChild.score<score){
+                    admin.database().ref(`/debug/users/${foundChild.id}/rank`).set(rank);
+                    admin.database().ref(`/debug/users/${uuid}/rank`).set(foundChild.rank);
+                    
+                    if(foundChild.rank!==1){
+                        upgradeRank(score,foundChild.rank,uuid);
+                    }
+                }
+                return 0;
+            });
+        }
+        const uuid=context.params.uuid;
+        return admin.database().ref(`/debug/users/${uuid}/`).once("value").then((snapshot, context) => {
+           var data= snapshot.val();
+           var userScore=data.score;
+           var userRank = data.rank; 
+
+           if(userRank!==1){
+                upgradeRank(userScore,userRank,uuid);
+            }
+
+            return 0;
+        });
+    });
+
+    exports.releaseRanks = functions.database.ref("/release/users/{uuid}/score")
+    .onUpdate((snapshot,context) => {
+        function upgradeRank(score,rank,uuid){
+            return admin.database().ref(`/release/users/`).once("value").then((snapshot)=>{
+                var rankToFind=rank-1;
+                var foundChild;
+                snapshot.forEach(function(child) {
+                    if(child.val().rank===rankToFind){
+                        foundChild=child.val();
+                        return true;
+                    }
+                });
+                if(foundChild.score<score){
+                    admin.database().ref(`/release/users/${foundChild.id}/rank`).set(rank);
+                    admin.database().ref(`/release/users/${uuid}/rank`).set(foundChild.rank);
+                    
+                    if(foundChild.rank!==1){
+                        upgradeRank(score,foundChild.rank,uuid);
+                    }
+                }
+                return 0;
+            });
+        }
+        const uuid=context.params.uuid;
+        return admin.database().ref(`/release/users/${uuid}/`).once("value").then((snapshot, context) => {
+           var data= snapshot.val();
+           var userScore=data.score;
+           var userRank = data.rank; 
+
+           if(userRank!==1){
+                upgradeRank(userScore,userRank,uuid);
+            }
+
+            return 0;
+        });
+    });
+

@@ -11,9 +11,10 @@
 
     <application
         android:name=".Comrades"
-        android:allowBackup="true"
+        android:allowBackup="false"
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
+        android:largeHeap="true"
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme.NoActionBar"
@@ -58,6 +59,11 @@
         <activity
             android:name=".notification.NotificationSettings"
             android:label="@string/title_activity_notification_settings">
+
+        </activity>
+        <activity
+            android:name=".ranks.RankActivity"
+            android:label="@string/title_activity_rank">
 
         </activity>
     </application>

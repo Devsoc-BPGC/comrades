@@ -106,7 +106,6 @@ public class CourseActivity extends AppCompatActivity
                                 if (Objects.equals(materialArrayList.get(i).getId(), itemId)) {
                                     materialArrayList.get(i).setProgress(progress);
                                     materialAdapter.notifyItemChanged(i);
-                                    Log.e(TAG, "progress updated");
                                     break;
                                 }
                             }

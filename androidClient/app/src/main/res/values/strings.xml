@@ -38,6 +38,7 @@
     <string name="title_activity_notification_settings">NotificationSettings</string>
     <string name="notification_settings_off">Currently you are not subscribed to any courses.Click on the switch above to turn on the Notifications.</string>
     <string name="unsubscribe">UnSubscribe</string>
+    <string name="title_activity_rank">RankActivity</string>
 
 
 </resources>
