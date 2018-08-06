@@ -149,7 +149,7 @@ class DataRepository(application: Application) {
         course.addedById = author.id
         // author is already added to db, isn't it?
         insertLocally(course)
-        FirebaseMessaging.getInstance().subscribeToTopic(BuildConfig.BUILD_TYPE + "Course${course.id}")
+        FirebaseMessaging.getInstance().subscribeToTopic(BuildConfig.BUILD_TYPE + "MyCourse${course.id}")
                 .addOnCompleteListener {
                     if (BuildConfig.DEBUG) {
                         Log.i(tag, "Subscription to topic course${course.id} isSuccessful: ${it.isSuccessful}")

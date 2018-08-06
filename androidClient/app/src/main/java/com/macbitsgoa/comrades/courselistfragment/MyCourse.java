@@ -1,4 +1,4 @@
-package com.macbitsgoa.comrades.notification;
+package com.macbitsgoa.comrades.courselistfragment;
 
 import androidx.annotation.NonNull;
 import androidx.room.ColumnInfo;
@@ -9,7 +9,7 @@ import androidx.room.PrimaryKey;
  * @author aayush
  */
 @Entity
-public class SubscribedCourses {
+public class MyCourse {
 
     @PrimaryKey
     @NonNull
@@ -24,6 +24,13 @@ public class SubscribedCourses {
 
     @ColumnInfo(name = "code")
     private String code;
+
+    @ColumnInfo(name = "isFollowing")
+    private Boolean isFollowing;
+
+    @ColumnInfo(name = "isPinned")
+    private Boolean isPinned;
+
 
     public String getAddedById() {
         return addedById;
@@ -55,5 +62,21 @@ public class SubscribedCourses {
 
     public void setName(String name) {
         this.name = name;
+    }
+
+    public Boolean getPinned() {
+        return isPinned;
+    }
+
+    public void setPinned(Boolean pinned) {
+        isPinned = pinned;
+    }
+
+    public Boolean getFollowing() {
+        return isFollowing;
+    }
+
+    public void setFollowing(Boolean following) {
+        isFollowing = following;
     }
 }

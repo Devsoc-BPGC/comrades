@@ -5,7 +5,6 @@ import android.view.LayoutInflater;
 import android.view.ViewGroup;
 
 import com.macbitsgoa.comrades.R;
-import com.macbitsgoa.comrades.notification.SubscribedCourses;
 
 import java.util.ArrayList;
 
@@ -16,12 +15,10 @@ import androidx.recyclerview.widget.RecyclerView;
  */
 public class CourseAdapter extends RecyclerView.Adapter<CourseVh> {
 
-    private ArrayList<ItemCourse> courses;
-    private ArrayList<SubscribedCourses> subscribedCourses;
+    private ArrayList<MyCourse> course;
 
-    public CourseAdapter(ArrayList<ItemCourse> courses, ArrayList<SubscribedCourses> subscribedCourses) {
-        this.courses = courses;
-        this.subscribedCourses = subscribedCourses;
+    public CourseAdapter(ArrayList<MyCourse> course) {
+        this.course = course;
     }
 
     @Override
@@ -32,11 +29,11 @@ public class CourseAdapter extends RecyclerView.Adapter<CourseVh> {
 
     @Override
     public void onBindViewHolder(CourseVh holder, int position) {
-        holder.populate(courses.get(position), subscribedCourses);
+        holder.populate(course.get(position));
     }
 
     @Override
     public int getItemCount() {
-        return courses.size();
+        return course.size();
     }
 }

@@ -9,6 +9,8 @@ import android.widget.LinearLayout;
 import android.widget.Switch;
 
 import com.macbitsgoa.comrades.R;
+import com.macbitsgoa.comrades.courselistfragment.CourseVm;
+import com.macbitsgoa.comrades.courselistfragment.MyCourse;
 
 import java.util.ArrayList;
 
@@ -21,7 +23,7 @@ import androidx.recyclerview.widget.RecyclerView;
 public class NotificationSettings extends AppCompatActivity implements CompoundButton.OnCheckedChangeListener {
     private RecyclerView rv_subscribed_courses;
     public static String SETTINGS = "NotificationSetting";
-    private ArrayList<SubscribedCourses> course = new ArrayList<>(0);
+    private ArrayList<MyCourse> course = new ArrayList<>(0);
     private NotificationAdapter notificationAdapter;
     private LinearLayout viewNotificationsOff;
 
@@ -37,12 +39,14 @@ public class NotificationSettings extends AppCompatActivity implements CompoundB
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getBaseContext());
         radioButton.setChecked(prefs.getBoolean(SETTINGS, true));
         showViews(prefs.getBoolean(SETTINGS, true));
-        rv_subscribed_courses.setLayoutManager(new LinearLayoutManager(this));
+        LinearLayoutManager linearLayoutManager = new LinearLayoutManager(this);
+        rv_subscribed_courses.hasFixedSize();
+        rv_subscribed_courses.setLayoutManager(linearLayoutManager);
         notificationAdapter = new NotificationAdapter(course);
         rv_subscribed_courses.setAdapter(notificationAdapter);
 
-        NotificationVm notificationVm = ViewModelProviders.of(this).get(NotificationVm.class);
-        notificationVm.getAll().observe(this, courses -> {
+        CourseVm courseVm = ViewModelProviders.of(this).get(CourseVm.class);
+        courseVm.getFollowingList().observe(this, courses -> {
             course.clear();
             course.addAll(courses);
             notificationAdapter.notifyDataSetChanged();
@@ -67,4 +71,5 @@ public class NotificationSettings extends AppCompatActivity implements CompoundB
             viewNotificationsOff.setVisibility(View.VISIBLE);
         }
     }
+
 }

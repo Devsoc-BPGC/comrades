@@ -4,6 +4,7 @@ import android.view.LayoutInflater;
 import android.view.ViewGroup;
 
 import com.macbitsgoa.comrades.R;
+import com.macbitsgoa.comrades.courselistfragment.MyCourse;
 
 import java.util.ArrayList;
 
@@ -14,9 +15,9 @@ import androidx.recyclerview.widget.RecyclerView;
  */
 
 public class NotificationAdapter extends RecyclerView.Adapter<NotificationViewHolder> {
-    private ArrayList<SubscribedCourses> course;
+    private ArrayList<MyCourse> course;
 
-    public NotificationAdapter(ArrayList<SubscribedCourses> course) {
+    public NotificationAdapter(ArrayList<MyCourse> course) {
         this.course = course;
     }
 

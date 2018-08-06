@@ -14,4 +14,4 @@ const val COURSES = "courses"
 /**
  * Get fcm channel name corresponding to the course
  */
-fun getTopicForCourse(course: Course) = BuildConfig.BUILD_TYPE + "Course${course.id}"
+fun getTopicForCourse(course: Course) = BuildConfig.BUILD_TYPE + "MyCourse${course.id}"

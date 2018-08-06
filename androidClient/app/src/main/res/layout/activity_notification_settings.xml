@@ -1,18 +1,16 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical"
-    android:theme="@style/Theme.MaterialComponents.Light"
     tools:context="com.macbitsgoa.comrades.notification.NotificationSettings">
 
     <FrameLayout
+        android:id="@+id/toolbar"
         app:layout_constraintTop_toTopOf="parent"
         android:layout_width="match_parent"
         android:layout_height="?android:attr/actionBarSize"
-        android:orientation="horizontal"
         android:background="?android:attr/colorPrimary"
         android:elevation="4dp"
         android:theme="@style/AppTheme.ToolBarStyle"
@@ -37,18 +35,23 @@
             android:layout_height="wrap_content"
             android:layout_gravity="end|center"
             android:layout_marginEnd="20dp" />
+
     </FrameLayout>
 
     <androidx.recyclerview.widget.RecyclerView
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/toolbar"
         android:id="@+id/rv_notifications"
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
+        android:layout_height="wrap_content" />
 
-    </androidx.recyclerview.widget.RecyclerView>
 
     <LinearLayout
+        app:layout_constraintTop_toBottomOf="@id/toolbar"
         android:id="@+id/notifications_off"
         android:background="@color/lighterBlack"
+        android:visibility="visible"
         android:orientation="vertical"
         android:layout_width="match_parent"
         android:layout_height="match_parent">
@@ -70,4 +73,4 @@
             android:text="@string/notification_settings_off" />
     </LinearLayout>
 
-</LinearLayout>
+</androidx.constraintlayout.widget.ConstraintLayout>

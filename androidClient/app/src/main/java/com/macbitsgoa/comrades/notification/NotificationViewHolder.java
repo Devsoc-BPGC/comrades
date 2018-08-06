@@ -8,6 +8,8 @@ import com.facebook.drawee.view.SimpleDraweeView;
 import com.google.firebase.messaging.FirebaseMessaging;
 import com.macbitsgoa.comrades.BuildConfig;
 import com.macbitsgoa.comrades.R;
+import com.macbitsgoa.comrades.courselistfragment.CourseVm;
+import com.macbitsgoa.comrades.courselistfragment.MyCourse;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.lifecycle.ViewModelProviders;
@@ -27,12 +29,13 @@ public class NotificationViewHolder extends RecyclerView.ViewHolder {
         unSubscribeButton = itemView.findViewById(R.id.button_unsubscribe);
     }
 
-    public void populate(SubscribedCourses subscribedCourse) {
-        nameTv.setText(subscribedCourse.getName());
+    public void populate(MyCourse course) {
+        nameTv.setText(course.getName());
         unSubscribeButton.setOnClickListener(view -> {
-            FirebaseMessaging.getInstance().unsubscribeFromTopic(BuildConfig.BUILD_TYPE + subscribedCourse.getId());
-            NotificationVm notificationVm = ViewModelProviders.of((AppCompatActivity) ((ContextThemeWrapper) itemView.getContext()).getBaseContext()).get(NotificationVm.class);
-            notificationVm.delete(subscribedCourse);
+            FirebaseMessaging.getInstance().unsubscribeFromTopic(BuildConfig.BUILD_TYPE + course.getId());
+            CourseVm courseVm = ViewModelProviders.of((AppCompatActivity) ((ContextThemeWrapper) itemView.getContext()).getBaseContext()).get(CourseVm.class);
+            course.setFollowing(false);
+            courseVm.update(course);
         });
     }
 
