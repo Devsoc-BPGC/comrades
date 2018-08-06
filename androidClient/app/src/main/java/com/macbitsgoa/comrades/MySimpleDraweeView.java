@@ -69,6 +69,7 @@ public class MySimpleDraweeView extends SimpleDraweeView implements View.OnClick
                         tv_authority.setText(dataSnapshot.child("authority").getValue(String.class));
                         tv_uploads.setText(dataSnapshot.child("uploads").getValue(Long.class) + "");
                         tv_score.setText(dataSnapshot.child("score").getValue(Long.class) + "");
+                        tv_rank.setText(dataSnapshot.child("rank").getValue(Long.class) + "");
                         draweeView.setImageURI(dataSnapshot.child("photoUrl").getValue(String.class));
                     }
 
