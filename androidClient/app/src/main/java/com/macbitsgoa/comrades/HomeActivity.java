@@ -1,11 +1,16 @@
 package com.macbitsgoa.comrades;
 
+import android.app.SearchManager;
+import android.content.Context;
 import android.content.SharedPreferences;
+import android.database.Cursor;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
+import android.widget.SearchView;
 import android.widget.Toast;
 
 import com.facebook.drawee.backends.pipeline.Fresco;
@@ -16,13 +21,18 @@ import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.firebase.auth.FirebaseAuth;
 import com.macbitsgoa.comrades.courselistfragment.CourseListFragment;
-import com.macbitsgoa.comrades.courselistfragment.CourseListVm;
 import com.macbitsgoa.comrades.homefragment.HomeFragment;
+import com.macbitsgoa.comrades.persistance.Database;
 import com.macbitsgoa.comrades.profilefragment.ProfileFragment;
+import com.macbitsgoa.comrades.search.SearchCoursesCursorAdapter;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.FragmentManager;
-import androidx.lifecycle.ViewModelProviders;
+import io.reactivex.Observable;
+import io.reactivex.android.schedulers.AndroidSchedulers;
+import io.reactivex.functions.Consumer;
+import io.reactivex.functions.Function;
+import io.reactivex.schedulers.Schedulers;
 
 
 public class HomeActivity extends AppCompatActivity {
@@ -30,7 +40,7 @@ public class HomeActivity extends AppCompatActivity {
     private GoogleApiClient mGoogleApiClient;
     private FragmentManager fragmentManager = getSupportFragmentManager();
     public static BottomNavigationView navigation;
-
+    private SearchView searchView;
     private BottomNavigationView.OnNavigationItemSelectedListener mOnNavigationItemSelectedListener
             = item -> {
         switch (item.getItemId()) {
@@ -63,6 +73,8 @@ public class HomeActivity extends AppCompatActivity {
             navigation.setSelectedItemId(savedInstanceState.getInt("bottomNav"));
         else
             navigation.setSelectedItemId(R.id.navigation_home);
+
+
     }
 
     @Override
@@ -76,12 +88,31 @@ public class HomeActivity extends AppCompatActivity {
             FirebaseAuth.getInstance().signOut();
             Auth.GoogleSignInApi.signOut(mGoogleApiClient).setResultCallback(status -> {
                 invalidateOptionsMenu();
-                ViewModelProviders.of(HomeActivity.this).get(CourseListVm.class).signOut();
                 Toast.makeText(HomeActivity.this, "Signed Out Successfully", Toast.LENGTH_SHORT).show();
             });
             return true;
         });
 
+        MenuItem menuItem = menu.findItem(R.id.action_search);
+        SearchManager searchManager = (SearchManager) getSystemService(Context.SEARCH_SERVICE);
+        searchView = (SearchView) menuItem.getActionView();
+        searchView.setSearchableInfo(searchManager.getSearchableInfo(getComponentName()));
+        searchView.setIconifiedByDefault(true);
+        searchView.setSubmitButtonEnabled(true);
+        searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
+            @Override
+            public boolean onQueryTextSubmit(String s) {
+                Log.e("TAG", "query:" + s);
+                return false;
+            }
+
+            @Override
+            public boolean onQueryTextChange(String s) {
+                Log.e("TAG", "query:" + s);
+                getDealsFromDb(s);
+                return false;
+            }
+        });
         return true;
 
     }
@@ -116,4 +147,41 @@ public class HomeActivity extends AppCompatActivity {
         super.onSaveInstanceState(savedInstanceState);
         savedInstanceState.putInt("bottomNav", navigation.getSelectedItemId());
     }
+
+    private void getDealsFromDb(String searchText) {
+        searchText = "%" + searchText + "%";
+        Observable.just(searchText).observeOn(Schedulers.computation())
+                .map(new Function<String, Cursor>() {
+                    @Override
+                    public Cursor apply(String searchStrt) {
+                        return Database.getInstance(HomeActivity.this).getCourseDao().getSearchCursor(searchStrt);
+                    }
+                }).observeOn(AndroidSchedulers.mainThread())
+                .subscribe(new Consumer<Cursor>() {
+                    @Override
+                    public void accept(Cursor cursor) {
+                        handleResults(cursor);
+                    }
+                }, new Consumer<Throwable>() {
+                    @Override
+                    public void accept(Throwable throwable) {
+                        handleError(throwable);
+                    }
+                });
+
+
+    }
+
+
+    private void handleResults(Cursor cursor) {
+        searchView.setSuggestionsAdapter(new SearchCoursesCursorAdapter
+                (HomeActivity.this, cursor, searchView));
+    }
+
+    private void handleError(Throwable t) {
+        Log.e("TAG", t.getMessage(), t);
+        Toast.makeText(this, "Problem in Fetching Courses",
+                Toast.LENGTH_LONG).show();
+    }
+
 }

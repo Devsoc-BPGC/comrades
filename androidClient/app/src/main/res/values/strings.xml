@@ -7,7 +7,7 @@
         666225132801-iklcdj36jau98rf2v44a0v1rnguioatd.apps.googleusercontent.com
     </string>
     <string name="client_secret">NGfzk-7sJilNmFla6TZy8WrL</string>
-    <string name="action_search">Search App</string>
+    <string name="action_search">Search Courses</string>
     <string name="login_to_add_course">Please login to add Course.</string>
     <string name="login_to_add_file">Please login to add material.</string>
     <string name="login_to_download_file">Please login to download material.</string>
@@ -39,6 +39,8 @@
     <string name="notification_settings_off">Currently you are not subscribed to any course.Click on the switch above to turn on the Notifications.</string>
     <string name="unsubscribe">UnSubscribe</string>
     <string name="title_activity_rank">RankActivity</string>
+    <string name="search_hint">course name</string>
+    <string name="no_result_found">Your search string didn\'t match any course.Please try again with a different keyword.</string>
 
 
 </resources>

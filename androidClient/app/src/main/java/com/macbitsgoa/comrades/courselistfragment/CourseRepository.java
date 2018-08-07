@@ -23,7 +23,6 @@ public class CourseRepository {
         courseDao = db.getCourseDao();
         courseList = courseDao.getAllCourses();
         followingList = courseDao.getFollowingCourses();
-
     }
 
     public LiveData<List<MyCourse>> getAllCourses() {

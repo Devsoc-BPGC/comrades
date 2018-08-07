@@ -115,8 +115,10 @@ public class CourseListFragment extends Fragment implements ChildEventListener {
     @Override
     public void onChildAdded(DataSnapshot dataSnapshot, String s) {
         MyCourse myCourse = dataSnapshot.getValue(MyCourse.class);
+        if (myCourse.getAddedByName() == null) {
+            myCourse.setAddedByName("");
+        }
         myCourse.setFollowing(false);
-        myCourse.setPinned(false);
         courseVm.insert(myCourse);
     }
 
@@ -128,7 +130,6 @@ public class CourseListFragment extends Fragment implements ChildEventListener {
             if (Objects.equals(arrayList.get(i).getId(), myCourse.getId())) {
                 arrayList.remove(i);
                 myCourse.setFollowing(arrayList.get(i).getFollowing());
-                myCourse.setPinned(arrayList.get(i).getPinned());
                 courseVm.update(myCourse);
                 break;
             }

@@ -13,7 +13,7 @@ public class MyCourse {
 
     @PrimaryKey
     @NonNull
-    private String id;
+    private String _id;
 
     @ColumnInfo(name = "name")
     @NonNull
@@ -28,9 +28,8 @@ public class MyCourse {
     @ColumnInfo(name = "isFollowing")
     private Boolean isFollowing;
 
-    @ColumnInfo(name = "isPinned")
-    private Boolean isPinned;
-
+    @ColumnInfo(name = "addedByName")
+    private String addedByName;
 
     public String getAddedById() {
         return addedById;
@@ -41,7 +40,7 @@ public class MyCourse {
     }
 
     public String getId() {
-        return id;
+        return _id;
     }
 
     public String getName() {
@@ -57,19 +56,11 @@ public class MyCourse {
     }
 
     public void setId(String id) {
-        this.id = id;
+        this._id = id;
     }
 
     public void setName(String name) {
         this.name = name;
-    }
-
-    public Boolean getPinned() {
-        return isPinned;
-    }
-
-    public void setPinned(Boolean pinned) {
-        isPinned = pinned;
     }
 
     public Boolean getFollowing() {
@@ -78,5 +69,13 @@ public class MyCourse {
 
     public void setFollowing(Boolean following) {
         isFollowing = following;
+    }
+
+    public String getAddedByName() {
+        return addedByName;
+    }
+
+    public void setAddedByName(String addedByName) {
+        this.addedByName = addedByName;
     }
 }
