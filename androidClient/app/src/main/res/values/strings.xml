@@ -8,7 +8,7 @@
     </string>
     <string name="client_secret">NGfzk-7sJilNmFla6TZy8WrL</string>
     <string name="action_search">Search App</string>
-    <string name="login_to_add_course">Please login to add myCourse.</string>
+    <string name="login_to_add_course">Please login to add Course.</string>
     <string name="login_to_add_file">Please login to add material.</string>
     <string name="login_to_download_file">Please login to download material.</string>
     <string name="storage_permission_needed">Storage permission needed</string>
@@ -35,8 +35,8 @@
     <string name="title_home">Home</string>
     <string name="title_courses">All Courses</string>
     <string name="title_profile">My Profile</string>
-    <string name="title_activity_notification_settings">NotificationSettings</string>
-    <string name="notification_settings_off">Currently you are not subscribed to any cours.Click on the switch above to turn on the Notifications.</string>
+    <string name="title_activity_subscribed_courses">My Courses</string>
+    <string name="notification_settings_off">Currently you are not subscribed to any course.Click on the switch above to turn on the Notifications.</string>
     <string name="unsubscribe">UnSubscribe</string>
     <string name="title_activity_rank">RankActivity</string>
 

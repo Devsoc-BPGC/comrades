@@ -22,10 +22,7 @@ public interface CourseDao {
 
     @Query("SELECT * FROM MyCourse WHERE isFollowing ")
     LiveData<List<MyCourse>> getFollowingCourses();
-
-    @Query("SELECT * FROM MyCourse WHERE isPinned ")
-    List<MyCourse> getPinnedCourses();
-
+    
     @Insert
     void insertAll(List<MyCourse> products);
 

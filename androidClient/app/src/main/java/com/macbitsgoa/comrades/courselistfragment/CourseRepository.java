@@ -73,7 +73,7 @@ public class CourseRepository {
 
         @Override
         protected Void doInBackground(final MyCourse... params) {
-            mAsyncTaskDao.insert(params[0]);
+            mAsyncTaskDao.delete(params[0]);
             return null;
         }
     }

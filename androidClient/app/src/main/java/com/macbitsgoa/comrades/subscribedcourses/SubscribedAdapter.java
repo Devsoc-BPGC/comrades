@@ -1,4 +1,4 @@
-package com.macbitsgoa.comrades.notification;
+package com.macbitsgoa.comrades.subscribedcourses;
 
 import android.view.LayoutInflater;
 import android.view.ViewGroup;
@@ -14,21 +14,21 @@ import androidx.recyclerview.widget.RecyclerView;
  * @author aayush singla
  */
 
-public class NotificationAdapter extends RecyclerView.Adapter<NotificationViewHolder> {
+public class SubscribedAdapter extends RecyclerView.Adapter<SubscribedViewHolder> {
     private ArrayList<MyCourse> course;
 
-    public NotificationAdapter(ArrayList<MyCourse> course) {
+    public SubscribedAdapter(ArrayList<MyCourse> course) {
         this.course = course;
     }
 
     @Override
-    public NotificationViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-        return new NotificationViewHolder(LayoutInflater.from(parent.getContext())
+    public SubscribedViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+        return new SubscribedViewHolder(LayoutInflater.from(parent.getContext())
                 .inflate(R.layout.vh_notification_rv, null));
     }
 
     @Override
-    public void onBindViewHolder(NotificationViewHolder holder, int position) {
+    public void onBindViewHolder(SubscribedViewHolder holder, int position) {
         holder.populate(course.get(position));
     }
 

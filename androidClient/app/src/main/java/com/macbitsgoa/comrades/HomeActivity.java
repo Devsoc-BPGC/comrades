@@ -24,10 +24,9 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.FragmentManager;
 import androidx.lifecycle.ViewModelProviders;
 
-import static com.macbitsgoa.comrades.notification.NotificationSettings.SETTINGS;
 
 public class HomeActivity extends AppCompatActivity {
-
+    public static String SETTINGS = "NotificationSetting";
     private GoogleApiClient mGoogleApiClient;
     private FragmentManager fragmentManager = getSupportFragmentManager();
     public static BottomNavigationView navigation;
