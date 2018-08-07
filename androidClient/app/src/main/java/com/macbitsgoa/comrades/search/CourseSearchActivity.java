@@ -22,9 +22,9 @@ import androidx.recyclerview.widget.RecyclerView;
  */
 
 public class CourseSearchActivity extends AppCompatActivity {
-    ArrayList<MyCourse> arrayList;
-    RecyclerView recyclerView;
-    CourseAdapter courseAdapter;
+    private ArrayList<MyCourse> arrayList;
+    private RecyclerView recyclerView;
+    private CourseAdapter courseAdapter;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {

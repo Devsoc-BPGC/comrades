@@ -109,7 +109,7 @@ public class HomeActivity extends AppCompatActivity {
             @Override
             public boolean onQueryTextChange(String s) {
                 Log.e("TAG", "query:" + s);
-                getDealsFromDb(s);
+                getCoursesFromDb(s);
                 return false;
             }
         });
@@ -148,8 +148,8 @@ public class HomeActivity extends AppCompatActivity {
         savedInstanceState.putInt("bottomNav", navigation.getSelectedItemId());
     }
 
-    private void getDealsFromDb(String searchText) {
-        searchText = "%" + searchText + "%";
+    private void getCoursesFromDb(String query) {
+        String searchText = "%" + query + "%";
         Observable.just(searchText).observeOn(Schedulers.computation())
                 .map(new Function<String, Cursor>() {
                     @Override
@@ -174,8 +174,7 @@ public class HomeActivity extends AppCompatActivity {
 
 
     private void handleResults(Cursor cursor) {
-        searchView.setSuggestionsAdapter(new SearchCoursesCursorAdapter
-                (HomeActivity.this, cursor, searchView));
+        searchView.setSuggestionsAdapter(new SearchCoursesCursorAdapter(HomeActivity.this, cursor));
     }
 
     private void handleError(Throwable t) {

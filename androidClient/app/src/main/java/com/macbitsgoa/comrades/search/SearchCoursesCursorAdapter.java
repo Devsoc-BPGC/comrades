@@ -6,23 +6,19 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.CursorAdapter;
-import android.widget.SearchView;
 import android.widget.TextView;
 
 import com.macbitsgoa.comrades.R;
+import com.macbitsgoa.comrades.coursematerial.CourseActivity;
 
 /**
  * @author aayush singla
  */
 public class SearchCoursesCursorAdapter extends CursorAdapter {
     private LayoutInflater mLayoutInflater;
-    private Context mContext;
-    private SearchView searchView;
 
-    public SearchCoursesCursorAdapter(Context context, Cursor cursor, SearchView sv) {
+    public SearchCoursesCursorAdapter(Context context, Cursor cursor) {
         super(context, cursor, false);
-        mContext = context;
-        searchView = sv;
         mLayoutInflater = LayoutInflater.from(context);
     }
 
@@ -34,6 +30,7 @@ public class SearchCoursesCursorAdapter extends CursorAdapter {
 
     @Override
     public void bindView(View view, final Context context, Cursor cursor) {
+        String id = cursor.getString(cursor.getColumnIndexOrThrow("_id"));
         String name = cursor.getString(cursor.getColumnIndexOrThrow("name"));
         String code = cursor.getString(cursor.getColumnIndexOrThrow("code"));
         String addedBy = cursor.getString(cursor.getColumnIndexOrThrow("addedByName"));
@@ -46,7 +43,7 @@ public class SearchCoursesCursorAdapter extends CursorAdapter {
         codeTv.setText("added by " + addedBy);
 
         view.setOnClickListener(view1 -> {
-
+            CourseActivity.show(view1.getContext(), id, name);
         });
 
     }
