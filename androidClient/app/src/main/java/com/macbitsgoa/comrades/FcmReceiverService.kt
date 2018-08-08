@@ -18,7 +18,6 @@ import com.google.gson.Gson
 import com.macbitsgoa.comrades.coursematerial.CourseActivity
 import com.macbitsgoa.comrades.coursematerial.CourseActivity.KEY_COURSE_ID
 import com.macbitsgoa.comrades.coursematerial.CourseActivity.KEY_COURSE_NAME
-import com.macbitsgoa.comrades.notification.NotificationSettings.SETTINGS
 import com.macbitsgoa.comrades.persistance.Course
 import com.macbitsgoa.comrades.persistance.DataRepository
 import com.macbitsgoa.comrades.persistance.Material
@@ -34,6 +33,7 @@ import com.macbitsgoa.comrades.persistance.Person
 @Suppress("ProtectedInFinal")
 class FcmReceiverService : FirebaseMessagingService() {
     protected val tag = TAG_PREFIX + FcmReceiverService::class.java.simpleName
+    var SETTINGS = "NotificationSetting"
 
     override fun onMessageReceived(message: RemoteMessage) {
         val repo = DataRepository(application)

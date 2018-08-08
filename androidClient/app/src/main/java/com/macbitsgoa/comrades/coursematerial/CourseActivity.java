@@ -138,7 +138,6 @@ public class CourseActivity extends AppCompatActivity
         btnAddMaterial = findViewById(R.id.fab_add_material);
         RecyclerView recyclerView = findViewById(R.id.rv_content_list);
         final Toolbar toolbar = findViewById(R.id.toolbar_course_activity);
-
         toolbar.inflateMenu(R.menu.course_activity_toolbar);
         toolbar.setNavigationIcon(getResources().getDrawable(R.drawable.ic_arrow_back));
         toolbar.setTitle(courseName);

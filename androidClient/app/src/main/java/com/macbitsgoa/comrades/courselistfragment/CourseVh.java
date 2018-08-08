@@ -1,6 +1,5 @@
 package com.macbitsgoa.comrades.courselistfragment;
 
-import android.util.Log;
 import android.view.View;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
@@ -12,11 +11,6 @@ import com.google.firebase.messaging.FirebaseMessaging;
 import com.macbitsgoa.comrades.BuildConfig;
 import com.macbitsgoa.comrades.R;
 import com.macbitsgoa.comrades.coursematerial.CourseActivity;
-import com.macbitsgoa.comrades.notification.NotificationVm;
-import com.macbitsgoa.comrades.notification.SubscribedCourses;
-
-import java.util.List;
-import java.util.Objects;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.lifecycle.ViewModelProviders;
@@ -30,7 +24,6 @@ public class CourseVh extends RecyclerView.ViewHolder {
     private TextView nameTv;
     private Chip codeChip;
     private ImageButton subscribeButton;
-    private boolean subscribed = false;
 
     public CourseVh(View itemView) {
         super(itemView);
@@ -39,21 +32,13 @@ public class CourseVh extends RecyclerView.ViewHolder {
         subscribeButton = itemView.findViewById(R.id.notification_icon);
     }
 
-    public void populate(ItemCourse course, List<SubscribedCourses> subscribedCourses) {
-
-        for (int i = 0; i < subscribedCourses.size(); i++) {
-            if (Objects.equals(course.getId(), subscribedCourses.get(i).getId())) {
-                subscribed = true;
-                break;
-            }
-        }
-
-        nameTv.setText(course.getName());
-        codeChip.setChipText(course.getCode());
+    public void populate(MyCourse myCourse) {
+        nameTv.setText(myCourse.getName());
+        codeChip.setChipText(myCourse.getCode());
         itemView.setOnClickListener(view -> CourseActivity.show(itemView.getContext(),
-                course.getId(), course.getName()));
+                myCourse.getId(), myCourse.getName()));
 
-        if (subscribed)
+        if (myCourse.getFollowing())
             subscribeButton.setImageResource(R.drawable.ic_notifications_active_black_24dp);
         else
             subscribeButton.setImageResource(R.drawable.ic_notifications_none_black_24dp);
@@ -63,22 +48,17 @@ public class CourseVh extends RecyclerView.ViewHolder {
             final Animation animShake = AnimationUtils.loadAnimation(itemView.getContext(),
                     R.anim.subscribe);
             subscribeButton.startAnimation(animShake);
-            SubscribedCourses subscribedCourse = new SubscribedCourses();
-            subscribedCourse.setName(course.getName());
-            subscribedCourse.setId(course.getId());
-            subscribedCourse.setAddedById(course.getAddedById());
-            subscribedCourse.setCode(course.getCode());
-            Log.e("context.courseVH", itemView.getContext().toString());
-            NotificationVm notificationVm = ViewModelProviders.of((AppCompatActivity) itemView.getContext()).get(NotificationVm.class);
-            if (subscribed) {
-                subscribed = false;
-                FirebaseMessaging.getInstance().unsubscribeFromTopic(BuildConfig.BUILD_TYPE + course.getId());
-                notificationVm.delete(subscribedCourse);
+
+            CourseVm courseVm = ViewModelProviders.of((AppCompatActivity) itemView.getContext()).get(CourseVm.class);
+            if (myCourse.getFollowing()) {
+                myCourse.setFollowing(false);
+                FirebaseMessaging.getInstance().unsubscribeFromTopic(BuildConfig.BUILD_TYPE + myCourse.getId());
+                courseVm.update(myCourse);
                 subscribeButton.setImageResource(R.drawable.ic_notifications_none_black_24dp);
             } else {
-                subscribed = true;
-                FirebaseMessaging.getInstance().subscribeToTopic(BuildConfig.BUILD_TYPE + course.getId());
-                notificationVm.insert(subscribedCourse);
+                myCourse.setFollowing(true);
+                FirebaseMessaging.getInstance().subscribeToTopic(BuildConfig.BUILD_TYPE + myCourse.getId());
+                courseVm.update(myCourse);
                 subscribeButton.setImageResource(R.drawable.ic_notifications_active_black_24dp);
             }
         });

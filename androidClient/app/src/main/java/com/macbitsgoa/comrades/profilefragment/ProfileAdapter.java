@@ -21,7 +21,7 @@ public class ProfileAdapter extends RecyclerView.Adapter<ProfileViewHolder> {
         items.add("My Courses");
         items.add("Ongoing Downloads");
         items.add("Ongoing Uploads");
-        items.add("Notification Settings");
+        items.add("Notifications");
         items.add("Eateries");
         items.add("Utilities");
     }
@@ -35,7 +35,7 @@ public class ProfileAdapter extends RecyclerView.Adapter<ProfileViewHolder> {
 
     @Override
     public void onBindViewHolder(ProfileViewHolder holder, int position) {
-        holder.tvProfile.setText(items.get(position));
+        holder.populate(items.get(position));
     }
 
 

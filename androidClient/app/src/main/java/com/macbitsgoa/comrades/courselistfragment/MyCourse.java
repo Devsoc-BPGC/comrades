@@ -1,4 +1,4 @@
-package com.macbitsgoa.comrades.notification;
+package com.macbitsgoa.comrades.courselistfragment;
 
 import androidx.annotation.NonNull;
 import androidx.room.ColumnInfo;
@@ -9,11 +9,11 @@ import androidx.room.PrimaryKey;
  * @author aayush
  */
 @Entity
-public class SubscribedCourses {
+public class MyCourse {
 
     @PrimaryKey
     @NonNull
-    private String id;
+    private String _id;
 
     @ColumnInfo(name = "name")
     @NonNull
@@ -25,6 +25,12 @@ public class SubscribedCourses {
     @ColumnInfo(name = "code")
     private String code;
 
+    @ColumnInfo(name = "isFollowing")
+    private Boolean isFollowing;
+
+    @ColumnInfo(name = "addedByName")
+    private String addedByName;
+
     public String getAddedById() {
         return addedById;
     }
@@ -34,7 +40,7 @@ public class SubscribedCourses {
     }
 
     public String getId() {
-        return id;
+        return _id;
     }
 
     public String getName() {
@@ -50,10 +56,26 @@ public class SubscribedCourses {
     }
 
     public void setId(String id) {
-        this.id = id;
+        this._id = id;
     }
 
     public void setName(String name) {
         this.name = name;
+    }
+
+    public Boolean getFollowing() {
+        return isFollowing;
+    }
+
+    public void setFollowing(Boolean following) {
+        isFollowing = following;
+    }
+
+    public String getAddedByName() {
+        return addedByName;
+    }
+
+    public void setAddedByName(String addedByName) {
+        this.addedByName = addedByName;
     }
 }

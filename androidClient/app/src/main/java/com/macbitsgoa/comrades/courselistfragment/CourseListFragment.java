@@ -19,8 +19,6 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.macbitsgoa.comrades.BuildConfig;
 import com.macbitsgoa.comrades.GetGoogleSignInActivity;
 import com.macbitsgoa.comrades.R;
-import com.macbitsgoa.comrades.notification.NotificationVm;
-import com.macbitsgoa.comrades.notification.SubscribedCourses;
 
 import java.util.ArrayList;
 import java.util.Objects;
@@ -40,11 +38,11 @@ import static com.macbitsgoa.comrades.CHCKt.TAG_PREFIX;
 public class CourseListFragment extends Fragment implements ChildEventListener {
 
     private static final String ADD_COURSE_FRAGMENT = "addCourseFragment";
-    private ArrayList<ItemCourse> arrayList = new ArrayList<>();
-    private ArrayList<SubscribedCourses> subscribedCourses = new ArrayList<>(0);
+    private ArrayList<MyCourse> arrayList = new ArrayList<>();
     private CourseAdapter courseAdapter;
     private CoordinatorLayout rootCl;
     private final static String TAG = TAG_PREFIX + CourseListFragment.class.getSimpleName();
+    private CourseVm courseVm;
 
     public static Fragment newInstance() {
         return new CourseListFragment();
@@ -53,24 +51,25 @@ public class CourseListFragment extends Fragment implements ChildEventListener {
     @Override
     public void onCreate(Bundle bundle) {
         super.onCreate(bundle);
-        NotificationVm notificationVm = ViewModelProviders.of(this).get(NotificationVm.class);
-        notificationVm.getAll().observe(this, courses -> {
-            subscribedCourses.clear();
-            subscribedCourses.addAll(courses);
-        });
-
+        courseVm = ViewModelProviders.of(this).get(CourseVm.class);
     }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         super.onCreateView(inflater, container, savedInstanceState);
-        courseAdapter = new CourseAdapter(arrayList, subscribedCourses);
+        courseAdapter = new CourseAdapter(arrayList);
         View view = inflater.inflate(R.layout.fragment_course_list, container, false);
         view.findViewById(R.id.fab_add_course).setOnClickListener(v -> handleAddCourse());
         rootCl = view.findViewById(R.id.cl_main_activity);
         final RecyclerView coursesRv = view.findViewById(R.id.rv_course_list);
         coursesRv.setLayoutManager(new LinearLayoutManager(getContext()));
         coursesRv.setAdapter(courseAdapter);
+        courseVm.getAll().observe(this, courses -> {
+            arrayList.clear();
+            arrayList.addAll(courses);
+            courseAdapter.notifyDataSetChanged();
+        });
+
         FirebaseDatabase.getInstance().getReference().child(BuildConfig.BUILD_TYPE)
                 .child("/courses/").addChildEventListener(this);
         return view;
@@ -115,19 +114,23 @@ public class CourseListFragment extends Fragment implements ChildEventListener {
 
     @Override
     public void onChildAdded(DataSnapshot dataSnapshot, String s) {
-        arrayList.add(dataSnapshot.getValue(ItemCourse.class));
-        courseAdapter.notifyDataSetChanged();
+        MyCourse myCourse = dataSnapshot.getValue(MyCourse.class);
+        if (myCourse.getAddedByName() == null) {
+            myCourse.setAddedByName("");
+        }
+        myCourse.setFollowing(false);
+        courseVm.insert(myCourse);
     }
 
     @Override
     public void onChildChanged(DataSnapshot dataSnapshot, String s) {
-        ItemCourse itemCourse = dataSnapshot.getValue(ItemCourse.class);
+        MyCourse myCourse = dataSnapshot.getValue(MyCourse.class);
+
         for (int i = 0; i < arrayList.size(); i++) {
-            if (Objects.equals(arrayList.get(i).getId(), itemCourse.getId())) {
+            if (Objects.equals(arrayList.get(i).getId(), myCourse.getId())) {
                 arrayList.remove(i);
-                arrayList.add(i, itemCourse);
-                courseAdapter.notifyDataSetChanged();
-                Log.e(TAG, "Child Updated");
+                myCourse.setFollowing(arrayList.get(i).getFollowing());
+                courseVm.update(myCourse);
                 break;
             }
         }
@@ -135,21 +138,13 @@ public class CourseListFragment extends Fragment implements ChildEventListener {
 
     @Override
     public void onChildRemoved(DataSnapshot dataSnapshot) {
-        ItemCourse itemCourse = dataSnapshot.getValue(ItemCourse.class);
-        for (int i = 0; i < arrayList.size(); i++) {
-            if (Objects.equals(arrayList.get(i).getId(), itemCourse.getId())) {
-                arrayList.remove(i);
-                courseAdapter.notifyDataSetChanged();
-                Log.e(TAG, "Child Removed");
-                break;
-            }
-        }
+        MyCourse myCourse = dataSnapshot.getValue(MyCourse.class);
+        courseVm.delete(myCourse);
     }
 
     @Override
     public void onChildMoved(DataSnapshot dataSnapshot, String s) {
         Log.e(TAG, "Child Moved");
-
     }
 
     @Override

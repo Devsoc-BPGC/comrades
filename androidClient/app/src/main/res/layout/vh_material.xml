@@ -33,10 +33,10 @@
 
             <com.facebook.drawee.view.SimpleDraweeView
                 android:id="@+id/icon"
-                android:layout_width="34dp"
+                android:layout_width="28dp"
                 app:placeholderImage="@drawable/ic_file"
                 android:layout_gravity="center"
-                android:layout_height="34dp" />
+                android:layout_height="28dp" />
 
         </FrameLayout>
 
