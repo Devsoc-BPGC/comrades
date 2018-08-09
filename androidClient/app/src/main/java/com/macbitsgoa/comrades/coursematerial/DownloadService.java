@@ -44,6 +44,8 @@ public class DownloadService extends IntentService {
     protected void onHandleIntent(Intent intent) {
 
         if (intent != null) {
+            LocalBroadcastManager localBroadcastManager = LocalBroadcastManager.getInstance(this);
+
             String id = intent.getStringExtra(KEY_ITEM_ID);
             String downloadUrl = intent.getStringExtra(KEY_DOWNLOAD_URL);
             String path = intent.getStringExtra(KEY_FILE_PATH);
@@ -51,14 +53,13 @@ public class DownloadService extends IntentService {
             String extension = intent.getStringExtra(KEY_FILE_EXTENSION);
             Long fileLength = intent.getLongExtra(KEY_FILE_SIZE, 5454544);
             int position = intent.getIntExtra(KEY_ITEM_POSITION, 0);
-
             Bundle startBundle = new Bundle();
             startBundle.putString("id", id);
             startBundle.putInt("position", position);
             startBundle.putInt(RESULT_CODE, 0);
             Intent startIntent = new Intent(ACTION);
             startIntent.putExtras(startBundle);
-            LocalBroadcastManager.getInstance(this).sendBroadcast(startIntent);
+            localBroadcastManager.sendBroadcast(startIntent);
 
             int count;
             try {
@@ -82,20 +83,20 @@ public class DownloadService extends IntentService {
                 byte[] data = new byte[1024];
                 long total = 0;
                 int progress;
-                while ((count = input.read(data)) != -1) {
-                    Log.e("count", count + "");
-                    total += count;
 
+
+                while ((count = input.read(data)) != -1) {
+                    total += count;
                     progress = (int) (total * 100 / fileLength);
                     if (fileLength > 0) {
                         Bundle progressBundle = new Bundle();
                         progressBundle.putString("id", id);
                         progressBundle.putInt("position", position);
-                        progressBundle.putInt("progress", progress);
                         progressBundle.putInt(RESULT_CODE, 1);
+                        progressBundle.putInt("progress", progress);
                         Intent messageIntent = new Intent(ACTION);
                         messageIntent.putExtras(progressBundle);
-                        LocalBroadcastManager.getInstance(this).sendBroadcast(messageIntent);
+                        localBroadcastManager.sendBroadcast(messageIntent);
 
                         // writing data to file
                         output.write(data, 0, count);
@@ -108,6 +109,7 @@ public class DownloadService extends IntentService {
                 output.close();
                 input.close();
 
+
             } catch (final Exception e) {
                 Log.e(TAG + ":Error: ", e.getMessage());
             }
@@ -117,8 +119,8 @@ public class DownloadService extends IntentService {
             finalBundle.putInt("position", position);
             finalBundle.putInt(RESULT_CODE, 2);
             Intent finalIntent = new Intent(ACTION);
-            finalIntent.putExtras(startBundle);
-            LocalBroadcastManager.getInstance(this).sendBroadcast(finalIntent);
+            finalIntent.putExtras(finalBundle);
+            localBroadcastManager.sendBroadcast(finalIntent);
 
         }
 

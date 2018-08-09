@@ -31,7 +31,7 @@ public interface CourseDao {
     @Query("SELECT * FROM MyCourse WHERE name LIKE :search OR addedByName LIKE :search OR code LIKE :search ")
     Cursor getSearchCursor(String search);
 
-    @Insert
+    @Insert()
     void insertAll(List<MyCourse> products);
 
     @Insert(onConflict = OnConflictStrategy.IGNORE)

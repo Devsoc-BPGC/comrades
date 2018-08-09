@@ -18,7 +18,9 @@ import com.mikhaellopez.circularprogressbar.CircularProgressBar;
 
 import java.io.File;
 
+import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.content.FileProvider;
+import androidx.lifecycle.ViewModelProviders;
 import androidx.recyclerview.widget.RecyclerView;
 
 
@@ -46,21 +48,33 @@ public class MaterialViewHolder extends RecyclerView.ViewHolder {
     /**
      * updates the view in recycler with the data and sets onClick listener to it.
      *
-     * @param data  object of class @{@link ItemCourseMaterial}
+     * @param data  object of class @{@link CourseMaterial}
      */
-    public void populate(ItemCourseMaterial data) {
+    public void populate(CourseMaterial data) {
         tvOwnerName.setText("added by " + data.getAddedBy());
         tvFileName.setText(data.getFileName());
+        Boolean isDownloading = data.getDownloading();
+        Boolean isWaiting = data.getWaiting();
+
+        if (isDownloading) {
+            donutProgress.setProgress(data.getProgress());
+            tvDownloadStatus.setText("Downloading");
+        } else if (isWaiting) {
+            donutProgress.enableIndeterminateMode(true);
+            tvDownloadStatus.setText("waiting");
+        } else {
+            Boolean fileAvailable = data.getFileAvailable();
+            if (fileAvailable) {
+                donutProgress.setProgress(100);
+                tvDownloadStatus.setText("click to open");
+            } else {
+                donutProgress.setProgress(0);
+                tvDownloadStatus.setText("click to download");
+            }
+        }
+
         if (data.getIconLink() != null)
             iconDraweeView.setImageURI(data.getIconLink());
-
-        if (data.getFileAvailable()) {
-            donutProgress.setProgress(100);
-            tvDownloadStatus.setText("click to open");
-        } else {
-            donutProgress.setProgress(data.getProgress());
-            tvDownloadStatus.setText(data.getDownloadStatus());
-        }
 
         rootView.setOnClickListener(view -> {
             final Context context = rootView.getContext();
@@ -77,7 +91,11 @@ public class MaterialViewHolder extends RecyclerView.ViewHolder {
                 if (data.getFileAvailable()) {
                     openFile(data);
                 } else {
-                    tvDownloadStatus.setText(R.string.download_status_waiting);
+                    data.setDownloading(false);
+                    data.setWaiting(true);
+                    MaterialVm materialVm = ViewModelProviders.of((AppCompatActivity) context).get(MaterialVm.class);
+                    materialVm.update(data);
+
                     final Intent downloadIntent =
                             DownloadService.makeDownloadIntent(itemView.getContext(), data.getLink(),
                                     data.getFileName(), data.getExtension(), data.getFilePath(),
@@ -107,7 +125,7 @@ public class MaterialViewHolder extends RecyclerView.ViewHolder {
         context.startActivity(intent);
     }
 
-    private void openFile(ItemCourseMaterial obj) {
+    private void openFile(CourseMaterial obj) {
         final File file = new File(obj.getFilePath() + obj.getFileName() + obj.getExtension());
         final Intent generic = new Intent();
         final Uri uri =
