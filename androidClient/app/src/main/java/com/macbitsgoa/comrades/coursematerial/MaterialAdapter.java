@@ -15,9 +15,9 @@ import androidx.recyclerview.widget.RecyclerView;
  */
 
 public class MaterialAdapter extends RecyclerView.Adapter<MaterialViewHolder> {
-    private final ArrayList<ItemCourseMaterial> materialArrayList;
+    private final ArrayList<CourseMaterial> materialArrayList;
 
-    MaterialAdapter(final ArrayList<ItemCourseMaterial> materialArrayList) {
+    public MaterialAdapter(final ArrayList<CourseMaterial> materialArrayList) {
         this.materialArrayList = materialArrayList;
     }
 
@@ -30,8 +30,7 @@ public class MaterialAdapter extends RecyclerView.Adapter<MaterialViewHolder> {
 
     @Override
     public void onBindViewHolder(final MaterialViewHolder holder, final int position) {
-        final ItemCourseMaterial obj = materialArrayList.get(position);
-        holder.populate(obj);
+        holder.populate(materialArrayList.get(position));
     }
 
     @Override

@@ -1,25 +1,34 @@
 package com.macbitsgoa.comrades.coursematerial;
 
 import android.Manifest;
+import android.app.SearchManager;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.pm.PackageManager;
+import android.database.Cursor;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
+import android.widget.SearchView;
+import android.widget.Toast;
 
 import com.google.android.gms.auth.api.signin.GoogleSignIn;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.android.material.snackbar.Snackbar;
+import com.google.firebase.database.ChildEventListener;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.FirebaseDatabase;
-import com.google.firebase.database.ValueEventListener;
 import com.macbitsgoa.comrades.BuildConfig;
 import com.macbitsgoa.comrades.GetGoogleSignInActivity;
 import com.macbitsgoa.comrades.R;
+import com.macbitsgoa.comrades.persistance.Database;
+import com.macbitsgoa.comrades.search.MaterialCoursesCursorAdapter;
 
 import java.util.ArrayList;
 import java.util.Objects;
@@ -29,14 +38,22 @@ import androidx.appcompat.widget.Toolbar;
 import androidx.fragment.app.DialogFragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
+import androidx.lifecycle.ViewModelProviders;
 import androidx.localbroadcastmanager.content.LocalBroadcastManager;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
+import io.reactivex.Observable;
+import io.reactivex.android.schedulers.AndroidSchedulers;
+import io.reactivex.functions.Consumer;
+import io.reactivex.functions.Function;
+import io.reactivex.schedulers.Schedulers;
 
+import static android.os.Environment.getExternalStorageDirectory;
 import static com.macbitsgoa.comrades.CHCKt.TAG_PREFIX;
+import static com.macbitsgoa.comrades.ComradesConstants.DOWNLOAD_DIRECTORY;
 
 public class CourseActivity extends AppCompatActivity
-        implements View.OnClickListener, ValueEventListener {
+        implements View.OnClickListener, ChildEventListener {
 
     public static final String ADD_FILE_FRAGMENT = "AddFileFragment";
     private static final String TAG = TAG_PREFIX + CourseActivity.class.getSimpleName();
@@ -48,17 +65,17 @@ public class CourseActivity extends AppCompatActivity
     public static final String KEY_COURSE_ID = "courseId";
     public static final String KEY_COURSE_NAME = "courseName";
     private final FirebaseDatabase databaseInstance = FirebaseDatabase.getInstance();
-    private ArrayList<ItemCourseMaterial> materialArrayList = new ArrayList<>(0);
+    private ArrayList<CourseMaterial> materialArrayList = new ArrayList<>(0);
     private MaterialAdapter materialAdapter;
     private FloatingActionButton btnAddMaterial;
     private BroadcastReceiver broadcastReceiver;
+    private MaterialVm materialVm;
+    private SearchView searchView;
 
     public static void show(final Context context, final String courseId, final String courseName) {
         final Intent intent = new Intent(context, CourseActivity.class);
         intent.putExtra(KEY_COURSE_NAME, courseName);
         intent.putExtra(KEY_COURSE_ID, courseId);
-        CourseActivity.courseId = courseId;
-        CourseActivity.courseName = courseName;
         context.startActivity(intent);
     }
 
@@ -69,13 +86,26 @@ public class CourseActivity extends AppCompatActivity
         if (savedInstanceState != null) {
             courseId = savedInstanceState.getString("courseId");
             courseName = savedInstanceState.getString("courseName");
+        } else {
+            if (getIntent().getStringExtra(KEY_COURSE_ID) != null)
+                courseId = getIntent().getStringExtra(KEY_COURSE_ID);
+            if (getIntent().getStringExtra(KEY_COURSE_NAME) != null)
+                courseName = getIntent().getStringExtra(KEY_COURSE_NAME);
         }
         receiveDownloadMessage();
         initUi();
 
+        materialVm = ViewModelProviders.of(this,
+                new MaterialVmFactoryClass(this.getApplication(), courseId)).get(MaterialVm.class);
+        materialVm.getMaterialList().observe(CourseActivity.this, courseMaterials -> {
+            materialArrayList.clear();
+            materialArrayList.addAll(courseMaterials);
+            materialAdapter.notifyDataSetChanged();
+        });
+
         databaseInstance
                 .getReferenceFromUrl(dbUrl)
-                .child(courseId).addValueEventListener(this);
+                .child(courseId).addChildEventListener(this);
         btnAddMaterial.setOnClickListener(this);
     }
 
@@ -88,12 +118,14 @@ public class CourseActivity extends AppCompatActivity
                     String itemId = resultData.getString("id");
                     int resultCode = resultData.getInt("resultCode");
                     switch (resultCode) {
+
                         // download starting
                         case 0:
                             for (int i = 0; i < materialArrayList.size(); i++) {
                                 if (Objects.equals(materialArrayList.get(i).getId(), itemId)) {
-                                    materialArrayList.get(i).setDownloadStatus("Downloading");
-                                    materialAdapter.notifyItemChanged(i);
+                                    materialArrayList.get(i).setDownloading(true);
+                                    materialArrayList.get(i).setWaiting(false);
+                                    materialVm.update(materialArrayList.get(i));
                                     break;
                                 }
                             }
@@ -110,17 +142,18 @@ public class CourseActivity extends AppCompatActivity
                                 }
                             }
                             break;
-
                         //download successful
                         case 2:
                             for (int i = 0; i < materialArrayList.size(); i++) {
                                 if (Objects.equals(materialArrayList.get(i).getId(), itemId)) {
-                                    materialArrayList.get(i).setDownloadStatus("click to open");
-                                    materialAdapter.notifyItemChanged(i);
+                                    materialArrayList.get(i).setDownloading(false);
+                                    materialArrayList.get(i).setWaiting(false);
+                                    materialVm.update(materialArrayList.get(i));
                                     break;
                                 }
                             }
                             break;
+
                         default:
                             if (BuildConfig.DEBUG) {
                                 Log.e(TAG, "Downloading Failed");
@@ -138,6 +171,7 @@ public class CourseActivity extends AppCompatActivity
         btnAddMaterial = findViewById(R.id.fab_add_material);
         RecyclerView recyclerView = findViewById(R.id.rv_content_list);
         final Toolbar toolbar = findViewById(R.id.toolbar_course_activity);
+        setSupportActionBar(toolbar);
         toolbar.inflateMenu(R.menu.course_activity_toolbar);
         toolbar.setNavigationIcon(getResources().getDrawable(R.drawable.ic_arrow_back));
         toolbar.setTitle(courseName);
@@ -149,6 +183,67 @@ public class CourseActivity extends AppCompatActivity
         materialAdapter = new MaterialAdapter(materialArrayList);
         recyclerView.setLayoutManager(linearLayoutManager);
         recyclerView.setAdapter(materialAdapter);
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        final MenuInflater inflater = getMenuInflater();
+        inflater.inflate(R.menu.course_activity_toolbar, menu);
+        MenuItem menuItem = menu.findItem(R.id.action_search);
+        SearchManager searchManager = (SearchManager) getSystemService(Context.SEARCH_SERVICE);
+        searchView = (SearchView) menuItem.getActionView();
+        searchView.setSearchableInfo(searchManager.getSearchableInfo(getComponentName()));
+        searchView.setIconifiedByDefault(true);
+        searchView.setSubmitButtonEnabled(true);
+        searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
+            @Override
+            public boolean onQueryTextSubmit(String s) {
+                Log.e("TAG", "query:" + s);
+                return false;
+            }
+
+            @Override
+            public boolean onQueryTextChange(String s) {
+                Log.e("TAG", "query:" + s);
+                getMaterialFromDb(s);
+                return false;
+            }
+        });
+        return true;
+    }
+
+    private void getMaterialFromDb(String s) {
+        String searchText = "%" + s + "%";
+        Observable.just(searchText).observeOn(Schedulers.computation())
+                .map(new Function<String, Cursor>() {
+                    @Override
+                    public Cursor apply(String searchStrt) {
+                        return Database.getInstance(CourseActivity.this).getMaterialDao().searchMaterialCursor(courseId, searchStrt);
+                    }
+                }).observeOn(AndroidSchedulers.mainThread())
+                .subscribe(new Consumer<Cursor>() {
+                    @Override
+                    public void accept(Cursor cursor) {
+                        handleResults(cursor);
+                    }
+                }, new Consumer<Throwable>() {
+                    @Override
+                    public void accept(Throwable throwable) {
+                        handleError(throwable);
+                    }
+                });
+
+    }
+
+    private void handleError(Throwable throwable) {
+        Log.e("TAG", throwable.getMessage(), throwable);
+        Toast.makeText(this, "Problem in Fetching Material",
+                Toast.LENGTH_LONG).show();
+    }
+
+    private void handleResults(Cursor cursor) {
+        searchView
+                .setSuggestionsAdapter(new MaterialCoursesCursorAdapter(CourseActivity.this, cursor, searchView));
     }
 
     @Override
@@ -192,13 +287,44 @@ public class CourseActivity extends AppCompatActivity
         startActivity(signInIntent);
     }
 
+
     @Override
-    public void onDataChange(final DataSnapshot dataSnapshot) {
-        materialArrayList.clear();
-        for (final DataSnapshot snapshot : dataSnapshot.getChildren()) {
-            materialArrayList.add(snapshot.getValue(ItemCourseMaterial.class));
+    public void onChildAdded(DataSnapshot dataSnapshot, String s) {
+        CourseMaterial courseMaterial = dataSnapshot.getValue(CourseMaterial.class);
+        courseMaterial.setFilePath(String.format("%s/%s/%s/", getExternalStorageDirectory(),
+                DOWNLOAD_DIRECTORY, courseId));
+        courseMaterial.setCourseId(courseId);
+        courseMaterial.setWaiting(false);
+        courseMaterial.setDownloading(false);
+        courseMaterial.setProgress(0);
+        materialVm.insert(courseMaterial);
+    }
+
+    @Override
+    public void onChildChanged(DataSnapshot dataSnapshot, String s) {
+        CourseMaterial courseMaterial = dataSnapshot.getValue(CourseMaterial.class);
+        for (int i = 0; i < materialArrayList.size(); i++) {
+            if (Objects.equals(materialArrayList.get(i).getId(), courseMaterial.getId())) {
+                courseMaterial.setFilePath(String.format("%s/%s/%s/", getExternalStorageDirectory(),
+                        DOWNLOAD_DIRECTORY, courseId));
+                courseMaterial.setCourseId(courseId);
+                courseMaterial.setWaiting(materialArrayList.get(i).getWaiting());
+                courseMaterial.setDownloading(materialArrayList.get(i).getDownloading());
+                courseMaterial.setProgress(materialArrayList.get(i).getProgress());
+                break;
+            }
         }
-        materialAdapter.notifyDataSetChanged();
+        materialVm.update(courseMaterial);
+    }
+
+    @Override
+    public void onChildRemoved(DataSnapshot dataSnapshot) {
+        materialVm.delete(dataSnapshot.getValue(CourseMaterial.class));
+    }
+
+    @Override
+    public void onChildMoved(DataSnapshot dataSnapshot, String s) {
+        //Empty Method
     }
 
     @Override
@@ -213,10 +339,6 @@ public class CourseActivity extends AppCompatActivity
         if (BuildConfig.DEBUG) {
             Log.v(TAG, "onResume");
         }
-        if (getIntent().getStringExtra(KEY_COURSE_ID) != null)
-            courseId = getIntent().getStringExtra(KEY_COURSE_ID);
-        if (getIntent().getStringExtra(KEY_COURSE_NAME) != null)
-            courseName = getIntent().getStringExtra(KEY_COURSE_NAME);
         // Register broadcast receiver
         LocalBroadcastManager.getInstance(this)
                 .registerReceiver(broadcastReceiver, new IntentFilter(DownloadService.ACTION));

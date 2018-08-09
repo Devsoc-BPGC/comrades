@@ -247,7 +247,7 @@ public class UploadService extends IntentService {
             thumbnailLink = (String) jsonObject.get("iconLink");
         String iconLink = (String) jsonObject.get("iconLink");
         iconLink = iconLink.replace("16", "128");
-        final ItemCourseMaterial itemCourseMaterial = new ItemCourseMaterial();
+        final CourseMaterial itemCourseMaterial = new CourseMaterial();
         FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
         itemCourseMaterial.setAddedById(user.getUid());
         itemCourseMaterial.setAddedBy(owner);
@@ -257,8 +257,10 @@ public class UploadService extends IntentService {
         itemCourseMaterial.setThumbnailLink(thumbnailLink);
         itemCourseMaterial.setIconLink(iconLink);
         itemCourseMaterial.setFileSize(fileSize);
-        itemCourseMaterial.setDownloadStatus(null);
         itemCourseMaterial.setFilePath(null);
+        itemCourseMaterial.setDownloading(null);
+        itemCourseMaterial.setWaiting(null);
+        itemCourseMaterial.setProgress(0);
         itemCourseMaterial.setLink(jsonObject.get("webContentLink").toString());
         itemCourseMaterial.setMimeType(jsonObject.get("mimeType").toString());
         dbRef.child(fileId).setValue(itemCourseMaterial);
