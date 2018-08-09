@@ -1,8 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
-<menu xmlns:android="http://schemas.android.com/apk/res/android">
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
     <item
         android:id="@+id/action_search"
         android:icon="@drawable/ic_search"
-        android:showAsAction="ifRoom"
-        android:title="@string/action_search" />
+        android:showAsAction="collapseActionView|ifRoom"
+        app:actionViewClass="android.widget.SearchView"
+        app:showAsAction="ifRoom"
+        android:title="@string/action_search"
+        tools:ignore="AppCompatResource" />
 </menu>

@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:orientation="vertical"
+    android:background="@color/transparent_black"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content">
+
+    <TextView
+        android:id="@+id/tv_course_name"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_margin="4dp"
+        android:drawablePadding="4dp"
+        android:padding="4dp"
+        android:textColor="#fff"
+        android:textSize="18sp"
+        tools:text="Mechanics Oscillations and Waves" />
+
+    <TextView
+        android:id="@+id/text_added_by"
+        style="@style/Widget.MaterialComponents.Chip.Entry"
+        android:layout_width="wrap_content"
+        android:textColor="#fff"
+        android:padding="4dp"
+        android:layout_height="wrap_content"
+        android:layout_margin="4dp"
+        tools:text="added by Aayush Singla" />
+
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:background="@color/colorAccentContrast"
+        android:layout_marginTop="3dp"
+        android:layout_marginBottom="6dp" />
+
+</LinearLayout>

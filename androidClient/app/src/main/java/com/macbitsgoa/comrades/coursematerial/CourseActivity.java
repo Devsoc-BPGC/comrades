@@ -1,14 +1,21 @@
 package com.macbitsgoa.comrades.coursematerial;
 
 import android.Manifest;
+import android.app.SearchManager;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.pm.PackageManager;
+import android.database.Cursor;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
+import android.widget.SearchView;
+import android.widget.Toast;
 
 import com.google.android.gms.auth.api.signin.GoogleSignIn;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
@@ -20,6 +27,8 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.macbitsgoa.comrades.BuildConfig;
 import com.macbitsgoa.comrades.GetGoogleSignInActivity;
 import com.macbitsgoa.comrades.R;
+import com.macbitsgoa.comrades.persistance.Database;
+import com.macbitsgoa.comrades.search.MaterialCoursesCursorAdapter;
 
 import java.util.ArrayList;
 import java.util.Objects;
@@ -33,6 +42,11 @@ import androidx.lifecycle.ViewModelProviders;
 import androidx.localbroadcastmanager.content.LocalBroadcastManager;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
+import io.reactivex.Observable;
+import io.reactivex.android.schedulers.AndroidSchedulers;
+import io.reactivex.functions.Consumer;
+import io.reactivex.functions.Function;
+import io.reactivex.schedulers.Schedulers;
 
 import static android.os.Environment.getExternalStorageDirectory;
 import static com.macbitsgoa.comrades.CHCKt.TAG_PREFIX;
@@ -56,6 +70,7 @@ public class CourseActivity extends AppCompatActivity
     private FloatingActionButton btnAddMaterial;
     private BroadcastReceiver broadcastReceiver;
     private MaterialVm materialVm;
+    private SearchView searchView;
 
     public static void show(final Context context, final String courseId, final String courseName) {
         final Intent intent = new Intent(context, CourseActivity.class);
@@ -156,6 +171,7 @@ public class CourseActivity extends AppCompatActivity
         btnAddMaterial = findViewById(R.id.fab_add_material);
         RecyclerView recyclerView = findViewById(R.id.rv_content_list);
         final Toolbar toolbar = findViewById(R.id.toolbar_course_activity);
+        setSupportActionBar(toolbar);
         toolbar.inflateMenu(R.menu.course_activity_toolbar);
         toolbar.setNavigationIcon(getResources().getDrawable(R.drawable.ic_arrow_back));
         toolbar.setTitle(courseName);
@@ -167,6 +183,67 @@ public class CourseActivity extends AppCompatActivity
         materialAdapter = new MaterialAdapter(materialArrayList);
         recyclerView.setLayoutManager(linearLayoutManager);
         recyclerView.setAdapter(materialAdapter);
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        final MenuInflater inflater = getMenuInflater();
+        inflater.inflate(R.menu.course_activity_toolbar, menu);
+        MenuItem menuItem = menu.findItem(R.id.action_search);
+        SearchManager searchManager = (SearchManager) getSystemService(Context.SEARCH_SERVICE);
+        searchView = (SearchView) menuItem.getActionView();
+        searchView.setSearchableInfo(searchManager.getSearchableInfo(getComponentName()));
+        searchView.setIconifiedByDefault(true);
+        searchView.setSubmitButtonEnabled(true);
+        searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
+            @Override
+            public boolean onQueryTextSubmit(String s) {
+                Log.e("TAG", "query:" + s);
+                return false;
+            }
+
+            @Override
+            public boolean onQueryTextChange(String s) {
+                Log.e("TAG", "query:" + s);
+                getMaterialFromDb(s);
+                return false;
+            }
+        });
+        return true;
+    }
+
+    private void getMaterialFromDb(String s) {
+        String searchText = "%" + s + "%";
+        Observable.just(searchText).observeOn(Schedulers.computation())
+                .map(new Function<String, Cursor>() {
+                    @Override
+                    public Cursor apply(String searchStrt) {
+                        return Database.getInstance(CourseActivity.this).getMaterialDao().searchMaterialCursor(courseId, searchStrt);
+                    }
+                }).observeOn(AndroidSchedulers.mainThread())
+                .subscribe(new Consumer<Cursor>() {
+                    @Override
+                    public void accept(Cursor cursor) {
+                        handleResults(cursor);
+                    }
+                }, new Consumer<Throwable>() {
+                    @Override
+                    public void accept(Throwable throwable) {
+                        handleError(throwable);
+                    }
+                });
+
+    }
+
+    private void handleError(Throwable throwable) {
+        Log.e("TAG", throwable.getMessage(), throwable);
+        Toast.makeText(this, "Problem in Fetching Material",
+                Toast.LENGTH_LONG).show();
+    }
+
+    private void handleResults(Cursor cursor) {
+        searchView
+                .setSuggestionsAdapter(new MaterialCoursesCursorAdapter(CourseActivity.this, cursor, searchView));
     }
 
     @Override

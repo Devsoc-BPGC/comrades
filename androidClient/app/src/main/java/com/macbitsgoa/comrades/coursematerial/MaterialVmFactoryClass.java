@@ -6,7 +6,7 @@ import androidx.lifecycle.ViewModel;
 import androidx.lifecycle.ViewModelProvider;
 
 /**
- * Created by aayush on 9/8/18.
+ * @author aayush si
  */
 
 public class MaterialVmFactoryClass extends ViewModelProvider.NewInstanceFactory {
@@ -24,4 +24,5 @@ public class MaterialVmFactoryClass extends ViewModelProvider.NewInstanceFactory
     public <T extends ViewModel> T create(Class<T> modelClass) {
         return (T) new MaterialVm(mApplication, mParam);
     }
+
 }

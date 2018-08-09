@@ -17,7 +17,7 @@ import androidx.recyclerview.widget.RecyclerView;
 public class MaterialAdapter extends RecyclerView.Adapter<MaterialViewHolder> {
     private final ArrayList<CourseMaterial> materialArrayList;
 
-    MaterialAdapter(final ArrayList<CourseMaterial> materialArrayList) {
+    public MaterialAdapter(final ArrayList<CourseMaterial> materialArrayList) {
         this.materialArrayList = materialArrayList;
     }
 

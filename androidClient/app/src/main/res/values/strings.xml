@@ -40,7 +40,9 @@
     <string name="unsubscribe">UnSubscribe</string>
     <string name="title_activity_rank">RankActivity</string>
     <string name="search_hint">course name</string>
+    <string name="search_hint_material">material name</string>
     <string name="no_result_found">Your search string didn\'t match any course.Please try again with a different keyword.</string>
+    <string name="no_result_found_material">Your search string didn\'t match any material.Please try again with a different keyword.</string>
 
 
 </resources>
