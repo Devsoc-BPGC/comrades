@@ -15,6 +15,7 @@ import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.macbitsgoa.comrades.R;
+import com.macbitsgoa.comrades.persistance.Database;
 import com.squareup.okhttp.MediaType;
 import com.squareup.okhttp.OkHttpClient;
 import com.squareup.okhttp.Request;
@@ -26,7 +27,12 @@ import org.json.JSONObject;
 
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.io.InputStream;
+import java.math.BigInteger;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
 import java.util.Random;
 import java.util.concurrent.TimeUnit;
 
@@ -55,9 +61,10 @@ public class UploadService extends IntentService {
     private String accessToken;
     private Long fileSize;
     private NotificationManager mNotificationManager;
-    NotificationCompat.Builder mBuilder;
-
+    private NotificationCompat.Builder mBuilder;
+    private String hashId;
     public static int NOTIFICATION_ID;
+    private Boolean shouldContinue;
 
     public UploadService() {
         super("UploadService");
@@ -76,35 +83,59 @@ public class UploadService extends IntentService {
         mBuilder.setOngoing(true);
         mNotificationManager.notify(NOTIFICATION_ID, mBuilder.build());
 
-        final String response = uploadFile();
+        long time = System.currentTimeMillis();
+        hashId = calculateMD5(new File(path));
+        Log.e("TAG", System.currentTimeMillis() - time + " " + hashId);
 
-        try {
-            final JSONObject jsonObject = new JSONObject(response);
-            fileId = (String) jsonObject.get("id");
-            getPermissions();
-            final JSONObject metaData = getMetadata();
-            if (metaData == null) {
-                Log.e(TAG, "Received null metadata, returning");
-                return;
+        checkHashIdFirebase(hashId);
+        if (shouldContinue) {
+            final String response = uploadFile();
+
+            try {
+                final JSONObject jsonObject = new JSONObject(response);
+                fileId = (String) jsonObject.get("id");
+                getPermissions();
+                final JSONObject metaData = getMetadata();
+                if (metaData == null) {
+                    Log.e(TAG, "Received null metadata, returning");
+                    return;
+                }
+
+
+                pushToFirebase(metaData);
+
+
+            } catch (final JSONException e) {
+                Log.e(TAG, e.getMessage(), e.fillInStackTrace());
+                sendNotification(R.drawable.ic_launcher_foreground, "Comrades",
+                        "File Could not be uploaded.Please try again later.");
+                mBuilder.setProgress(0, 0, false);
+                mBuilder.setOngoing(false);
+                mNotificationManager.notify(NOTIFICATION_ID, mBuilder.build());
             }
-
-            pushToFirebase(metaData);
-
-
-        } catch (final JSONException e) {
-            Log.e(TAG, e.getMessage(), e.fillInStackTrace());
-            sendNotification(R.drawable.ic_launcher_foreground, "Comrades",
-                    "File Could not be uploaded.Please try again later.");
+            sendNotification(R.drawable.ic_cloud_done_black_24dp, fName + " uploaded",
+                    "Thanks for Contributing");
             mBuilder.setProgress(0, 0, false);
             mBuilder.setOngoing(false);
+            mBuilder.setSound(RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION));
             mNotificationManager.notify(NOTIFICATION_ID, mBuilder.build());
         }
-        sendNotification(R.drawable.ic_cloud_done_black_24dp, fName + " uploaded",
-                "Thanks for Contributing");
-        mBuilder.setProgress(0, 0, false);
-        mBuilder.setOngoing(false);
-        mBuilder.setSound(RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION));
-        mNotificationManager.notify(NOTIFICATION_ID, mBuilder.build());
+
+    }
+
+    private void checkHashIdFirebase(String hashId) {
+        CourseMaterial material = Database.getInstance(this).getMaterialDao().checkHashId(hashId);
+        if (material == null) {
+            shouldContinue = true;
+        } else {
+            shouldContinue = false;
+            sendNotification(R.drawable.ic_cloud_done_black_24dp, fName + " couldn't be uploaded",
+                    "A similar file already exists in this course with name " + material.getFileName());
+            mBuilder.setProgress(0, 0, false);
+            mBuilder.setOngoing(false);
+            mBuilder.setSound(RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION));
+            mNotificationManager.notify(NOTIFICATION_ID, mBuilder.build());
+        }
     }
 
     private void sendNotification(int drawable, String msg, String msg_detail) {
@@ -122,6 +153,47 @@ public class UploadService extends IntentService {
                 .setAutoCancel(false)
                 .setPriority(Notification.PRIORITY_HIGH);
         mBuilder.setContentIntent(contentIntent);
+
+    }
+
+    public static String calculateMD5(File updateFile) {
+        MessageDigest digest;
+        try {
+            digest = MessageDigest.getInstance("MD5");
+        } catch (NoSuchAlgorithmException e) {
+            Log.e(TAG, "Exception while getting digest", e);
+            return null;
+        }
+
+        InputStream is;
+        try {
+            is = new FileInputStream(updateFile);
+        } catch (FileNotFoundException e) {
+            Log.e(TAG, "Exception while getting FileInputStream", e);
+            return null;
+        }
+
+        byte[] buffer = new byte[8192];
+        int read;
+        try {
+            while ((read = is.read(buffer)) > 0) {
+                digest.update(buffer, 0, read);
+            }
+            byte[] md5sum = digest.digest();
+            BigInteger bigInt = new BigInteger(1, md5sum);
+            String output = bigInt.toString(16);
+            // Fill to 32 chars
+            output = String.format("%32s", output).replace(' ', '0');
+            return output;
+        } catch (IOException e) {
+            throw new RuntimeException("Unable to process file for MD5", e);
+        } finally {
+            try {
+                is.close();
+            } catch (IOException e) {
+                Log.e(TAG, "Exception on closing MD5 input stream", e);
+            }
+        }
     }
 
     public static Intent makeUploadIntent(final Context context, final String path, final String accessToken,
@@ -261,9 +333,10 @@ public class UploadService extends IntentService {
         itemCourseMaterial.setDownloading(null);
         itemCourseMaterial.setWaiting(null);
         itemCourseMaterial.setProgress(0);
+        itemCourseMaterial.setHashId(hashId);
         itemCourseMaterial.setLink(jsonObject.get("webContentLink").toString());
         itemCourseMaterial.setMimeType(jsonObject.get("mimeType").toString());
-        dbRef.child(fileId).setValue(itemCourseMaterial);
+        dbRef.child(hashId).setValue(itemCourseMaterial);
     }
 
     private String getFileExtension(final String path) {

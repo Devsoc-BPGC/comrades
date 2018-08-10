@@ -22,6 +22,9 @@ public interface MaterialDao {
     @Query("SELECT * FROM CourseMaterial WHERE courseId = :courseId ")
     LiveData<List<CourseMaterial>> getCourseMaterial(String courseId);
 
+    @Query("SELECT * FROM CourseMaterial WHERE hashId = :hashId ")
+    CourseMaterial checkHashId(String hashId);
+
     @Query("SELECT * FROM CourseMaterial WHERE courseId = :courseId " +
             "AND fileName LIKE :search OR addedBy LIKE :search")
     LiveData<List<CourseMaterial>> searchMaterial(String courseId, String search);

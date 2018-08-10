@@ -1,7 +1,6 @@
 package com.macbitsgoa.comrades.eateries;
 
 import android.content.Context;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -42,7 +41,6 @@ public class EateriesDetailsAdapter extends PagerAdapter {
         View itemView = mLayoutInflater.inflate(R.layout.layout_pager_eateries, container, false);
         PhotoView imageView = itemView.findViewById(R.id.imageView);
         Picasso.get().load(list.get(position)).into(imageView);
-        Log.e("bhgghgj", list.get(position) + "");
         container.addView(itemView);
         return itemView;
     }

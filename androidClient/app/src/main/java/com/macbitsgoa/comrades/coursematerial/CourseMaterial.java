@@ -29,6 +29,9 @@ public class CourseMaterial {
     @ColumnInfo(name = "_id")
     private String _id;
 
+    @ColumnInfo(name = "hashId")
+    private String hashId;
+
     @NonNull
     @ColumnInfo(name = "courseId")
     private String courseId;
@@ -201,4 +204,13 @@ public class CourseMaterial {
             return false;
         }
     }
+
+    public String getHashId() {
+        return hashId;
+    }
+
+    public void setHashId(String hashId) {
+        this.hashId = hashId;
+    }
+
 }
