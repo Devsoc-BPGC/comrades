@@ -17,4 +17,8 @@
         android:id="@+id/action_sign_out"
         android:title="@string/sign_out"
         android:showAsAction="never"/>
+    <item
+        android:id="@+id/action_about_mac"
+        android:showAsAction="never"
+        android:title="@string/action_about_mac" />
 </menu>

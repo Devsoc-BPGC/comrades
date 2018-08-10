@@ -11,6 +11,8 @@ const val FCM_KEY_TYPE = "type"
 const val USERS = "users"
 const val TOPIC_COURSE_UPDATES = BuildConfig.BUILD_TYPE + "CourseUpdates"
 const val COURSES = "courses"
+const val CONTRIBUTORS = "contributors"
+const val CONTRIBUTORS_NAME = "name"
 /**
  * Get fcm channel name corresponding to the course
  */

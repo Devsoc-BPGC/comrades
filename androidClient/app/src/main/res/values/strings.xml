@@ -1,11 +1,15 @@
 <!--suppress ALL -->
 <resources>
     <string name="app_name">Comrades</string>
+    <string name="app_version">Version 1</string>
+    <string name="about_mac_main">Comrades is a free, handy and open file sharing platform by Mobile Applications Club for students of BITS Goa, to become their companion in acads and everyday life. This app allows you to add to the library of content already present and hence creates an ever-growing storage of knowledge and information. So, next time you need a file, you\'ll surely find it on Comrades.</string>
+    <string name="about_mac_contributors"><b>Contributors</b></string>
     <string name="title_activity_sign_in">SignInActivity</string>
     <string name="title_activity_download">DownloadActivity</string>
     <string name="server_client_id">
         666225132801-iklcdj36jau98rf2v44a0v1rnguioatd.apps.googleusercontent.com
     </string>
+    <string name="appbar_scrolling_view_behavior_1" translatable="false">com.google.android.material.appbar.AppBarLayout$ScrollingViewBehavior</string>
     <string name="client_secret">NGfzk-7sJilNmFla6TZy8WrL</string>
     <string name="action_search">Search Courses</string>
     <string name="login_to_add_course">Please login to add Course.</string>
@@ -18,6 +22,7 @@
     <string name="retry">Retry</string>
     <string name="bits_only_email_allowed">Only BITS email is allowed</string>
     <string name="sign_out">Sign Out</string>
+    <string name="action_about_mac">About MAC</string>
     <string name="add_course">Add Course</string>
     <string name="add_file">Add File</string>
     <string name="cancel">Cancel</string>

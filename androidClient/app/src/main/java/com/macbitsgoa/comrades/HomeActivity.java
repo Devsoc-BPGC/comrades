@@ -2,6 +2,7 @@ package com.macbitsgoa.comrades;
 
 import android.app.SearchManager;
 import android.content.Context;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.os.Bundle;
@@ -20,6 +21,7 @@ import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.firebase.auth.FirebaseAuth;
+import com.macbitsgoa.comrades.aboutmac.AboutMacActivity;
 import com.macbitsgoa.comrades.courselistfragment.CourseListFragment;
 import com.macbitsgoa.comrades.homefragment.HomeFragment;
 import com.macbitsgoa.comrades.persistance.Database;
@@ -113,6 +115,13 @@ public class HomeActivity extends AppCompatActivity {
                 getCoursesFromDb(s);
                 return false;
             }
+        });
+
+        final MenuItem aboutMac = menu.findItem(R.id.action_about_mac);
+        aboutMac.setOnMenuItemClickListener(menuItem1 -> {
+            startActivity(new Intent(this, AboutMacActivity.class));
+            return true;
+
         });
         return true;
 

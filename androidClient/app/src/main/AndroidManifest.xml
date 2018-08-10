@@ -47,9 +47,7 @@
         </service>
         <service
             android:name=".coursematerial.DownloadService"
-            android:enabled="true">
-
-        </service>
+            android:enabled="true"></service>
         <service android:name=".coursematerial.UploadService" />
 
         <activity
@@ -67,6 +65,7 @@
             </intent-filter>
         </activity>
         <activity
+
             android:name=".subscribedcourses.SubscribedCoursesActivity"
             android:label="@string/title_activity_subscribed_courses">
 
@@ -97,7 +96,9 @@
                 android:resource="@xml/searchable_material" />
         </activity>
         <activity android:name=".eateries.EateriesActivity" />
-        <activity android:name=".eateries.EateriesDetail" />
+        <activity android:name=".eateries.EateriesDetail" />        
+        <activity android:name=".aboutmac.AboutMacActivity"/>
+
     </application>
 
 </manifest>
