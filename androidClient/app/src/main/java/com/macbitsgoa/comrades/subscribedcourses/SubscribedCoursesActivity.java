@@ -11,14 +11,13 @@ import java.util.ArrayList;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import androidx.lifecycle.ViewModelProviders;
-import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 
 public class SubscribedCoursesActivity extends AppCompatActivity {
 
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
+    protected void onCreate(final Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_subscribed_courses);
         setSupportActionBar(findViewById(R.id.toolbar));
@@ -27,18 +26,14 @@ public class SubscribedCoursesActivity extends AppCompatActivity {
         toolbar.setNavigationIcon(getResources().getDrawable(R.drawable.ic_arrow_back));
         toolbar.setNavigationOnClickListener(view -> onBackPressed());
 
+        final ArrayList<MyCourse> myCourses = new ArrayList<>(0);
+        final SubscribedAdapter subscribedAdapter = new SubscribedAdapter(myCourses);
+        ((RecyclerView) findViewById(R.id.rv_notifications)).setAdapter(subscribedAdapter);
 
-        ArrayList<MyCourse> course = new ArrayList<>(0);
-        RecyclerView rv_subscribed_courses = findViewById(R.id.rv_notifications);
-        final LinearLayoutManager linearLayoutManager = new LinearLayoutManager(this);
-        final SubscribedAdapter subscribedAdapter = new SubscribedAdapter(course);
-        rv_subscribed_courses.setLayoutManager(linearLayoutManager);
-        rv_subscribed_courses.setAdapter(subscribedAdapter);
-
-        CourseVm courseVm = ViewModelProviders.of(this).get(CourseVm.class);
+        final CourseVm courseVm = ViewModelProviders.of(this).get(CourseVm.class);
         courseVm.getFollowingList().observe(this, courses -> {
-            course.clear();
-            course.addAll(courses);
+            myCourses.clear();
+            myCourses.addAll(courses);
             subscribedAdapter.notifyDataSetChanged();
         });
     }
