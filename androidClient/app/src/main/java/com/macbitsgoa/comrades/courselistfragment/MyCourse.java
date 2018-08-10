@@ -13,11 +13,11 @@ public class MyCourse {
 
     @PrimaryKey
     @NonNull
-    private String _id;
+    public String _id;
 
     @ColumnInfo(name = "name")
     @NonNull
-    private String name;
+    public String name;
 
     @ColumnInfo(name = "addedById")
     private String addedById;

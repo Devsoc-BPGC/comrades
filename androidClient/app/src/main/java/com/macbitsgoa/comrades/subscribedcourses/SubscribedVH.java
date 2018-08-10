@@ -1,9 +1,9 @@
 package com.macbitsgoa.comrades.subscribedcourses;
 
 import android.view.View;
+import android.widget.ImageButton;
 import android.widget.TextView;
 
-import com.facebook.drawee.view.SimpleDraweeView;
 import com.google.firebase.messaging.FirebaseMessaging;
 import com.macbitsgoa.comrades.BuildConfig;
 import com.macbitsgoa.comrades.R;
@@ -11,33 +11,29 @@ import com.macbitsgoa.comrades.courselistfragment.CourseVm;
 import com.macbitsgoa.comrades.courselistfragment.MyCourse;
 import com.macbitsgoa.comrades.coursematerial.CourseActivity;
 
-import androidx.appcompat.app.AppCompatActivity;
+import androidx.fragment.app.FragmentActivity;
 import androidx.lifecycle.ViewModelProviders;
 import androidx.recyclerview.widget.RecyclerView;
 
-/**
- * @author aayush singla
- */
+public class SubscribedVH extends RecyclerView.ViewHolder {
+    private final TextView nameTv;
+    private final ImageButton unSubscribeButton;
 
-public class SubscribedViewHolder extends RecyclerView.ViewHolder {
-    private TextView nameTv;
-    private SimpleDraweeView unSubscribeButton;
-
-    public SubscribedViewHolder(View itemView) {
+    public SubscribedVH(final View itemView) {
         super(itemView);
         nameTv = itemView.findViewById(R.id.tv_name);
         unSubscribeButton = itemView.findViewById(R.id.button_unsubscribe);
     }
 
-    public void populate(MyCourse course) {
-        nameTv.setText(course.getName());
+    public void populate(final MyCourse course) {
+        nameTv.setText(course.name);
         itemView.setOnClickListener(view -> CourseActivity.show(itemView.getContext(),
-                course.getId(), course.getName()));
+                course._id, course.name));
 
         unSubscribeButton.setOnClickListener(view -> {
-            FirebaseMessaging.getInstance().unsubscribeFromTopic(BuildConfig.BUILD_TYPE + course.getId());
-
-            CourseVm courseVm = ViewModelProviders.of((AppCompatActivity) view.getContext()).get(CourseVm.class);
+            // TODO: show snack bar with option to revert the un-subscription
+            FirebaseMessaging.getInstance().unsubscribeFromTopic(BuildConfig.BUILD_TYPE + course._id);
+            final CourseVm courseVm = ViewModelProviders.of((FragmentActivity) view.getContext()).get(CourseVm.class);
             course.setFollowing(false);
             courseVm.update(course);
         });

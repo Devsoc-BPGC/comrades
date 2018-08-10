@@ -11,6 +11,7 @@
         android:id="@+id/rv_notifications"
         android:layout_marginTop="?android:attr/actionBarSize"
         android:layout_width="match_parent"
+        app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
         android:layout_height="match_parent" />
 
     <androidx.appcompat.widget.Toolbar

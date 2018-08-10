@@ -8,27 +8,26 @@ import com.macbitsgoa.comrades.courselistfragment.MyCourse;
 
 import java.util.ArrayList;
 
+import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
-/**
- * @author aayush singla
- */
+public class SubscribedAdapter extends RecyclerView.Adapter<SubscribedVH> {
 
-public class SubscribedAdapter extends RecyclerView.Adapter<SubscribedViewHolder> {
-    private ArrayList<MyCourse> course;
+    private final ArrayList<MyCourse> course;
 
-    public SubscribedAdapter(ArrayList<MyCourse> course) {
+    public SubscribedAdapter(final ArrayList<MyCourse> course) {
         this.course = course;
     }
 
+    @NonNull
     @Override
-    public SubscribedViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-        return new SubscribedViewHolder(LayoutInflater.from(parent.getContext())
-                .inflate(R.layout.vh_notification_rv, null));
+    public SubscribedVH onCreateViewHolder(@NonNull final ViewGroup parent, final int viewType) {
+        return new SubscribedVH(LayoutInflater.from(parent.getContext())
+                .inflate(R.layout.vh_notification_rv, parent, false));
     }
 
     @Override
-    public void onBindViewHolder(SubscribedViewHolder holder, int position) {
+    public void onBindViewHolder(@NonNull final SubscribedVH holder, final int position) {
         holder.populate(course.get(position));
     }
 
