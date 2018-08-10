@@ -19,11 +19,10 @@ public class ProfileAdapter extends RecyclerView.Adapter<ProfileViewHolder> {
 
     ProfileAdapter() {
         items.add("My Courses");
-        items.add("Ongoing Downloads");
-        items.add("Ongoing Uploads");
+        items.add("Upload queue");
         items.add("Notifications");
-        items.add("Eateries");
-        items.add("Utilities");
+        items.add("Menus");
+        items.add("Imp. Documents");
     }
 
     @Override

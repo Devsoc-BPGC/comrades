@@ -10,6 +10,8 @@ import android.widget.TextView;
 
 import com.facebook.drawee.view.SimpleDraweeView;
 import com.macbitsgoa.comrades.R;
+import com.macbitsgoa.comrades.coursematerial.CourseActivity;
+import com.macbitsgoa.comrades.eateries.EateriesActivity;
 import com.macbitsgoa.comrades.subscribedcourses.SubscribedCoursesActivity;
 
 import java.util.Objects;
@@ -43,6 +45,11 @@ public class ProfileViewHolder extends RecyclerView.ViewHolder implements View.O
                 Intent intent = new Intent(view.getContext(), SubscribedCoursesActivity.class);
                 view.getContext().startActivity(intent);
                 break;
+            case "Menus":
+                Intent intentEatery = new Intent(view.getContext(), EateriesActivity.class);
+                view.getContext().startActivity(intentEatery);
+            case "Imp. Documents":
+                CourseActivity.show(view.getContext(), "-LJUx7EJ78rkt41kHNFs", "Imp. Docs");
             default:
                 break;
         }

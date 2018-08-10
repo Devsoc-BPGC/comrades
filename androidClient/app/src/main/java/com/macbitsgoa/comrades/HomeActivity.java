@@ -69,11 +69,11 @@ public class HomeActivity extends AppCompatActivity {
         navigation = findViewById(R.id.navigation);
         navigation.setOnNavigationItemSelectedListener(mOnNavigationItemSelectedListener);
 
-        if (savedInstanceState != null)
+        if (savedInstanceState != null) {
             navigation.setSelectedItemId(savedInstanceState.getInt("bottomNav"));
-        else
+        } else {
             navigation.setSelectedItemId(R.id.navigation_home);
-
+        }
 
     }
 

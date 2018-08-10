@@ -96,6 +96,8 @@
                 android:name="android.app.searchable"
                 android:resource="@xml/searchable_material" />
         </activity>
+        <activity android:name=".eateries.EateriesActivity" />
+        <activity android:name=".eateries.EateriesDetail" />
     </application>
 
 </manifest>

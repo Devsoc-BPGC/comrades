@@ -1,11 +1,13 @@
 package com.macbitsgoa.comrades.homefragment;
 
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageButton;
 
 import com.google.firebase.database.ChildEventListener;
 import com.google.firebase.database.DataSnapshot;
@@ -13,6 +15,9 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.FirebaseDatabase;
 import com.macbitsgoa.comrades.BuildConfig;
 import com.macbitsgoa.comrades.R;
+import com.macbitsgoa.comrades.coursematerial.CourseActivity;
+import com.macbitsgoa.comrades.eateries.EateriesActivity;
+import com.macbitsgoa.comrades.subscribedcourses.SubscribedCoursesActivity;
 
 import java.util.ArrayList;
 import java.util.Objects;
@@ -42,6 +47,19 @@ public class HomeFragment extends Fragment implements ChildEventListener {
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.fragment_home, container, false);
+        ImageButton btnMyCourses = view.findViewById(R.id.btn_my_courses);
+        ImageButton btnMenus = view.findViewById(R.id.btn_menus);
+        ImageButton btnDocs = view.findViewById(R.id.btn_docs);
+        btnDocs.setOnClickListener(v -> CourseActivity.show(getContext(),
+                "-LJUx7EJ78rkt41kHNFs", "Imp. Docs"));
+        btnMyCourses.setOnClickListener(v -> {
+            Intent intent = new Intent(getContext(), SubscribedCoursesActivity.class);
+            startActivity(intent);
+        });
+        btnMenus.setOnClickListener(v -> {
+            Intent intent = new Intent(getContext(), EateriesActivity.class);
+            startActivity(intent);
+        });
         recentAdapter = new RecentAdapter(recent);
         RecyclerView recentRv = view.findViewById(R.id.rv_recent);
         LinearLayoutManager linearLayoutManager = new LinearLayoutManager(getContext());
@@ -67,7 +85,6 @@ public class HomeFragment extends Fragment implements ChildEventListener {
                 recent.remove(i);
                 recent.add(i, itemRecent);
                 recentAdapter.notifyDataSetChanged();
-                Log.e(TAG, "Child Updated");
                 break;
             }
         }

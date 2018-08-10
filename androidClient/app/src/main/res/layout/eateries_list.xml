@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.cardview.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="220dp"
+    android:layout_margin="5dp"
+    android:background="?attr/selectableItemBackground"
+    app:cardCornerRadius="2dp">
+
+    <com.facebook.drawee.view.SimpleDraweeView
+        android:id="@+id/item_format_categories_background"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:adjustViewBounds="true"
+        android:scaleType="centerCrop" />
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="?attr/selectableItemBackground"
+        android:orientation="vertical">
+
+        <TextView
+            android:id="@+id/item_format_categories_title"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_gravity="center_horizontal"
+            android:layout_weight="1"
+            android:background="#2037474F"
+            android:gravity="center"
+            android:padding="8dp"
+            android:text="TITLE"
+            android:textColor="@color/colorAccentContrast"
+            android:textSize="26sp"
+            android:textStyle="bold" />
+
+        <TextView
+            android:id="@+id/item_format_categories_description"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="1"
+            android:gravity="top|center_horizontal"
+            android:text="DESC"
+            android:textColor="@color/colorAccentContrast"
+            android:textSize="19sp" />
+
+    </LinearLayout>
+
+
+</androidx.cardview.widget.CardView>
