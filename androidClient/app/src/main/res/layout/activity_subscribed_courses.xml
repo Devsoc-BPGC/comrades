@@ -1,18 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.coordinatorlayout.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/cl_main_activity"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:orientation="vertical"
     tools:context="com.macbitsgoa.comrades.coursematerial.CourseActivity">
-
-    <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/rv_notifications"
-        android:layout_marginTop="?android:attr/actionBarSize"
-        android:layout_width="match_parent"
-        app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
-        android:layout_height="match_parent" />
 
     <androidx.appcompat.widget.Toolbar
         android:id="@+id/toolbar"
@@ -24,4 +18,31 @@
         app:layout_scrollFlags="enterAlways|scroll"
         app:popupTheme="@style/ThemeOverlay.AppCompat.Light" />
 
-</androidx.coordinatorlayout.widget.CoordinatorLayout>
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/rv_notifications"
+        android:layout_width="match_parent"
+        app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+        android:layout_height="match_parent" />
+
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:id="@+id/notSubscribed"
+        android:orientation="horizontal"
+        android:visibility="gone">
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:padding="10dp"
+            android:textSize="20dp"
+            android:text="@string/click_on_the_bell_icon"
+            android:layout_gravity="center"
+            android:gravity="center"
+            android:elevation="2dp"
+            android:shadowColor="@color/black"
+            android:textColor="@color/black"
+            android:layout_margin="4dp" />
+    </LinearLayout>
+</LinearLayout>

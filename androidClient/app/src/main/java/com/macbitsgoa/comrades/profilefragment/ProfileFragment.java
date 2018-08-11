@@ -18,6 +18,7 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 import com.macbitsgoa.comrades.BuildConfig;
+import com.macbitsgoa.comrades.GetGoogleSignInActivity;
 import com.macbitsgoa.comrades.R;
 import com.macbitsgoa.comrades.ranks.RankActivity;
 import com.macbitsgoa.comrades.ranks.UserObject;
@@ -51,29 +52,7 @@ public class ProfileFragment extends Fragment {
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.fragment_profile, container, false);
-        FirebaseUser firebaseUser = FirebaseAuth.getInstance().getCurrentUser();
         initUI(view);
-        if (firebaseUser != null)
-            FirebaseDatabase.getInstance().getReference().child(BuildConfig.BUILD_TYPE)
-                    .child("/users/").child(firebaseUser.getUid())
-                    .addValueEventListener(new ValueEventListener() {
-                        @Override
-                        public void onDataChange(DataSnapshot dataSnapshot) {
-                            UserObject obj = dataSnapshot.getValue(UserObject.class);
-                            tvUserName.setText(obj.getName());
-                            tvUserAuthority.setText(obj.getAuthority());
-                            tvScore.setText(String.valueOf(obj.getScore()));
-                            tvUploads.setText(String.valueOf(obj.getUploads()));
-                            tvRank.setText(String.valueOf(obj.getRank()));
-                            tvUserImage.setImageURI(obj.getPhotoUrl());
-                        }
-
-                        @Override
-                        public void onCancelled(DatabaseError databaseError) {
-                            Log.e(TAG, databaseError.getMessage());
-                        }
-                    });
-
         return view;
     }
 
@@ -91,4 +70,40 @@ public class ProfileFragment extends Fragment {
         recyclerView.setAdapter(new ProfileAdapter());
     }
 
+    private void initiateView(UserObject obj) {
+        tvUserName.setText(obj.getName());
+        tvUserAuthority.setText(obj.getAuthority());
+        tvScore.setText(String.valueOf(obj.getScore()));
+        tvUploads.setText(String.valueOf(obj.getUploads()));
+        tvRank.setText(String.valueOf(obj.getRank()));
+        tvUserImage.setImageURI(obj.getPhotoUrl());
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        FirebaseUser firebaseUser = FirebaseAuth.getInstance().getCurrentUser();
+        if (firebaseUser != null) {
+            tvUserAuthority.setOnClickListener(null);
+            FirebaseDatabase.getInstance().getReference().child(BuildConfig.BUILD_TYPE)
+                    .child("/users/").child(firebaseUser.getUid())
+                    .addValueEventListener(new ValueEventListener() {
+                        @Override
+                        public void onDataChange(DataSnapshot dataSnapshot) {
+                            UserObject obj = dataSnapshot.getValue(UserObject.class);
+                            initiateView(obj);
+                        }
+
+                        @Override
+                        public void onCancelled(DatabaseError databaseError) {
+                            Log.e(TAG, databaseError.getMessage());
+                        }
+                    });
+        } else {
+            tvUserAuthority.setOnClickListener(view1 -> {
+                final Intent intent = new Intent(getContext(), GetGoogleSignInActivity.class);
+                startActivity(intent);
+            });
+        }
+    }
 }
