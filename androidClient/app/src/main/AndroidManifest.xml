@@ -54,7 +54,8 @@
 
         <activity
             android:name=".HomeActivity"
-            android:label="@string/app_name">
+            android:label="@string/app_name"
+            android:theme="@style/SplashTheme">
 
             <meta-data
                 android:name="android.app.default_searchable"
@@ -67,6 +68,7 @@
             </intent-filter>
         </activity>
         <activity
+
             android:name=".subscribedcourses.SubscribedCoursesActivity"
             android:label="@string/title_activity_subscribed_courses">
 
@@ -97,7 +99,9 @@
                 android:resource="@xml/searchable_material" />
         </activity>
         <activity android:name=".eateries.EateriesActivity" />
-        <activity android:name=".eateries.EateriesDetail" />
+        <activity android:name=".eateries.EateriesDetail" />        
+        <activity android:name=".aboutmac.AboutMacActivity"/>
+
     </application>
 
 </manifest>
