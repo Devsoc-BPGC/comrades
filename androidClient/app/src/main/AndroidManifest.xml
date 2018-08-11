@@ -47,12 +47,15 @@
         </service>
         <service
             android:name=".coursematerial.DownloadService"
-            android:enabled="true"></service>
+            android:enabled="true">
+
+        </service>
         <service android:name=".coursematerial.UploadService" />
 
         <activity
             android:name=".HomeActivity"
-            android:label="@string/app_name">
+            android:label="@string/app_name"
+            android:theme="@style/SplashTheme">
 
             <meta-data
                 android:name="android.app.default_searchable"
