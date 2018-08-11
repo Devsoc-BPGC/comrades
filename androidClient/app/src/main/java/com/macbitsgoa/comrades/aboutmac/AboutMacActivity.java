@@ -12,27 +12,14 @@ import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.net.Uri;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
 import android.widget.ImageButton;
 import android.widget.Toast;
 
-import com.google.firebase.database.DataSnapshot;
-import com.google.firebase.database.DatabaseError;
-import com.google.firebase.database.DatabaseReference;
-import com.google.firebase.database.FirebaseDatabase;
-import com.google.firebase.database.ValueEventListener;
-
-import com.macbitsgoa.comrades.FbListener;
-import com.macbitsgoa.comrades.FirebaseKeysKt;
-import com.macbitsgoa.comrades.CHCKt;
-
 import com.macbitsgoa.comrades.R;
 
-import java.util.ArrayList;
-import java.util.List;
 
 public class AboutMacActivity extends AppCompatActivity implements View.OnClickListener {
 
@@ -130,6 +117,7 @@ public class AboutMacActivity extends AppCompatActivity implements View.OnClickL
             case R.id.content_about_us_macweb:
                     Intent macwebIntent = new Intent(Intent.ACTION_VIEW,Uri.parse(ABOUT_US_MACWEBSITE_URL));
                     startActivity(macwebIntent);
+                    break;
             default:
                 break;
         }

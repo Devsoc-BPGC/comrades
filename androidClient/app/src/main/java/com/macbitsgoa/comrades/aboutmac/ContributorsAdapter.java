@@ -5,25 +5,23 @@ import android.view.ViewGroup;
 
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseReference;
-import com.google.firebase.database.ValueEventListener;
+
 import com.macbitsgoa.comrades.CHCKt;
 import com.macbitsgoa.comrades.FbListener;
 import com.macbitsgoa.comrades.FirebaseKeysKt;
 import com.macbitsgoa.comrades.R;
 
 import java.util.ArrayList;
-import java.util.List;
 
 import androidx.recyclerview.widget.RecyclerView;
 
 public class ContributorsAdapter extends RecyclerView.Adapter<ContributorsVh> {
 
-    private DatabaseReference dbRef;
     private ArrayList<String> contributors;
 
-    public ContributorsAdapter() {
+    ContributorsAdapter() {
         this.contributors = new ArrayList<>();
-        dbRef = CHCKt.getFirebaseRootRef().child(FirebaseKeysKt.CONTRIBUTORS);
+        DatabaseReference dbRef = CHCKt.getFirebaseRootRef().child(FirebaseKeysKt.CONTRIBUTORS);
         dbRef.keepSynced(true);
         dbRef.addValueEventListener(new FbListener() {
             @Override
