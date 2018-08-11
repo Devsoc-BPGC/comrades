@@ -26,7 +26,7 @@
                 android:id="@+id/donut_progress"
                 android:layout_width="70dp"
                 android:layout_height="70dp"
-                app:cpb_progressbar_width="8dp"
+                app:cpb_progressbar_width="6dp"
                 app:cpb_progressbar_color="#0dce10"
                 app:cpb_progress="69"
                 app:cpb_background_progressbar_width="6dp" />
@@ -61,7 +61,7 @@
                 android:id="@+id/tv_owner_name"
                 android:textSize="14sp"
                 android:padding="4dp"
-                android:layout_marginBottom="2dp"
+                android:layout_marginBottom="4dp"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 tools:text="Mechanics Oscillations and Waves" />

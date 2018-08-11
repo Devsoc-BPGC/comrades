@@ -89,6 +89,7 @@ public class HomeActivity extends AppCompatActivity {
             Auth.GoogleSignInApi.signOut(mGoogleApiClient).setResultCallback(status -> {
                 invalidateOptionsMenu();
                 Toast.makeText(HomeActivity.this, "Signed Out Successfully", Toast.LENGTH_SHORT).show();
+                navigation.setSelectedItemId(navigation.getSelectedItemId());
             });
             return true;
         });

@@ -1,6 +1,8 @@
 package com.macbitsgoa.comrades.subscribedcourses;
 
 import android.os.Bundle;
+import android.view.View;
+import android.widget.LinearLayout;
 
 import com.macbitsgoa.comrades.R;
 import com.macbitsgoa.comrades.courselistfragment.CourseVm;
@@ -28,11 +30,17 @@ public class SubscribedCoursesActivity extends AppCompatActivity {
 
         final ArrayList<MyCourse> myCourses = new ArrayList<>(0);
         final SubscribedAdapter subscribedAdapter = new SubscribedAdapter(myCourses);
-        ((RecyclerView) findViewById(R.id.rv_notifications)).setAdapter(subscribedAdapter);
-
+        RecyclerView recyclerView = findViewById(R.id.rv_notifications);
+        recyclerView.setAdapter(subscribedAdapter);
+        LinearLayout linearLayout = findViewById(R.id.notSubscribed);
         final CourseVm courseVm = ViewModelProviders.of(this).get(CourseVm.class);
         courseVm.getFollowingList().observe(this, courses -> {
             myCourses.clear();
+            if (courses.size() == 0) {
+                linearLayout.setVisibility(View.VISIBLE);
+                recyclerView.setVisibility(View.GONE);
+                return;
+            }
             myCourses.addAll(courses);
             subscribedAdapter.notifyDataSetChanged();
         });

@@ -3,10 +3,14 @@ package com.macbitsgoa.comrades.profilefragment;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.preference.PreferenceManager;
+import android.view.Gravity;
+import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.CompoundButton;
+import android.widget.PopupWindow;
 import android.widget.Switch;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.facebook.drawee.view.SimpleDraweeView;
 import com.macbitsgoa.comrades.R;
@@ -18,6 +22,7 @@ import java.util.Objects;
 
 import androidx.recyclerview.widget.RecyclerView;
 
+import static android.view.ViewGroup.LayoutParams.MATCH_PARENT;
 import static com.macbitsgoa.comrades.HomeActivity.SETTINGS;
 
 /**
@@ -48,8 +53,29 @@ public class ProfileViewHolder extends RecyclerView.ViewHolder implements View.O
             case "Menus":
                 Intent intentEatery = new Intent(view.getContext(), EateriesActivity.class);
                 view.getContext().startActivity(intentEatery);
+                break;
             case "Imp. Documents":
                 CourseActivity.show(view.getContext(), "-LJUx7EJ78rkt41kHNFs", "Imp. Docs");
+                break;
+            case "My Uploads":
+                Toast.makeText(view.getContext(), "Coming Soon", Toast.LENGTH_LONG).show();
+                break;
+            case "Terms And Conditions":
+                View v = LayoutInflater.from(view.getContext())
+                        .inflate(R.layout.layout_terms_conditions, null);
+                PopupWindow popupWindow = new PopupWindow(v, MATCH_PARENT, MATCH_PARENT, true);
+                popupWindow.setAnimationStyle(R.style.animation);
+                popupWindow.showAtLocation(view.getRootView(),
+                        Gravity.CENTER, 0, 0);
+                break;
+            case "Privacy":
+                View v1 = LayoutInflater.from(view.getContext())
+                        .inflate(R.layout.layout_privacy, null);
+                PopupWindow popupWindowPrivacy = new PopupWindow(v1, MATCH_PARENT, MATCH_PARENT, true);
+                popupWindowPrivacy.setAnimationStyle(R.style.animation);
+                popupWindowPrivacy.showAtLocation(view.getRootView(),
+                        Gravity.CENTER, 0, 0);
+                break;
             default:
                 break;
         }
