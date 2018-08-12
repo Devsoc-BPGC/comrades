@@ -20,16 +20,16 @@ public class MyCourse {
     public String name;
 
     @ColumnInfo(name = "addedById")
-    private String addedById;
+    public String addedById;
 
     @ColumnInfo(name = "code")
     private String code;
 
     @ColumnInfo(name = "isFollowing")
-    private Boolean isFollowing;
+    public Boolean isFollowing;
 
     @ColumnInfo(name = "addedByName")
-    private String addedByName;
+    public String addedByName;
 
     public String getAddedById() {
         return addedById;

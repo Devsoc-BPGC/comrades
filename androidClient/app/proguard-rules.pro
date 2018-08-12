@@ -19,3 +19,24 @@
 # If you keep the line number information, uncomment this to
 # hide the original source file name.
 #-renamesourcefileattribute SourceFile
+
+# https://firebase.google.com/docs/crashlytics/customize-crash-reports
+-keepattributes *Annotation*
+-keepattributes SourceFile,LineNumberTable
+-keep public class * extends java.lang.Exception
+-printmapping mapping.txt
+-keep class com.crashlytics.** { *; }
+-dontwarn com.crashlytics.**
+
+
+# https://gist.github.com/brownsoo/9b11a823360c9cf184263df3e669375c
+-keep public class * extends androidx.lifecycle.AndroidViewModel {
+    <init>(...);
+}
+
+-keepclassmembers class androidx.lifecycle.Lifecycle$State{ *; }
+-keepclassmembers class androidx.lifecycle.Lifecycle$Event{ *; }
+-keepclassmembers class androidx.** { *; }
+-keep class androidx.** { *; }
+-dontwarn androidx.**
+
