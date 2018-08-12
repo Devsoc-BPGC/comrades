@@ -23,6 +23,7 @@ import com.macbitsgoa.comrades.R;
 import java.util.ArrayList;
 import java.util.Objects;
 
+import androidx.annotation.NonNull;
 import androidx.coordinatorlayout.widget.CoordinatorLayout;
 import androidx.fragment.app.DialogFragment;
 import androidx.fragment.app.Fragment;
@@ -38,7 +39,7 @@ import static com.macbitsgoa.comrades.CHCKt.TAG_PREFIX;
 public class CourseListFragment extends Fragment implements ChildEventListener {
 
     private static final String ADD_COURSE_FRAGMENT = "addCourseFragment";
-    private ArrayList<MyCourse> arrayList = new ArrayList<>();
+    private final ArrayList<MyCourse> arrayList = new ArrayList<>(0);
     private CourseAdapter courseAdapter;
     private CoordinatorLayout rootCl;
     private final static String TAG = TAG_PREFIX + CourseListFragment.class.getSimpleName();
@@ -49,16 +50,13 @@ public class CourseListFragment extends Fragment implements ChildEventListener {
     }
 
     @Override
-    public void onCreate(Bundle bundle) {
-        super.onCreate(bundle);
-        courseVm = ViewModelProviders.of(this).get(CourseVm.class);
-    }
-
-    @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+    public View onCreateView(@NonNull final LayoutInflater inflater,
+                             final ViewGroup container,
+                             final Bundle savedInstanceState) {
         super.onCreateView(inflater, container, savedInstanceState);
+        courseVm = ViewModelProviders.of(this).get(CourseVm.class);
         courseAdapter = new CourseAdapter(arrayList);
-        View view = inflater.inflate(R.layout.fragment_course_list, container, false);
+        final View view = inflater.inflate(R.layout.fragment_course_list, container, false);
         view.findViewById(R.id.fab_add_course).setOnClickListener(v -> handleAddCourse());
         rootCl = view.findViewById(R.id.cl_main_activity);
         final RecyclerView coursesRv = view.findViewById(R.id.rv_course_list);
@@ -77,7 +75,7 @@ public class CourseListFragment extends Fragment implements ChildEventListener {
 
 
     private void handleAddCourse() {
-        final boolean signedIn = GoogleSignIn.getLastSignedInAccount(getContext()) != null;
+        final boolean signedIn = GoogleSignIn.getLastSignedInAccount(Objects.requireNonNull(getContext())) != null;
         boolean storagePermission = true;
 
         if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.M) {
@@ -86,7 +84,7 @@ public class CourseListFragment extends Fragment implements ChildEventListener {
                             == PackageManager.PERMISSION_GRANTED;
         }
         if (signedIn && storagePermission) {
-            final FragmentManager fm = getActivity().getSupportFragmentManager();
+            final FragmentManager fm = Objects.requireNonNull(getActivity()).getSupportFragmentManager();
             final FragmentTransaction ft = fm.beginTransaction();
             final DialogFragment addCourseFragment = new AddCourseFragment();
             addCourseFragment.show(ft, ADD_COURSE_FRAGMENT);
@@ -113,9 +111,10 @@ public class CourseListFragment extends Fragment implements ChildEventListener {
     }
 
     @Override
-    public void onChildAdded(DataSnapshot dataSnapshot, String s) {
-        MyCourse myCourse = dataSnapshot.getValue(MyCourse.class);
-        if (myCourse.getAddedByName() == null) {
+    public void onChildAdded(@NonNull final DataSnapshot dataSnapshot, final String s) {
+        final MyCourse myCourse = dataSnapshot.getValue(MyCourse.class);
+        assert myCourse != null;
+        if (myCourse.addedByName == null) {
             myCourse.setAddedByName("");
         }
         myCourse.setFollowing(false);
@@ -123,13 +122,13 @@ public class CourseListFragment extends Fragment implements ChildEventListener {
     }
 
     @Override
-    public void onChildChanged(DataSnapshot dataSnapshot, String s) {
-        MyCourse myCourse = dataSnapshot.getValue(MyCourse.class);
-
+    public void onChildChanged(@NonNull final DataSnapshot dataSnapshot, final String s) {
+        final MyCourse myCourse = dataSnapshot.getValue(MyCourse.class);
+        assert myCourse != null;
         for (int i = 0; i < arrayList.size(); i++) {
-            if (Objects.equals(arrayList.get(i).getId(), myCourse.getId())) {
+            if (Objects.equals(arrayList.get(i)._id, myCourse._id)) {
                 arrayList.remove(i);
-                myCourse.setFollowing(arrayList.get(i).getFollowing());
+                myCourse.isFollowing = arrayList.get(i).isFollowing;
                 courseVm.update(myCourse);
                 break;
             }
@@ -137,18 +136,20 @@ public class CourseListFragment extends Fragment implements ChildEventListener {
     }
 
     @Override
-    public void onChildRemoved(DataSnapshot dataSnapshot) {
-        MyCourse myCourse = dataSnapshot.getValue(MyCourse.class);
+    public void onChildRemoved(@NonNull final DataSnapshot dataSnapshot) {
+        final MyCourse myCourse = dataSnapshot.getValue(MyCourse.class);
         courseVm.delete(myCourse);
     }
 
     @Override
-    public void onChildMoved(DataSnapshot dataSnapshot, String s) {
-        Log.e(TAG, "Child Moved");
+    public void onChildMoved(@NonNull final DataSnapshot dataSnapshot, final String s) {
+        if (BuildConfig.DEBUG) {
+            Log.d(TAG, "Child Moved " + dataSnapshot.getValue());
+        }
     }
 
     @Override
-    public void onCancelled(DatabaseError databaseError) {
-        Log.e(TAG, databaseError.getMessage());
+    public void onCancelled(final @NonNull DatabaseError databaseError) {
+        Log.e(TAG, databaseError.getMessage(), databaseError.toException());
     }
 }

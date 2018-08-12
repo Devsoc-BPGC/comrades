@@ -14,12 +14,12 @@ import androidx.lifecycle.LiveData;
  */
 
 public class CourseRepository {
-    private CourseDao courseDao;
-    private LiveData<List<MyCourse>> courseList;
-    private LiveData<List<MyCourse>> followingList;
+    private final CourseDao courseDao;
+    private final LiveData<List<MyCourse>> courseList;
+    private final LiveData<List<MyCourse>> followingList;
 
-    CourseRepository(Application application) {
-        Database db = Database.getInstance(application);
+    public CourseRepository(final Application application) {
+        final Database db = Database.getInstance(application);
         courseDao = db.getCourseDao();
         courseList = courseDao.getAllCourses();
         followingList = courseDao.getFollowingCourses();
@@ -33,24 +33,24 @@ public class CourseRepository {
         return followingList;
     }
 
-    public void insert(MyCourse myCourse) {
+    public void insert(final MyCourse myCourse) {
         new CourseRepository.insertAsyncTask(courseDao).execute(myCourse);
     }
 
-    public void delete(MyCourse myCourse) {
+    public void delete(final MyCourse myCourse) {
         new CourseRepository.deleteAsyncTask(courseDao).execute(myCourse);
     }
 
-    public void update(MyCourse myCourse) {
+    public void update(final MyCourse myCourse) {
         new CourseRepository.updateAsyncTask(courseDao).execute(myCourse);
     }
 
 
     private static class insertAsyncTask extends AsyncTask<MyCourse, Void, Void> {
 
-        private CourseDao mAsyncTaskDao;
+        private final CourseDao mAsyncTaskDao;
 
-        insertAsyncTask(CourseDao dao) {
+        insertAsyncTask(final CourseDao dao) {
             mAsyncTaskDao = dao;
         }
 
@@ -64,9 +64,9 @@ public class CourseRepository {
 
     private static class deleteAsyncTask extends AsyncTask<MyCourse, Void, Void> {
 
-        private CourseDao mAsyncTaskDao;
+        private final CourseDao mAsyncTaskDao;
 
-        deleteAsyncTask(CourseDao dao) {
+        protected deleteAsyncTask(final CourseDao dao) {
             mAsyncTaskDao = dao;
         }
 
@@ -80,9 +80,9 @@ public class CourseRepository {
 
     private static class updateAsyncTask extends AsyncTask<MyCourse, Void, Void> {
 
-        private CourseDao mAsyncTaskDao;
+        private final CourseDao mAsyncTaskDao;
 
-        updateAsyncTask(CourseDao dao) {
+        updateAsyncTask(final CourseDao dao) {
             mAsyncTaskDao = dao;
         }
 

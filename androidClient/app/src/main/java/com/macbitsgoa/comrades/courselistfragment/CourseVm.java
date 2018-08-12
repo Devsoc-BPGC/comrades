@@ -4,6 +4,7 @@ import android.app.Application;
 
 import java.util.List;
 
+import androidx.annotation.NonNull;
 import androidx.lifecycle.AndroidViewModel;
 import androidx.lifecycle.LiveData;
 
@@ -12,12 +13,11 @@ import androidx.lifecycle.LiveData;
  */
 
 public class CourseVm extends AndroidViewModel {
-    private CourseRepository mRepository;
-    private LiveData<List<MyCourse>> courseList;
-    private LiveData<List<MyCourse>> followingList;
+    private final CourseRepository mRepository;
+    private final LiveData<List<MyCourse>> courseList;
+    private final LiveData<List<MyCourse>> followingList;
 
-
-    public CourseVm(Application application) {
+    public CourseVm(@NonNull final Application application) {
         super(application);
         mRepository = new CourseRepository(application);
         courseList = mRepository.getAllCourses();
@@ -32,17 +32,15 @@ public class CourseVm extends AndroidViewModel {
         return followingList;
     }
 
-    public void insert(MyCourse myCourse) {
+    public void insert(final MyCourse myCourse) {
         mRepository.insert(myCourse);
     }
 
-    public void delete(MyCourse myCourse) {
+    public void delete(final MyCourse myCourse) {
         mRepository.delete(myCourse);
     }
 
-    public void update(MyCourse myCourse) {
+    public void update(final MyCourse myCourse) {
         mRepository.update(myCourse);
     }
-
-
 }
