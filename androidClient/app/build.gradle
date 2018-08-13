@@ -18,9 +18,9 @@ android {
             applicationIdSuffix ".debug"
         }
         release {
-            debuggable true
-            shrinkResources true
-            minifyEnabled true
+            debuggable false
+            shrinkResources false
+            minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }
     }

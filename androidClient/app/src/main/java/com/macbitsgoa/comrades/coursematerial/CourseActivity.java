@@ -99,6 +99,7 @@ public class CourseActivity extends AppCompatActivity
                 new MaterialVmFactoryClass(this.getApplication(), courseId)).get(MaterialVm.class);
         materialVm.getMaterialList().observe(CourseActivity.this, courseMaterials -> {
             materialArrayList.clear();
+            Log.e("TAG:1",materialArrayList.size()+"");
             materialArrayList.addAll(courseMaterials);
             materialAdapter.notifyDataSetChanged();
         });
@@ -291,6 +292,7 @@ public class CourseActivity extends AppCompatActivity
     @Override
     public void onChildAdded(DataSnapshot dataSnapshot, String s) {
         CourseMaterial courseMaterial = dataSnapshot.getValue(CourseMaterial.class);
+        Log.e("TAG:2",courseMaterial.getId()+"");
         courseMaterial.setFilePath(String.format("%s/%s/%s/", getExternalStorageDirectory(),
                 DOWNLOAD_DIRECTORY, courseId));
         courseMaterial.setCourseId(courseId);
