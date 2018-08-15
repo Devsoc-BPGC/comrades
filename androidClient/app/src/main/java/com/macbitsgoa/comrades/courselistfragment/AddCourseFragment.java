@@ -1,6 +1,7 @@
 package com.macbitsgoa.comrades.courselistfragment;
 
 import android.app.Dialog;
+import android.content.Context;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
@@ -13,11 +14,13 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.macbitsgoa.comrades.BuildConfig;
 import com.macbitsgoa.comrades.R;
+import com.macbitsgoa.comrades.coursematerial.CourseActivity;
 
 import java.util.Objects;
 
 import androidx.appcompat.app.AlertDialog;
 import androidx.fragment.app.DialogFragment;
+import androidx.lifecycle.ViewModelProviders;
 
 
 /**
@@ -80,17 +83,32 @@ public class AddCourseFragment extends DialogFragment implements TextWatcher {
                 allFieldsSet = false;
             }
             if (allFieldsSet) {
-                DatabaseReference dbr = FirebaseDatabase.getInstance().getReference()
-                        .child(BuildConfig.BUILD_TYPE).child("/courses/").push();
-                String key = dbr.getKey();
-                MyCourse myCourse = new MyCourse();
-                myCourse.setId(key);
-                myCourse.setAddedById(FirebaseAuth.getInstance().getCurrentUser().getUid());
-                myCourse.setAddedByName(FirebaseAuth.getInstance().getCurrentUser().getDisplayName());
-                myCourse.setName(courseName);
-                myCourse.setCode((streamId + "-" + courseNumber));
-                myCourse.setFollowing(null);
-                dbr.setValue(myCourse);
+                CourseVm courseVm = ViewModelProviders.of(getActivity()).get(CourseVm.class);
+                MyCourse existingCourse = courseVm.getCourseExist(getActivity().getApplication(), streamId + "-" + courseNumber, courseName);
+                if (existingCourse == null) {
+                    DatabaseReference dbr = FirebaseDatabase.getInstance().getReference()
+                            .child(BuildConfig.BUILD_TYPE).child("/courses/").push();
+                    String key = dbr.getKey();
+                    MyCourse myCourse = new MyCourse();
+                    myCourse.setId(key);
+                    myCourse.setAddedById(FirebaseAuth.getInstance().getCurrentUser().getUid());
+                    myCourse.setAddedByName(FirebaseAuth.getInstance().getCurrentUser().getDisplayName());
+                    myCourse.setName(courseName);
+                    myCourse.setCode((streamId + "-" + courseNumber));
+                    myCourse.setFollowing(null);
+                    dbr.setValue(myCourse);
+                } else {
+                    Context context = getContext();
+                    new AlertDialog.Builder(getContext())
+                            .setTitle("Can't Add Course")
+                            .setMessage("The course you want to add already exists in the database." +
+                                    "Please add files to the existing course.")
+                            .setPositiveButton("Click to open", (dialogInterface12, i12) -> {
+                                CourseActivity.show(context, existingCourse.getCode(), existingCourse.getName());
+                            })
+                            .setNegativeButton(getString(R.string.cancel), (dialogInterface1, i1) -> {
+                            }).show();
+                }
             }
         };
     }

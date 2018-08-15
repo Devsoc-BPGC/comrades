@@ -2,6 +2,7 @@ package com.macbitsgoa.comrades.courselistfragment;
 
 import android.app.Application;
 import android.os.AsyncTask;
+import android.util.Log;
 
 import com.macbitsgoa.comrades.persistance.Database;
 
@@ -9,20 +10,38 @@ import java.util.List;
 
 import androidx.lifecycle.LiveData;
 
+import static com.macbitsgoa.comrades.CHCKt.TAG_PREFIX;
+
 /**
  * @author aayush singla
  */
 
 public class CourseRepository {
-    private final CourseDao courseDao;
-    private final LiveData<List<MyCourse>> courseList;
-    private final LiveData<List<MyCourse>> followingList;
+    private static final String TAG = TAG_PREFIX + CourseRepository.class.getSimpleName();
+    private CourseDao courseDao;
+    private LiveData<List<MyCourse>> courseList;
+    private LiveData<List<MyCourse>> followingList;
+    private MyCourse courseExist;
 
     public CourseRepository(final Application application) {
         final Database db = Database.getInstance(application);
         courseDao = db.getCourseDao();
         courseList = courseDao.getAllCourses();
         followingList = courseDao.getFollowingCourses();
+    }
+
+    public CourseRepository(final Application application, String code, String name) {
+        try {
+            final Database db = Database.getInstance(application);
+            courseDao = db.getCourseDao();
+            courseExist = new checkCourseAsyncTask(courseDao).execute(name, code).get();
+        } catch (Exception e) {
+            Log.e(TAG, e.getMessage());
+        }
+    }
+
+    public MyCourse getCourseExist() {
+        return courseExist;
     }
 
     public LiveData<List<MyCourse>> getAllCourses() {
@@ -91,6 +110,23 @@ public class CourseRepository {
             mAsyncTaskDao.update(params[0]);
             return null;
         }
+    }
+
+    private static class checkCourseAsyncTask extends AsyncTask<String, Void, MyCourse> {
+
+        private final CourseDao mAsyncTaskDao;
+
+        checkCourseAsyncTask(final CourseDao dao) {
+            mAsyncTaskDao = dao;
+        }
+
+        @Override
+        protected MyCourse doInBackground(final String... params) {
+            return mAsyncTaskDao.ifCourseExists(params[0], params[1]);
+
+        }
+
+
     }
 
 }

@@ -31,6 +31,9 @@ public interface CourseDao {
     @Query("SELECT * FROM MyCourse WHERE name LIKE :search OR addedByName LIKE :search OR code LIKE :search ")
     Cursor getSearchCursor(String search);
 
+    @Query("SELECT * FROM MyCourse WHERE name LIKE :name OR code LIKE :code")
+    MyCourse ifCourseExists(String name, String code);
+
     @Insert()
     void insertAll(List<MyCourse> products);
 
