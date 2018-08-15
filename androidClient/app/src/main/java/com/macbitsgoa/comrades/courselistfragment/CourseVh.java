@@ -35,7 +35,7 @@ public class CourseVh extends RecyclerView.ViewHolder {
     public void populate(MyCourse myCourse) {
         nameTv.setText(myCourse.getName());
         codeChip.setChipText(myCourse.getCode());
-        itemView.setOnClickListener(view -> CourseActivity.show(itemView.getContext(),
+        itemView.setOnClickListener(view -> CourseActivity.launchCourse(itemView.getContext(),
                 myCourse.getId(), myCourse.getName()));
 
         if (myCourse.getFollowing())

@@ -39,9 +39,9 @@ import io.reactivex.schedulers.Schedulers;
 
 public class HomeActivity extends AppCompatActivity {
     public static String SETTINGS = "NotificationSetting";
+    public static BottomNavigationView navigation;
     private GoogleApiClient mGoogleApiClient;
     private FragmentManager fragmentManager = getSupportFragmentManager();
-    public static BottomNavigationView navigation;
     private SearchView searchView;
     private BottomNavigationView.OnNavigationItemSelectedListener mOnNavigationItemSelectedListener
             = item -> {
@@ -78,6 +78,24 @@ public class HomeActivity extends AppCompatActivity {
             navigation.setSelectedItemId(R.id.navigation_home);
         }
 
+    }
+
+    @Override
+    protected void onStart() {
+        GoogleSignInOptions gso = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
+                .requestEmail()
+                .build();
+        mGoogleApiClient = new GoogleApiClient.Builder(this)
+                .addApi(Auth.GOOGLE_SIGN_IN_API, gso)
+                .build();
+        mGoogleApiClient.connect();
+        super.onStart();
+    }
+
+    @Override
+    public void onSaveInstanceState(Bundle savedInstanceState) {
+        super.onSaveInstanceState(savedInstanceState);
+        savedInstanceState.putInt("bottomNav", navigation.getSelectedItemId());
     }
 
     @Override
@@ -128,37 +146,6 @@ public class HomeActivity extends AppCompatActivity {
 
     }
 
-    @Override
-    protected void onStart() {
-        GoogleSignInOptions gso = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
-                .requestEmail()
-                .build();
-        mGoogleApiClient = new GoogleApiClient.Builder(this)
-                .addApi(Auth.GOOGLE_SIGN_IN_API, gso)
-                .build();
-        mGoogleApiClient.connect();
-        super.onStart();
-    }
-
-    @Override
-    protected void onResume() {
-        super.onResume();
-        invalidateOptionsMenu();
-        SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(getBaseContext());
-        Boolean previousStarted = preferences.getBoolean("Previously Started", false);
-        if (!previousStarted) {
-            SharedPreferences.Editor edit = preferences.edit();
-            edit.putBoolean(SETTINGS, true);
-            edit.putBoolean("Previously Started", Boolean.TRUE);
-            edit.apply();
-        }
-    }
-    @Override
-    public void onSaveInstanceState(Bundle savedInstanceState) {
-        super.onSaveInstanceState(savedInstanceState);
-        savedInstanceState.putInt("bottomNav", navigation.getSelectedItemId());
-    }
-
     private void getCoursesFromDb(String query) {
         String searchText = "%" + query + "%";
         Observable.just(searchText).observeOn(Schedulers.computation())
@@ -182,7 +169,6 @@ public class HomeActivity extends AppCompatActivity {
 
     }
 
-
     private void handleResults(Cursor cursor) {
         searchView.setSuggestionsAdapter(new SearchCoursesCursorAdapter(HomeActivity.this, cursor));
     }
@@ -191,6 +177,20 @@ public class HomeActivity extends AppCompatActivity {
         Log.e("TAG", t.getMessage(), t);
         Toast.makeText(this, "Problem in Fetching Courses",
                 Toast.LENGTH_LONG).show();
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        invalidateOptionsMenu();
+        SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(getBaseContext());
+        Boolean previousStarted = preferences.getBoolean("Previously Started", false);
+        if (!previousStarted) {
+            SharedPreferences.Editor edit = preferences.edit();
+            edit.putBoolean(SETTINGS, true);
+            edit.putBoolean("Previously Started", Boolean.TRUE);
+            edit.apply();
+        }
     }
 
 }

@@ -104,7 +104,7 @@ public class AddCourseFragment extends DialogFragment implements TextWatcher {
                             .setMessage("The course you want to add already exists in the database." +
                                     "Please add files to the existing course.")
                             .setPositiveButton("Click to open", (dialogInterface12, i12) -> {
-                                CourseActivity.show(context, existingCourse.getCode(), existingCourse.getName());
+                                CourseActivity.launchCourse(context, existingCourse.getCode(), existingCourse.getName());
                             })
                             .setNegativeButton(getString(R.string.cancel), (dialogInterface1, i1) -> {
                             }).show();

@@ -43,7 +43,7 @@ public class SearchCoursesCursorAdapter extends CursorAdapter {
         addedByTv.setText("added by " + addedBy);
 
         view.setOnClickListener(view1 -> {
-            CourseActivity.show(view1.getContext(), id, name);
+            CourseActivity.launchCourse(view1.getContext(), id, name);
         });
 
     }

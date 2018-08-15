@@ -23,11 +23,27 @@
           }
         },
         {
-          "client_id": "666225132801-ad1s5f5a1juq3l544783ega2uh6l4vdf.apps.googleusercontent.com",
+          "client_id": "666225132801-cdd5kh3ijajuoagmm9kssbb4828mnd2j.apps.googleusercontent.com",
           "client_type": 1,
           "android_info": {
             "package_name": "com.macbitsgoa.comrades",
             "certificate_hash": "691c9e26f5d642b23fe6899c9a699cd2645fd639"
+          }
+        },
+        {
+          "client_id": "666225132801-senbbk42jrdg307m9govgorel901p105.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.macbitsgoa.comrades",
+            "certificate_hash": "d10f53c806bcb7749d6e055c55a0cf8bed02ec00"
+          }
+        },
+        {
+          "client_id": "666225132801-n79cq5ag8u2pis6qto8b3077h4efla4q.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.macbitsgoa.comrades",
+            "certificate_hash": "506cc66679f84c1e583cb61b04e321c6f3b42b45"
           }
         },
         {
@@ -80,6 +96,14 @@
           "android_info": {
             "package_name": "com.macbitsgoa.comrades.debug",
             "certificate_hash": "691c9e26f5d642b23fe6899c9a699cd2645fd639"
+          }
+        },
+        {
+          "client_id": "666225132801-eigao03bqcj0vcmblb0se7u181kk22gg.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.macbitsgoa.comrades.debug",
+            "certificate_hash": "506cc66679f84c1e583cb61b04e321c6f3b42b45"
           }
         },
         {

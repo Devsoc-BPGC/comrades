@@ -27,7 +27,7 @@ public class SubscribedVH extends RecyclerView.ViewHolder {
 
     public void populate(final MyCourse course) {
         nameTv.setText(course.name);
-        itemView.setOnClickListener(view -> CourseActivity.show(itemView.getContext(),
+        itemView.setOnClickListener(view -> CourseActivity.launchCourse(itemView.getContext(),
                 course._id, course.name));
 
         unSubscribeButton.setOnClickListener(view -> {

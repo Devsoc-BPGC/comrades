@@ -3,6 +3,7 @@ package com.macbitsgoa.comrades.coursematerial;
 import com.macbitsgoa.comrades.courselistfragment.MyCourse;
 
 import java.io.File;
+import java.util.List;
 
 import androidx.annotation.NonNull;
 import androidx.room.ColumnInfo;
@@ -17,6 +18,7 @@ import static com.macbitsgoa.comrades.ComradesConstants.DOWNLOAD_DIRECTORY;
 
 /**
  * @author aayush singla
+ * @author Rushikesh Jogdand
  */
 
 @Entity(foreignKeys = @ForeignKey(entity = MyCourse.class,
@@ -24,23 +26,26 @@ import static com.macbitsgoa.comrades.ComradesConstants.DOWNLOAD_DIRECTORY;
         childColumns = "courseId",
         onDelete = CASCADE))
 public class CourseMaterial {
+    @ColumnInfo(name = "isDowloading") // OOPS, spelling mistake
+    public Boolean isDownloading;
+
+    @ColumnInfo(name = "isWaiting")
+    public Boolean isWaiting;
+
+    @Ignore
+    public int progress;
+
     @PrimaryKey
     @NonNull
     @ColumnInfo(name = "_id")
-    private String _id;
+    public String _id;
 
     @ColumnInfo(name = "hashId")
     private String hashId;
 
     @NonNull
     @ColumnInfo(name = "courseId")
-    private String courseId;
-
-    @ColumnInfo(name = "isDowloading")
-    private Boolean isDownloading;
-
-    @ColumnInfo(name = "isWaiting")
-    private Boolean isWaiting;
+    public String courseId;
 
     @ColumnInfo(name = "addedBy")
     private String addedBy;
@@ -67,13 +72,27 @@ public class CourseMaterial {
     private String iconLink;
 
     @ColumnInfo(name = "filePath")
-    private String filePath;
+    public String filePath;
 
     @ColumnInfo(name = "fileSize")
     private Long fileSize;
 
-    @Ignore
-    private int progress;
+    /**
+     * Utility method to find a index of a material in list.
+     *
+     * @param list ref {@link List}
+     * @param id   {@link #_id}
+     * @return index, -1 if not found.
+     */
+    public static int findIndex(@NonNull final List<CourseMaterial> list,
+                                @NonNull final String id) {
+        for (int i = 0; i < list.size(); i++) {
+            if (id.equals(list.get(i)._id)) {
+                return i;
+            }
+        }
+        return -1;
+    }
 
     public String getId() {
         return _id;
@@ -95,7 +114,7 @@ public class CourseMaterial {
         return isDownloading;
     }
 
-    public void setDownloading(Boolean downloading) {
+    public void setDownloading(final Boolean downloading) {
         isDownloading = downloading;
     }
 
@@ -212,5 +231,4 @@ public class CourseMaterial {
     public void setHashId(String hashId) {
         this.hashId = hashId;
     }
-
 }

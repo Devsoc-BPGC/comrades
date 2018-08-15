@@ -45,7 +45,7 @@ public class RecentViewHolder extends RecyclerView.ViewHolder implements View.On
     @Override
     public void onClick(View view) {
         if (Objects.equals(obj.getType(), "recent_material"))
-            CourseActivity.show(view.getContext(), obj.getCourseId(), obj.getCourseName());
+            CourseActivity.launchCourse(view.getContext(), obj.getCourseId(), obj.getCourseName());
         else if (Objects.equals(obj.getType(), "recent_course"))
             navigation.setSelectedItemId(R.id.navigation_courses);
     }

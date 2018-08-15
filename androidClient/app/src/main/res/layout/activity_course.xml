@@ -21,7 +21,7 @@
         android:layout_marginBottom="16dp"
         android:layout_marginEnd="16dp"
         android:tint="@color/colorAccentContrast"
-        android:src="@drawable/ic_add" />
+        android:src="@drawable/ic_file_upload_black_24dp" />
 
     <androidx.appcompat.widget.Toolbar
         android:id="@+id/toolbar_course_activity"

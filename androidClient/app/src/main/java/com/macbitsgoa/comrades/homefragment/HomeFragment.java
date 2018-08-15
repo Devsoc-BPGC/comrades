@@ -50,7 +50,7 @@ public class HomeFragment extends Fragment implements ChildEventListener {
         ImageButton btnMyCourses = view.findViewById(R.id.btn_my_courses);
         ImageButton btnMenus = view.findViewById(R.id.btn_menus);
         ImageButton btnDocs = view.findViewById(R.id.btn_docs);
-        btnDocs.setOnClickListener(v -> CourseActivity.show(getContext(),
+        btnDocs.setOnClickListener(v -> CourseActivity.launchCourse(getContext(),
                 "-LJUx7EJ78rkt41kHNFs", "Imp. Docs"));
         btnMyCourses.setOnClickListener(v -> {
             Intent intent = new Intent(getContext(), SubscribedCoursesActivity.class);

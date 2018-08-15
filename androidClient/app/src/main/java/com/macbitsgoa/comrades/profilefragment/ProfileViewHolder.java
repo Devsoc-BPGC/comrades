@@ -55,7 +55,7 @@ public class ProfileViewHolder extends RecyclerView.ViewHolder implements View.O
                 view.getContext().startActivity(intentEatery);
                 break;
             case "Imp. Documents":
-                CourseActivity.show(view.getContext(), "-LJUx7EJ78rkt41kHNFs", "Imp. Docs");
+                CourseActivity.launchCourse(view.getContext(), "-LJUx7EJ78rkt41kHNFs", "Imp. Docs");
                 break;
             case "My Uploads":
                 Toast.makeText(view.getContext(), "Coming Soon", Toast.LENGTH_LONG).show();

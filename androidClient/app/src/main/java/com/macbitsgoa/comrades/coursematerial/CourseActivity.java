@@ -1,6 +1,7 @@
 package com.macbitsgoa.comrades.coursematerial;
 
 import android.Manifest;
+import android.annotation.SuppressLint;
 import android.app.SearchManager;
 import android.content.BroadcastReceiver;
 import android.content.Context;
@@ -31,8 +32,8 @@ import com.macbitsgoa.comrades.persistance.Database;
 import com.macbitsgoa.comrades.search.MaterialCoursesCursorAdapter;
 
 import java.util.ArrayList;
-import java.util.Objects;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import androidx.fragment.app.DialogFragment;
@@ -44,8 +45,6 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import io.reactivex.Observable;
 import io.reactivex.android.schedulers.AndroidSchedulers;
-import io.reactivex.functions.Consumer;
-import io.reactivex.functions.Function;
 import io.reactivex.schedulers.Schedulers;
 
 import static android.os.Environment.getExternalStorageDirectory;
@@ -56,23 +55,23 @@ public class CourseActivity extends AppCompatActivity
         implements View.OnClickListener, ChildEventListener {
 
     public static final String ADD_FILE_FRAGMENT = "AddFileFragment";
+    public static final String KEY_COURSE_ID = "courseId";
+    public static final String KEY_COURSE_NAME = "courseName";
     private static final String TAG = TAG_PREFIX + CourseActivity.class.getSimpleName();
     public static String databaseUrl;
     public static String courseId;
     public static String courseName;
     private final String dbUrl =
             "https://balmy-component-204213.firebaseio.com/" + BuildConfig.BUILD_TYPE + "/courseMaterial/";
-    public static final String KEY_COURSE_ID = "courseId";
-    public static final String KEY_COURSE_NAME = "courseName";
     private final FirebaseDatabase databaseInstance = FirebaseDatabase.getInstance();
-    private ArrayList<CourseMaterial> materialArrayList = new ArrayList<>(0);
+    private final ArrayList<CourseMaterial> materialArrayList = new ArrayList<>(0);
     private MaterialAdapter materialAdapter;
     private FloatingActionButton btnAddMaterial;
     private BroadcastReceiver broadcastReceiver;
     private MaterialVm materialVm;
     private SearchView searchView;
 
-    public static void show(final Context context, final String courseId, final String courseName) {
+    public static void launchCourse(final Context context, final String courseId, final String courseName) {
         final Intent intent = new Intent(context, CourseActivity.class);
         intent.putExtra(KEY_COURSE_NAME, courseName);
         intent.putExtra(KEY_COURSE_ID, courseId);
@@ -80,26 +79,27 @@ public class CourseActivity extends AppCompatActivity
     }
 
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
+    protected void onCreate(final Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_course);
         if (savedInstanceState != null) {
             courseId = savedInstanceState.getString("courseId");
             courseName = savedInstanceState.getString("courseName");
         } else {
-            if (getIntent().getStringExtra(KEY_COURSE_ID) != null)
+            if (getIntent().getStringExtra(KEY_COURSE_ID) != null) {
                 courseId = getIntent().getStringExtra(KEY_COURSE_ID);
-            if (getIntent().getStringExtra(KEY_COURSE_NAME) != null)
+            }
+            if (getIntent().getStringExtra(KEY_COURSE_NAME) != null) {
                 courseName = getIntent().getStringExtra(KEY_COURSE_NAME);
+            }
         }
-        receiveDownloadMessage();
+        initBroadCastReceiver();
         initUi();
 
         materialVm = ViewModelProviders.of(this,
                 new MaterialVmFactoryClass(this.getApplication(), courseId)).get(MaterialVm.class);
         materialVm.getMaterialList().observe(CourseActivity.this, courseMaterials -> {
             materialArrayList.clear();
-            Log.e("TAG:1",materialArrayList.size()+"");
             materialArrayList.addAll(courseMaterials);
             materialAdapter.notifyDataSetChanged();
         });
@@ -110,72 +110,72 @@ public class CourseActivity extends AppCompatActivity
         btnAddMaterial.setOnClickListener(this);
     }
 
-    private void receiveDownloadMessage() {
+    private void initBroadCastReceiver() {
         broadcastReceiver = new BroadcastReceiver() {
             @Override
-            public void onReceive(Context context, Intent intent) {
-                Bundle resultData = intent.getExtras();
+            public void onReceive(final Context context, final Intent intent) {
+                final Bundle resultData = intent.getExtras();
                 if (resultData != null) {
-                    String itemId = resultData.getString("id");
-                    int resultCode = resultData.getInt("resultCode");
+                    final String itemId = resultData.getString("id");
+                    if (itemId == null) {
+                        Log.e(TAG, "itemId was found null. Returning", new Throwable("Trace").fillInStackTrace());
+                        return;
+                    }
+                    final int resultCode = resultData.getInt("resultCode");
+                    final int index = CourseMaterial.findIndex(materialArrayList, itemId);
+                    if (index < 0) {
+                        Log.e(TAG, "material was null.", new Throwable("Trace").fillInStackTrace());
+                        return;
+                    }
                     switch (resultCode) {
 
                         // download starting
-                        case 0:
-                            for (int i = 0; i < materialArrayList.size(); i++) {
-                                if (Objects.equals(materialArrayList.get(i).getId(), itemId)) {
-                                    materialArrayList.get(i).setDownloading(true);
-                                    materialArrayList.get(i).setWaiting(false);
-                                    materialVm.update(materialArrayList.get(i));
-                                    break;
-                                }
-                            }
-                            break;
+                        case 0: {
+                            materialArrayList.get(index).isDownloading = true;
+                            materialArrayList.get(index).isWaiting = false;
+                            materialVm.update(materialArrayList.get(index));
+                        }
+                        break;
 
                         //updating progress
-                        case 1:
-                            int progress = resultData.getInt("progress");
-                            for (int i = 0; i < materialArrayList.size(); i++) {
-                                if (Objects.equals(materialArrayList.get(i).getId(), itemId)) {
-                                    materialArrayList.get(i).setProgress(progress);
-                                    materialAdapter.notifyItemChanged(i);
-                                    break;
-                                }
-                            }
-                            break;
-                        //download successful
-                        case 2:
-                            for (int i = 0; i < materialArrayList.size(); i++) {
-                                if (Objects.equals(materialArrayList.get(i).getId(), itemId)) {
-                                    materialArrayList.get(i).setDownloading(false);
-                                    materialArrayList.get(i).setWaiting(false);
-                                    materialVm.update(materialArrayList.get(i));
-                                    break;
-                                }
-                            }
-                            break;
+                        case 1: {
+                            materialArrayList.get(index).progress = resultData.getInt("progress");
+                            materialAdapter.notifyItemChanged(index);
+                        }
+                        break;
 
-                        default:
+                        // download successful
+                        case 2: {
+                            materialArrayList.get(index).isDownloading = false;
+                            materialArrayList.get(index).isWaiting = false;
+                            materialVm.update(materialArrayList.get(index));
+                        }
+                        break;
+
+                        default: {
                             if (BuildConfig.DEBUG) {
-                                Log.e(TAG, "Downloading Failed");
+                                Log.e(TAG, "Downloading Failed", new Throwable("Trace").fillInStackTrace());
                             }
-                            break;
+                        }
+                        break;
                     }
                 }
             }
         };
-
     }
 
     private void initUi() {
         databaseUrl = dbUrl + courseId;
         btnAddMaterial = findViewById(R.id.fab_add_material);
-        RecyclerView recyclerView = findViewById(R.id.rv_content_list);
+        final RecyclerView recyclerView = findViewById(R.id.rv_content_list);
         final Toolbar toolbar = findViewById(R.id.toolbar_course_activity);
         setSupportActionBar(toolbar);
         toolbar.inflateMenu(R.menu.course_activity_toolbar);
         toolbar.setNavigationIcon(getResources().getDrawable(R.drawable.ic_arrow_back));
-        toolbar.setTitle(courseName);
+        final androidx.appcompat.app.ActionBar actionBar = getSupportActionBar();
+        if (actionBar != null) {
+            actionBar.setTitle(courseName);
+        }
         toolbar.setNavigationOnClickListener(view -> onBackPressed());
 
         final LinearLayoutManager linearLayoutManager;
@@ -187,25 +187,34 @@ public class CourseActivity extends AppCompatActivity
     }
 
     @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
+    public void onSaveInstanceState(final Bundle savedInstanceState) {
+        super.onSaveInstanceState(savedInstanceState);
+        savedInstanceState.putString("courseId", courseId);
+        savedInstanceState.putString("courseName", courseName);
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(final Menu menu) {
         final MenuInflater inflater = getMenuInflater();
         inflater.inflate(R.menu.course_activity_toolbar, menu);
-        MenuItem menuItem = menu.findItem(R.id.action_search);
-        SearchManager searchManager = (SearchManager) getSystemService(Context.SEARCH_SERVICE);
+        final MenuItem menuItem = menu.findItem(R.id.action_search);
+        final SearchManager searchManager = (SearchManager) getSystemService(Context.SEARCH_SERVICE);
         searchView = (SearchView) menuItem.getActionView();
-        searchView.setSearchableInfo(searchManager.getSearchableInfo(getComponentName()));
+        if (searchManager != null) {
+            searchView.setSearchableInfo(searchManager.getSearchableInfo(getComponentName()));
+        }
         searchView.setIconifiedByDefault(true);
         searchView.setSubmitButtonEnabled(true);
         searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
             @Override
-            public boolean onQueryTextSubmit(String s) {
-                Log.e("TAG", "query:" + s);
+            public boolean onQueryTextSubmit(@NonNull final String s) {
+                Log.e(TAG, "query:" + s);
                 return false;
             }
 
             @Override
-            public boolean onQueryTextChange(String s) {
-                Log.e("TAG", "query:" + s);
+            public boolean onQueryTextChange(@NonNull final String s) {
+                Log.e(TAG, "query:" + s);
                 getMaterialFromDb(s);
                 return false;
             }
@@ -213,36 +222,21 @@ public class CourseActivity extends AppCompatActivity
         return true;
     }
 
-    private void getMaterialFromDb(String s) {
-        String searchText = "%" + s + "%";
+    @SuppressLint("CheckResult")
+    private void getMaterialFromDb(final String s) {
+        final String searchText = "%" + s + "%";
         Observable.just(searchText).observeOn(Schedulers.computation())
-                .map(new Function<String, Cursor>() {
-                    @Override
-                    public Cursor apply(String searchStrt) {
-                        return Database.getInstance(CourseActivity.this).getMaterialDao().searchMaterialCursor(courseId, searchStrt);
-                    }
-                }).observeOn(AndroidSchedulers.mainThread())
-                .subscribe(new Consumer<Cursor>() {
-                    @Override
-                    public void accept(Cursor cursor) {
-                        handleResults(cursor);
-                    }
-                }, new Consumer<Throwable>() {
-                    @Override
-                    public void accept(Throwable throwable) {
-                        handleError(throwable);
-                    }
-                });
-
+                .map(searchStart -> Database.getInstance(CourseActivity.this).getMaterialDao().searchMaterialCursor(courseId, searchStart)).observeOn(AndroidSchedulers.mainThread())
+                .subscribe(this::handleResults, this::handleError);
     }
 
-    private void handleError(Throwable throwable) {
+    private void handleError(final Throwable throwable) {
         Log.e("TAG", throwable.getMessage(), throwable);
         Toast.makeText(this, "Problem in Fetching Material",
                 Toast.LENGTH_LONG).show();
     }
 
-    private void handleResults(Cursor cursor) {
+    private void handleResults(final Cursor cursor) {
         searchView
                 .setSuggestionsAdapter(new MaterialCoursesCursorAdapter(CourseActivity.this, cursor, searchView));
     }
@@ -288,81 +282,72 @@ public class CourseActivity extends AppCompatActivity
         startActivity(signInIntent);
     }
 
-
     @Override
-    public void onChildAdded(DataSnapshot dataSnapshot, String s) {
-        CourseMaterial courseMaterial = dataSnapshot.getValue(CourseMaterial.class);
-        Log.e("TAG:2",courseMaterial.getId()+"");
-        courseMaterial.setFilePath(String.format("%s/%s/%s/", getExternalStorageDirectory(),
-                DOWNLOAD_DIRECTORY, courseId));
-        courseMaterial.setCourseId(courseId);
-        courseMaterial.setWaiting(false);
-        courseMaterial.setDownloading(false);
-        courseMaterial.setProgress(0);
+    public void onChildAdded(@NonNull final DataSnapshot dataSnapshot, final String s) {
+        final CourseMaterial courseMaterial = dataSnapshot.getValue(CourseMaterial.class);
+        if (courseMaterial == null) {
+            Log.e(TAG, "null course material", new Throwable("Trace").fillInStackTrace());
+            return;
+        }
+        courseMaterial.filePath = String.format("%s/%s/%s/", getExternalStorageDirectory(),
+                DOWNLOAD_DIRECTORY, courseId);
+        courseMaterial.courseId = courseId;
+        courseMaterial.isWaiting = false;
+        courseMaterial.isDownloading = false;
+        courseMaterial.progress = 0;
         materialVm.insert(courseMaterial);
     }
 
     @Override
-    public void onChildChanged(DataSnapshot dataSnapshot, String s) {
-        CourseMaterial courseMaterial = dataSnapshot.getValue(CourseMaterial.class);
-        for (int i = 0; i < materialArrayList.size(); i++) {
-            if (Objects.equals(materialArrayList.get(i).getId(), courseMaterial.getId())) {
-                courseMaterial.setFilePath(String.format("%s/%s/%s/", getExternalStorageDirectory(),
-                        DOWNLOAD_DIRECTORY, courseId));
-                courseMaterial.setCourseId(courseId);
-                courseMaterial.setWaiting(materialArrayList.get(i).getWaiting());
-                courseMaterial.setDownloading(materialArrayList.get(i).getDownloading());
-                courseMaterial.setProgress(materialArrayList.get(i).getProgress());
-                break;
-            }
+    public void onChildChanged(@NonNull final DataSnapshot dataSnapshot, final String s) {
+        final CourseMaterial courseMaterial = dataSnapshot.getValue(CourseMaterial.class);
+        if (courseMaterial == null) {
+            Log.e(TAG, "null course material", new Throwable("Trace").fillInStackTrace());
+            return;
         }
+        final int index = CourseMaterial.findIndex(materialArrayList, courseMaterial._id);
+        if (index < 0) {
+            Log.e(TAG, "material was null.", new Throwable("Trace").fillInStackTrace());
+            return;
+        }
+        courseMaterial.filePath = String.format("%s/%s/%s/", getExternalStorageDirectory(),
+                DOWNLOAD_DIRECTORY, courseId);
+        courseMaterial.setCourseId(courseId);
+        courseMaterial.isWaiting = materialArrayList.get(index).isWaiting;
+        courseMaterial.isDownloading = materialArrayList.get(index).isDownloading;
+        courseMaterial.progress = materialArrayList.get(index).progress;
         materialVm.update(courseMaterial);
     }
 
     @Override
-    public void onChildRemoved(DataSnapshot dataSnapshot) {
+    public void onChildRemoved(@NonNull final DataSnapshot dataSnapshot) {
         materialVm.delete(dataSnapshot.getValue(CourseMaterial.class));
     }
 
     @Override
-    public void onChildMoved(DataSnapshot dataSnapshot, String s) {
+    public void onChildMoved(@NonNull final DataSnapshot dataSnapshot, final String s) {
         //Empty Method
     }
 
     @Override
-    public void onCancelled(final DatabaseError databaseError) {
-        Log.e(TAG, databaseError.getCode() + databaseError.getMessage());
-    }
-
-
-    @Override
-    public void onResume() {
-        super.onResume();
-        if (BuildConfig.DEBUG) {
-            Log.v(TAG, "onResume");
-        }
-        // Register broadcast receiver
-        LocalBroadcastManager.getInstance(this)
-                .registerReceiver(broadcastReceiver, new IntentFilter(DownloadService.ACTION));
+    public void onCancelled(@NonNull final DatabaseError databaseError) {
+        Log.e(TAG, databaseError.getCode() + databaseError.getMessage(), databaseError.toException());
     }
 
     @Override
     public void onPause() {
         super.onPause();
-        if (BuildConfig.DEBUG) {
-            Log.v(TAG, "onPause");
-        }
         // Unregister broadcast receiver
         LocalBroadcastManager.getInstance(this).unregisterReceiver(broadcastReceiver);
     }
 
     @Override
-    public void onSaveInstanceState(Bundle savedInstanceState) {
-        super.onSaveInstanceState(savedInstanceState);
-        savedInstanceState.putString("courseId", courseId);
-        savedInstanceState.putString("courseName", courseName);
+    public void onResume() {
+        super.onResume();
+        // Register broadcast receiver
+        LocalBroadcastManager.getInstance(this)
+                .registerReceiver(broadcastReceiver, new IntentFilter(DownloadService.ACTION));
     }
-
 
 }
 
