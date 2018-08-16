@@ -243,6 +243,7 @@ public class CourseActivity extends AppCompatActivity
 
     @Override
     public void onClick(final View view) {
+
         final boolean signedIn = GoogleSignIn.getLastSignedInAccount(this) != null;
         boolean storagePermission = true;
 

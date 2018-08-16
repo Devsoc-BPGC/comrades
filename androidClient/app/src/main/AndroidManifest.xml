@@ -96,6 +96,7 @@
         <activity android:name=".aboutmac.AboutMacActivity" />
         <activity android:name=".TutorialActivity" />
 
+
     </application>
 
 </manifest>
