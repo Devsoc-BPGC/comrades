@@ -5,11 +5,12 @@ import android.database.Cursor;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.CursorAdapter;
-import android.widget.SearchView;
 import android.widget.TextView;
 
 import com.macbitsgoa.comrades.R;
+
+import androidx.appcompat.widget.SearchView;
+import androidx.cursoradapter.widget.CursorAdapter;
 
 /**
  * @author aayush singla
@@ -39,7 +40,7 @@ public class MaterialCoursesCursorAdapter extends CursorAdapter {
         TextView addedByTv = view.findViewById(R.id.text_added_by);
         TextView nameTv = view.findViewById(R.id.tv_course_name);
         nameTv.setText(name);
-        addedByTv.setText("added by " + addedBy);
+        addedByTv.setText("Added by " + addedBy);
         view.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {

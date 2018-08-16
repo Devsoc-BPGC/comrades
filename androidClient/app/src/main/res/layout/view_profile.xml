@@ -32,7 +32,7 @@
             android:fontFamily="@font/ps_bold"
             android:padding="4dp"
             android:singleLine="true"
-            android:text="Lazy Bitsian"
+            android:text="Anonymous"
             android:textColor="@android:color/black"
             android:textSize="30sp" />
 
@@ -86,7 +86,7 @@
                     android:fontFamily="@font/ps_regular"
                     android:padding="4dp"
                     android:singleLine="true"
-                    android:text="N.A."
+                    android:text="-"
                     android:textColor="@android:color/black"
                     android:textSize="30sp" />
 
@@ -130,7 +130,7 @@
                     android:fontFamily="@font/ps_regular"
                     android:padding="4dp"
                     android:singleLine="true"
-                    android:text="N.A."
+                    android:text="-"
                     android:textColor="@android:color/black"
                     android:textSize="30sp" />
 
@@ -173,7 +173,7 @@
                     android:fontFamily="@font/ps_regular"
                     android:padding="4dp"
                     android:singleLine="true"
-                    android:text="N.A."
+                    android:text="-"
                     android:textColor="@android:color/black"
                     android:textSize="30sp" />
 

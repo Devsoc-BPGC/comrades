@@ -19,7 +19,6 @@
 # If you keep the line number information, uncomment this to
 # hide the original source file name.
 #-renamesourcefileattribute SourceFile
-
 # https://firebase.google.com/docs/crashlytics/customize-crash-reports
 -keepattributes *Annotation*
 -keepattributes SourceFile,LineNumberTable
@@ -40,3 +39,4 @@
 -keep class androidx.** { *; }
 -dontwarn androidx.**
 
+-keep class android.support.v7.widget.SearchView { *; }
