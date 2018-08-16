@@ -5,8 +5,8 @@
     <item
         android:id="@+id/action_search"
         android:icon="@drawable/ic_search"
-        android:showAsAction="collapseActionView|ifRoom"
-        app:actionViewClass="android.widget.SearchView"
+        android:showAsAction="ifRoom|withText"
+        app:actionViewClass="androidx.appcompat.widget.SearchView"
         app:showAsAction="ifRoom"
         android:title="@string/action_search"
         tools:ignore="AppCompatResource" />

@@ -5,15 +5,15 @@
     android:layout_marginLeft="4dp"
     android:layout_marginRight="4dp"
     android:layout_marginTop="4dp"
-    app:cardElevation="3dp"
-    app:cardCornerRadius="0dp"
+    app:cardElevation="4dp"
+    app:cardCornerRadius="4dp"
     app:cardBackgroundColor="@color/colorAccentContrast"
     android:layout_width="match_parent"
     android:layout_height="wrap_content">
 
     <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="match_parent"
         android:orientation="horizontal">
 
         <com.macbitsgoa.comrades.MySimpleDraweeView
@@ -24,9 +24,9 @@
             android:layout_margin="10dp"
             app:roundAsCircle="true" />
 
-        <LinearLayout
+        <RelativeLayout
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
+            android:layout_height="match_parent"
             android:orientation="vertical">
 
             <TextView
@@ -37,18 +37,22 @@
                 android:layout_height="wrap_content"
                 android:textSize="16sp"
                 android:padding="5dp"
+                android:fontFamily="@font/ps_regular"
                 android:layout_margin="2dp" />
 
             <TextView
                 android:id="@+id/timeStamp"
                 tools:text="27/12/2018"
-                android:padding="2dp"
+                android:padding="8dp"
+                android:layout_alignParentBottom="true"
+                android:layout_alignParentRight="true"
                 android:textSize="12sp"
+                android:fontFamily="@font/ps_bold"
                 android:layout_margin="4dp"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:textColor="@android:color/black"
+                android:textColor="@color/bluegrey"
                 android:layout_gravity="end" />
-        </LinearLayout>
+        </RelativeLayout>
     </LinearLayout>
 </androidx.cardview.widget.CardView>

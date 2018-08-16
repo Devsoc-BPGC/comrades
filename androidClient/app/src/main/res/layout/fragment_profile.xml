@@ -32,8 +32,9 @@
                 android:layout_gravity="center"
                 android:textAlignment="center"
                 android:textSize="16sp"
+                android:fontFamily="@font/ps_regular"
                 android:textColor="@android:color/black"
-                android:text="View Complete Rank List >" />
+                android:text="View Complete Rank List" />
         </LinearLayout>
 
         <androidx.recyclerview.widget.RecyclerView

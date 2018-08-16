@@ -1,53 +1,58 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.cardview.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    android:orientation="vertical"
-    android:background="@color/transparent_black"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content">
-
-    <TextView
-        android:id="@+id/tv_course_name"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_margin="4dp"
-        android:drawablePadding="4dp"
-        android:padding="4dp"
-        android:textColor="#fff"
-        android:textSize="18sp"
-        tools:text="Mechanics Oscillations and Waves" />
+    android:layout_height="wrap_content"
+    android:elevation="0dp"
+    android:orientation="vertical"
+    app:cardCornerRadius="0dp">
 
     <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
+        android:layout_height="match_parent"
+        android:orientation="vertical">
 
         <TextView
-            android:id="@+id/text_course_code"
-            style="@style/Widget.MaterialComponents.Chip.Entry"
-            android:layout_width="wrap_content"
-            android:textColor="#fff"
+            android:id="@+id/tv_course_name"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginBottom="12dp"
-            android:layout_marginStart="8dp"
-            android:layout_marginTop="6dp"
-            tools:text="PHY - F111" />
+            android:layout_margin="4dp"
+            android:drawablePadding="4dp"
+            android:fontFamily="@font/ps_regular"
+            android:padding="4dp"
+            android:textColor="#000"
+            android:textSize="18sp"
+            tools:text="Mechanics Oscillations and Waves" />
 
-        <TextView
-            android:id="@+id/text_added_by"
-            style="@style/Widget.MaterialComponents.Chip.Entry"
-            android:layout_width="wrap_content"
-            android:textColor="#fff"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="30dp"
-            android:layout_marginTop="6dp"
-            tools:text="added by Aayush Singla" />
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+
+            <com.google.android.material.chip.Chip
+                android:id="@+id/text_course_code"
+                style="@style/Widget.MaterialComponents.Chip.Entry"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="12dp"
+                android:layout_marginStart="8dp"
+                android:layout_marginTop="6dp"
+                android:textColor="#000"
+                android:textIsSelectable="false"
+                app:closeIconEnabled="false"
+                tools:text="PHY - F111" />
+
+            <TextView
+                android:id="@+id/text_added_by"
+                style="@style/Widget.MaterialComponents.Chip.Entry"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="30dp"
+                android:layout_marginTop="6dp"
+                android:textColor="#000"
+                tools:text="added by Aayush Singla" />
+        </LinearLayout>
+
     </LinearLayout>
 
-    <View
-        android:layout_width="match_parent"
-        android:layout_height="1dp"
-        android:background="@color/colorAccentContrast"
-        android:layout_marginTop="3dp"
-        android:layout_marginBottom="6dp" />
-
-</LinearLayout>
+</androidx.cardview.widget.CardView>

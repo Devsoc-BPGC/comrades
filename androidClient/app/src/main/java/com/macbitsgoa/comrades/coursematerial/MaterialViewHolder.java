@@ -51,7 +51,7 @@ public class MaterialViewHolder extends RecyclerView.ViewHolder {
      * @param data  object of class @{@link CourseMaterial}
      */
     public void populate(CourseMaterial data) {
-        tvOwnerName.setText("added by " + data.getAddedBy());
+        tvOwnerName.setText("Added by " + data.getAddedBy());
         tvFileName.setText(data.getFileName());
         Boolean isDownloading = data.getDownloading();
         Boolean isWaiting = data.getWaiting();
@@ -61,15 +61,15 @@ public class MaterialViewHolder extends RecyclerView.ViewHolder {
             tvDownloadStatus.setText("Downloading");
         } else if (isWaiting) {
             donutProgress.enableIndeterminateMode(true);
-            tvDownloadStatus.setText("waiting");
+            tvDownloadStatus.setText("Waiting");
         } else {
             Boolean fileAvailable = data.getFileAvailable();
             if (fileAvailable) {
                 donutProgress.setProgress(100);
-                tvDownloadStatus.setText("click to open");
+                tvDownloadStatus.setText("Click to Open");
             } else {
                 donutProgress.setProgress(0);
-                tvDownloadStatus.setText("click to download");
+                tvDownloadStatus.setText("Click to Download");
             }
         }
 
