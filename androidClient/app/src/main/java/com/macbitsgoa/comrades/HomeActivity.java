@@ -72,6 +72,15 @@ public class HomeActivity extends AppCompatActivity {
         navigation = findViewById(R.id.navigation);
         navigation.setOnNavigationItemSelectedListener(mOnNavigationItemSelectedListener);
 
+        SharedPreferences sharedPreferences =
+                PreferenceManager.getDefaultSharedPreferences(this);
+        // Check if we need to display our OnboardingFragment
+        if (!sharedPreferences.getBoolean(
+                TutorialActivity.COMPLETED_ON_BOARDING_PREF_NAME, false)) {
+            // The user hasn't seen the OnboardingFragment yet, so show it
+            startActivity(new Intent(this, TutorialActivity.class));
+        }
+
         if (savedInstanceState != null) {
             navigation.setSelectedItemId(savedInstanceState.getInt("bottomNav"));
         } else {
@@ -192,5 +201,6 @@ public class HomeActivity extends AppCompatActivity {
             edit.apply();
         }
     }
+
 
 }

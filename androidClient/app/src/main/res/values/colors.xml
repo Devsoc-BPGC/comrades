@@ -13,4 +13,15 @@
     <color name="colorAccentFaint">#ffcdd2</color>
     <color name="grey">#808080</color>
     <color name="mac_color">#388E3C</color>
+
+    <color name="black_overlay">#66000000</color>
+
+    <!--Colors for tutorialScreen -->
+    <color name="purple">#581485</color>
+    <color name="darkPink">#900c3f</color>
+    <color name="pinkRed">#c70039</color>
+    <color name="orange">#ff5733</color>
+    <color name="yellow">#ffc305</color>
+
+
 </resources>
