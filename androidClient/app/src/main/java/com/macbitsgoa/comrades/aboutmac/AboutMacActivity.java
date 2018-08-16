@@ -1,11 +1,5 @@
 package com.macbitsgoa.comrades.aboutmac;
 
-import androidx.appcompat.app.AppCompatActivity;
-import androidx.appcompat.widget.Toolbar;
-import androidx.core.content.ContextCompat;
-import androidx.recyclerview.widget.LinearLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
-
 import android.content.ActivityNotFoundException;
 import android.content.Context;
 import android.content.Intent;
@@ -19,6 +13,11 @@ import android.widget.ImageButton;
 import android.widget.Toast;
 
 import com.macbitsgoa.comrades.R;
+
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.Toolbar;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
 
 public class AboutMacActivity extends AppCompatActivity implements View.OnClickListener {
@@ -50,8 +49,6 @@ public class AboutMacActivity extends AppCompatActivity implements View.OnClickL
 
         Window window = this.getWindow();
         window.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS);
-        window.setStatusBarColor(ContextCompat.getColor(this, R.color.mac_color));
-        window.setNavigationBarColor(ContextCompat.getColor(this, R.color.mac_color));
 
 
         contributorsRecyclerView.setHasFixedSize(false);

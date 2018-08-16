@@ -46,7 +46,9 @@
         </service>
         <service
             android:name=".coursematerial.DownloadService"
-            android:enabled="true"></service>
+            android:enabled="true">
+
+        </service>
         <service android:name=".coursematerial.UploadService" />
 
         <activity
@@ -63,12 +65,17 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+
         <activity
             android:name=".subscribedcourses.SubscribedCoursesActivity"
-            android:label="@string/title_activity_subscribed_courses"></activity>
+            android:label="@string/title_activity_subscribed_courses">
+
+        </activity>
         <activity
             android:name=".ranks.RankActivity"
-            android:label="@string/title_activity_rank"></activity>
+            android:label="@string/title_activity_rank">
+
+        </activity>
         <activity
             android:name=".search.CourseSearchActivity"
             android:launchMode="singleTop">
@@ -90,8 +97,12 @@
             <meta-data
                 android:name="android.app.searchable"
                 android:resource="@xml/searchable_material" />
+
         </activity>
-        <activity android:name=".eateries.EateriesActivity" />
+        <activity
+            android:name=".eateries.EateriesActivity"
+            android:label="@string/title_menus_activity" />
+
         <activity android:name=".eateries.EateriesDetail" />
         <activity android:name=".aboutmac.AboutMacActivity" />
         <activity android:name=".TutorialActivity" />

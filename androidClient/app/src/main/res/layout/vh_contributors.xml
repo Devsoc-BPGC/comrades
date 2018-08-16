@@ -10,6 +10,7 @@
         android:layout_height="wrap_content"
         android:layout_margin="4dp"
         android:padding="8dp"
+        android:fontFamily="@font/ps_regular"
         android:text="@string/about_mac_contributors"
         android:textColor="@color/grey500"
         android:textSize="12sp" />

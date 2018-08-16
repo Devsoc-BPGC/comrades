@@ -5,7 +5,6 @@ import android.view.ViewGroup;
 
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseReference;
-
 import com.macbitsgoa.comrades.CHCKt;
 import com.macbitsgoa.comrades.FbListener;
 import com.macbitsgoa.comrades.FirebaseKeysKt;
@@ -37,7 +36,7 @@ public class ContributorsAdapter extends RecyclerView.Adapter<ContributorsVh> {
 
     @Override
     public ContributorsVh onCreateViewHolder(ViewGroup parent, int viewType) {
-        return new ContributorsVh(LayoutInflater.from(parent.getContext()).inflate(R.layout.item_format_contributors,parent,false));
+        return new ContributorsVh(LayoutInflater.from(parent.getContext()).inflate(R.layout.vh_contributors, parent, false));
     }
 
     @Override

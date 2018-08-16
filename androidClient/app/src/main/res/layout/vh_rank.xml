@@ -3,7 +3,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="100dp"
+    android:layout_height="wrap_content"
     android:layout_marginLeft="4dp"
     android:layout_marginRight="4dp"
     android:layout_marginTop="4dp"
@@ -14,7 +14,8 @@
     <LinearLayout
         android:layout_width="match_parent"
         android:orientation="horizontal"
-        android:layout_height="match_parent">
+        android:layout_height="match_parent"
+        android:weightSum="5">
 
         <TextView
             android:id="@+id/tv_rank"
@@ -28,11 +29,12 @@
             tools:text="1" />
 
 
-        <RelativeLayout
+        <LinearLayout
             android:layout_width="0dp"
             android:layout_weight="3"
             android:layout_gravity="center_vertical"
             android:layout_height="match_parent"
+            android:orientation="vertical"
             android:padding="16dp">
 
 
@@ -40,19 +42,18 @@
                 android:id="@id/tv_name"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:padding="2dp"
                 android:layout_gravity="center"
                 android:fontFamily="@font/ps_regular"
                 android:textColor="@color/black"
                 android:textSize="22sp"
                 android:layout_marginBottom="8dp"
-                tools:text="Aayush Singla" />
+                tools:text="Aayush Singla Vikram Aditya Kukreja" />
 
             <LinearLayout
                 android:id="@+id/stats"
-                android:layout_alignParentBottom="true"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_below="@+id/tv_name"
                 android:orientation="horizontal">
 
                 <TextView
@@ -104,7 +105,7 @@
 
             </LinearLayout>
 
-        </RelativeLayout>
+        </LinearLayout>
 
 
         <com.macbitsgoa.comrades.MySimpleDraweeView
@@ -112,6 +113,7 @@
             android:layout_width="0dp"
             android:scaleX="0.5"
             android:scaleY="0.5"
+            android:scaleType="fitCenter"
             android:layout_height="match_parent"
             android:layout_marginTop="5dp"
             android:layout_weight="1"
