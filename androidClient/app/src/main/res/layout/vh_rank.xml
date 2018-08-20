@@ -19,7 +19,7 @@
 
         <TextView
             android:id="@+id/tv_rank"
-            android:layout_width="0dp"
+            android:layout_width="wrap_content"
             android:layout_height="match_parent"
             android:fontFamily="@font/ps_regular"
             android:gravity="center"
@@ -31,24 +31,41 @@
 
         <LinearLayout
             android:layout_width="0dp"
-            android:layout_weight="3"
+            android:layout_weight="4"
             android:layout_gravity="center_vertical"
             android:layout_height="match_parent"
             android:orientation="vertical"
-            android:padding="16dp">
+            android:padding="8dp">
 
-
-            <TextView
-                android:id="@id/tv_name"
+            <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:padding="2dp"
-                android:layout_gravity="center"
-                android:fontFamily="@font/ps_regular"
-                android:textColor="@color/black"
-                android:textSize="22sp"
-                android:layout_marginBottom="8dp"
-                tools:text="Aayush Singla Vikram Aditya Kukreja" />
+                android:orientation="horizontal">
+
+                <TextView
+                    android:id="@id/tv_name"
+                    android:layout_width="0dp"
+                    android:layout_weight="1"
+                    android:layout_height="wrap_content"
+                    android:padding="2dp"
+                    android:layout_gravity="center"
+                    android:fontFamily="@font/ps_regular"
+                    android:textColor="@color/black"
+                    android:textSize="22sp"
+                    tools:text="Aayush" />
+
+                <com.macbitsgoa.comrades.MySimpleDraweeView
+                    android:id="@+id/user_image"
+                    android:layout_width="60dp"
+                    android:layout_height="60dp"
+                    android:scaleX="0.7"
+                    android:scaleY="0.7"
+                    android:scaleType="fitCenter"
+                    android:layout_gravity="center"
+                    app:roundAsCircle="true" />
+
+            </LinearLayout>
+
 
             <LinearLayout
                 android:id="@+id/stats"
@@ -57,6 +74,7 @@
                 android:orientation="horizontal">
 
                 <TextView
+                    android:id="@+id/score"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:fontFamily="@font/ps_bold"
@@ -72,7 +90,6 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:padding="4dp"
-                    android:singleLine="true"
                     android:text="1400"
                     android:textAllCaps="true"
                     android:textColor="@color/black"
@@ -80,12 +97,13 @@
                     android:textStyle="bold" />
 
                 <TextView
+                    android:id="@+id/uploads"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_marginStart="4dp"
+                    android:layout_marginStart="6dp"
+                    app:layout_constraintLeft_toRightOf="@id/tv_score"
                     android:fontFamily="@font/ps_bold"
                     android:padding="4dp"
-                    android:singleLine="true"
                     android:text="Uploads"
                     android:textAllCaps="true"
                     android:textColor="@color/colorPrimary"
@@ -96,7 +114,6 @@
                     android:layout_width="wrap_content"
                     android:layout_height="match_parent"
                     android:padding="4dp"
-                    android:singleLine="true"
                     android:text="140"
                     android:textAllCaps="true"
                     android:textColor="@color/black"
@@ -108,16 +125,6 @@
         </LinearLayout>
 
 
-        <com.macbitsgoa.comrades.MySimpleDraweeView
-            android:id="@+id/user_image"
-            android:layout_width="0dp"
-            android:scaleX="0.5"
-            android:scaleY="0.5"
-            android:scaleType="fitCenter"
-            android:layout_height="match_parent"
-            android:layout_marginTop="5dp"
-            android:layout_weight="1"
-            app:roundAsCircle="true" />
     </LinearLayout>
 
 </androidx.cardview.widget.CardView>

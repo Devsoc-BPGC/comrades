@@ -15,6 +15,7 @@ import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.ProgressBar;
 import android.widget.Toast;
 
 import com.google.android.gms.auth.api.signin.GoogleSignIn;
@@ -70,6 +71,7 @@ public class CourseActivity extends AppCompatActivity
     private BroadcastReceiver broadcastReceiver;
     private MaterialVm materialVm;
     private SearchView searchView;
+    private ProgressBar progressBar;
 
     public static void launchCourse(final Context context, final String courseId, final String courseName) {
         final Intent intent = new Intent(context, CourseActivity.class);
@@ -102,6 +104,7 @@ public class CourseActivity extends AppCompatActivity
             materialArrayList.clear();
             materialArrayList.addAll(courseMaterials);
             materialAdapter.notifyDataSetChanged();
+            progressBar.setVisibility(View.GONE);
         });
 
         databaseInstance
@@ -167,6 +170,8 @@ public class CourseActivity extends AppCompatActivity
     private void initUi() {
         databaseUrl = dbUrl + courseId;
         btnAddMaterial = findViewById(R.id.fab_add_material);
+        progressBar = findViewById(R.id.progressBar);
+        progressBar.setVisibility(View.VISIBLE);
         final RecyclerView recyclerView = findViewById(R.id.rv_content_list);
         final Toolbar toolbar = findViewById(R.id.toolbar_course_activity);
         setSupportActionBar(toolbar);

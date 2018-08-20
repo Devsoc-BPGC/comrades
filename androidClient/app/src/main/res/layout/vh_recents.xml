@@ -13,28 +13,30 @@
 
     <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
+        android:layout_height="wrap_content"
         android:orientation="horizontal">
 
         <com.macbitsgoa.comrades.MySimpleDraweeView
             android:id="@+id/image_creator"
             android:layout_width="70dp"
             android:layout_height="70dp"
+            android:layout_gravity="center"
             android:padding="10dp"
             android:layout_margin="10dp"
             app:roundAsCircle="true" />
 
-        <RelativeLayout
+        <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
+            android:layout_height="wrap_content"
             android:orientation="vertical">
 
             <TextView
                 android:id="@+id/tv_update"
                 tools:text="Aayush Singla added a new file abc to the course"
                 android:textColor="@android:color/black"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
+                android:layout_weight="1"
                 android:textSize="16sp"
                 android:padding="5dp"
                 android:fontFamily="@font/ps_regular"
@@ -43,9 +45,7 @@
             <TextView
                 android:id="@+id/timeStamp"
                 tools:text="27/12/2018"
-                android:padding="8dp"
-                android:layout_alignParentBottom="true"
-                android:layout_alignParentRight="true"
+                android:padding="2dp"
                 android:textSize="12sp"
                 android:fontFamily="@font/ps_bold"
                 android:layout_margin="4dp"
@@ -53,6 +53,6 @@
                 android:layout_height="wrap_content"
                 android:textColor="@color/bluegrey"
                 android:layout_gravity="end" />
-        </RelativeLayout>
+        </LinearLayout>
     </LinearLayout>
 </androidx.cardview.widget.CardView>
