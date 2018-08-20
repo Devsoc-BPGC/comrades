@@ -15,7 +15,6 @@ import com.macbitsgoa.comrades.GetGoogleSignInActivity;
 import com.macbitsgoa.comrades.R;
 
 import java.io.File;
-import java.net.URISyntaxException;
 
 import androidx.appcompat.app.AlertDialog;
 import androidx.fragment.app.DialogFragment;
@@ -103,27 +102,29 @@ public class UploadFileFragment extends DialogFragment
      */
     @Override
     public void onClick(final View view) {
+        final UploadFileFragment dialogFragment = (UploadFileFragment) getActivity().getSupportFragmentManager()
+                .findFragmentByTag(CourseActivity.ADD_FILE_FRAGMENT);
         switch (view.getId()) {
             case R.id.fab_image:
                 Intent imageIntent = new Intent();
                 imageIntent.setType("image/*");
                 imageIntent.putExtra(Intent.EXTRA_ALLOW_MULTIPLE, false);
                 imageIntent.setAction(Intent.ACTION_GET_CONTENT);
-                startActivityForResult(Intent.createChooser(imageIntent, "Select Picture"), REQUEST_CHOOSER);
+                dialogFragment.startActivityForResult(Intent.createChooser(imageIntent, "Select Picture"), REQUEST_CHOOSER);
                 break;
 
             case R.id.fab_doc:
                 Intent fileIntent = new Intent(Intent.ACTION_GET_CONTENT);
                 fileIntent.addCategory(Intent.CATEGORY_OPENABLE);
                 fileIntent.setType("application/pdf");
-                startActivityForResult(Intent.createChooser(fileIntent, "Select Pdf"), REQUEST_CHOOSER);
+                dialogFragment.startActivityForResult(Intent.createChooser(fileIntent, "Select Pdf"), REQUEST_CHOOSER);
                 break;
 
             case R.id.fab_all_files:
                 Intent intent = new Intent(Intent.ACTION_GET_CONTENT);
                 intent.addCategory(Intent.CATEGORY_OPENABLE);
                 intent.setType("*/*");
-                startActivityForResult(Intent.createChooser(intent, "Select File"), REQUEST_CHOOSER);
+                dialogFragment.startActivityForResult(Intent.createChooser(intent, "Select File"), REQUEST_CHOOSER);
                 break;
             default:
                 if (BuildConfig.DEBUG) {
@@ -133,7 +134,7 @@ public class UploadFileFragment extends DialogFragment
     }
 
     /**
-     * function to handle callback from GetGoogleSignInActivity().
+     * function to handle callbacks
      *
      * @param requestCode code with which request was sent
      * @param resultCode  code to check if everything went well
@@ -150,13 +151,14 @@ public class UploadFileFragment extends DialogFragment
             Toast.makeText(getContext(), "Upload Started.Check NotificationBar for progress.",
                     Toast.LENGTH_LONG).show();
             getActivity().startService(uploadIntent);
-        } else if (requestCode == REQUEST_CHOOSER && resultCode == RESULT_OK) {
-            try {
-                filePath = PathUtil.getPath(getContext(), data.getData());
+        } else if (resultCode == RESULT_OK) {
+            filePath = PathUtil.getPath(getContext(), data.getData());
+            if (filePath != null) {
                 File tempFile = new File(filePath);
                 file.setText(tempFile.getName());
-            } catch (URISyntaxException e) {
-                Log.e(TAG, e.getMessage());
+            } else {
+                Log.e(TAG, data.getData().toString());
+                Toast.makeText(getContext(), "Problem Selecting File.Please check if that file actually exists on your device.", Toast.LENGTH_LONG).show();
             }
         } else if (resultCode == RESULT_CANCELED) {
             Toast.makeText(getContext(), "No File Selected", Toast.LENGTH_LONG).show();

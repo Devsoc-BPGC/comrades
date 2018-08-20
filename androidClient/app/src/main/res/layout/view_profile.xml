@@ -19,8 +19,6 @@
             android:layout_height="150dp"
             android:layout_gravity="center"
             android:layout_marginTop="20dp"
-            app:placeholderImage="@drawable/ic_person_black_24dp"
-            app:placeholderImageScaleType="fitXY"
             app:roundAsCircle="true" />
 
         <TextView

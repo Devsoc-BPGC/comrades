@@ -1,6 +1,7 @@
 package com.macbitsgoa.comrades;
 
 import android.content.Context;
+import android.content.Intent;
 import android.util.AttributeSet;
 import android.util.Log;
 import android.view.Gravity;
@@ -60,25 +61,33 @@ public class MySimpleDraweeView extends SimpleDraweeView implements View.OnClick
         popupWindow.setAnimationStyle(R.style.animation);
         popupWindow.showAtLocation(getRootView(),
                 Gravity.CENTER, 0, 0);
-        FirebaseDatabase.getInstance().getReference().child(BuildConfig.BUILD_TYPE)
-                .child("/users/" + uuid)
-                .addListenerForSingleValueEvent(new ValueEventListener() {
-                    @Override
-                    public void onDataChange(DataSnapshot dataSnapshot) {
-                        tv_name.setText(dataSnapshot.child("name").getValue(String.class));
-                        tv_authority.setText(dataSnapshot.child("authority").getValue(String.class));
-                        tv_uploads.setText(dataSnapshot.child("uploads").getValue(Long.class) + "");
-                        tv_score.setText(dataSnapshot.child("score").getValue(Long.class) + "");
-                        tv_rank.setText(dataSnapshot.child("rank").getValue(Long.class) + "");
-                        draweeView.setImageURI(dataSnapshot.child("photoUrl").getValue(String.class));
-                    }
+        if (uuid != null) {
+            tv_authority.setOnClickListener(null);
+            FirebaseDatabase.getInstance().getReference().child(BuildConfig.BUILD_TYPE)
+                    .child("/users/" + uuid)
+                    .addListenerForSingleValueEvent(new ValueEventListener() {
+                        @Override
+                        public void onDataChange(DataSnapshot dataSnapshot) {
+                            tv_name.setText(dataSnapshot.child("name").getValue(String.class));
+                            tv_authority.setText(dataSnapshot.child("authority").getValue(String.class));
+                            tv_uploads.setText(dataSnapshot.child("uploads").getValue(Long.class) + "");
+                            tv_score.setText(dataSnapshot.child("score").getValue(Long.class) + "");
+                            tv_rank.setText(dataSnapshot.child("rank").getValue(Long.class) + "");
+                            draweeView.setImageURI(dataSnapshot.child("photoUrl").getValue(String.class));
+                        }
 
-                    @Override
-                    public void onCancelled(DatabaseError databaseError) {
-                        tv_authority.setText(R.string.warning_internet);
-                        Log.e(TAG, databaseError.getMessage());
-                    }
-                });
-
+                        @Override
+                        public void onCancelled(DatabaseError databaseError) {
+                            tv_authority.setText(R.string.warning_internet);
+                            Log.e(TAG, databaseError.getMessage());
+                        }
+                    });
+        } else {
+            tv_authority.setOnClickListener(view1 -> {
+                final Intent intent = new Intent(getContext(), GetGoogleSignInActivity.class);
+                view1.getContext().startActivity(intent);
+            });
+            draweeView.setImageResource(R.drawable.ic_profile_white);
+        }
     }
 }

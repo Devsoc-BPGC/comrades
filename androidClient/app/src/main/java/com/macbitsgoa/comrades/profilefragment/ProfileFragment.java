@@ -100,6 +100,7 @@ public class ProfileFragment extends Fragment {
                         }
                     });
         } else {
+            tvUserImage.setImageResource(R.drawable.ic_profile_black);
             tvUserAuthority.setOnClickListener(view1 -> {
                 final Intent intent = new Intent(getContext(), GetGoogleSignInActivity.class);
                 startActivity(intent);

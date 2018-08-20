@@ -14,13 +14,13 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.widget.Toast;
 
-import com.facebook.drawee.backends.pipeline.Fresco;
 import com.google.android.gms.auth.api.Auth;
 import com.google.android.gms.auth.api.signin.GoogleSignIn;
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
 import com.macbitsgoa.comrades.aboutmac.AboutMacActivity;
 import com.macbitsgoa.comrades.courselistfragment.CourseListFragment;
 import com.macbitsgoa.comrades.homefragment.HomeFragment;
@@ -45,6 +45,7 @@ public class HomeActivity extends AppCompatActivity {
     private GoogleApiClient mGoogleApiClient;
     private FragmentManager fragmentManager = getSupportFragmentManager();
     private SearchView searchView;
+    private MySimpleDraweeView userProfileImage;
     private BottomNavigationView.OnNavigationItemSelectedListener mOnNavigationItemSelectedListener
             = item -> {
         switch (item.getItemId()) {
@@ -68,9 +69,10 @@ public class HomeActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         setTheme(R.style.AppTheme_NoActionBar);
         super.onCreate(savedInstanceState);
-        Fresco.initialize(this);
         setContentView(R.layout.activity_home);
         setSupportActionBar(findViewById(R.id.toolbar_main_act));
+        getSupportActionBar().setDisplayShowTitleEnabled(false);
+        userProfileImage = findViewById(R.id.profile_user_toolbar);
         navigation = findViewById(R.id.navigation);
         navigation.setOnNavigationItemSelectedListener(mOnNavigationItemSelectedListener);
 
@@ -115,6 +117,14 @@ public class HomeActivity extends AppCompatActivity {
         inflater.inflate(R.menu.main_activity_toolbar, menu);
         final boolean signedIn = GoogleSignIn.getLastSignedInAccount(this) != null;
         final MenuItem signOut = menu.findItem(R.id.action_sign_out);
+        FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
+        if (user != null) {
+            userProfileImage.setParam(user.getUid());
+            userProfileImage.setImageURI(user.getPhotoUrl());
+        } else {
+            userProfileImage.setParam(null);
+            userProfileImage.setImageResource(R.drawable.ic_profile_white);
+        }
         signOut.setVisible(signedIn);
         signOut.setOnMenuItemClickListener(menuItem -> {
             FirebaseAuth.getInstance().signOut();
@@ -198,6 +208,7 @@ public class HomeActivity extends AppCompatActivity {
         invalidateOptionsMenu();
         SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(getBaseContext());
         Boolean previousStarted = preferences.getBoolean("Previously Started", false);
+
         if (!previousStarted) {
             SharedPreferences.Editor edit = preferences.edit();
             edit.putBoolean(SETTINGS, true);
@@ -205,6 +216,5 @@ public class HomeActivity extends AppCompatActivity {
             edit.apply();
         }
     }
-
 
 }

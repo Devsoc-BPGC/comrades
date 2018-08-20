@@ -8,6 +8,7 @@ import android.os.AsyncTask;
 import android.preference.PreferenceManager;
 import android.util.Log;
 
+import com.facebook.drawee.backends.pipeline.Fresco;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.FirebaseDatabase;
@@ -30,6 +31,7 @@ public class Comrades extends Application {
     @Override
     public void onCreate() {
         super.onCreate();
+        Fresco.initialize(this);
         Comrades.context = getApplicationContext();
         SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(getBaseContext());
         Boolean coursesPresent = preferences.getBoolean("Courses Present", false);
