@@ -217,4 +217,12 @@ public class HomeActivity extends AppCompatActivity {
         }
     }
 
+    @Override
+    public void onBackPressed() {
+        if (navigation.getSelectedItemId() == R.id.navigation_home) {
+            super.onBackPressed();
+        } else {
+            navigation.setSelectedItemId(R.id.navigation_home);
+        }
+    }
 }

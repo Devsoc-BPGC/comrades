@@ -334,6 +334,7 @@ public class UploadService extends IntentService {
         itemCourseMaterial.setWaiting(null);
         itemCourseMaterial.setProgress(0);
         itemCourseMaterial.setHashId(hashId);
+        itemCourseMaterial.setWebViewLink(jsonObject.get("webViewLink").toString());
         itemCourseMaterial.setLink(jsonObject.get("webContentLink").toString());
         itemCourseMaterial.setMimeType(jsonObject.get("mimeType").toString());
         dbRef.child(hashId).setValue(itemCourseMaterial);
