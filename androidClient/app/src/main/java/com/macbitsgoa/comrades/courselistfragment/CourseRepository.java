@@ -26,7 +26,6 @@ public class CourseRepository {
     public CourseRepository(final Application application) {
         final Database db = Database.getInstance(application);
         courseDao = db.getCourseDao();
-        courseList = courseDao.getAllCourses();
         followingList = courseDao.getFollowingCourses();
     }
 
@@ -40,11 +39,18 @@ public class CourseRepository {
         }
     }
 
+
     public MyCourse getCourseExist() {
         return courseExist;
     }
 
-    public LiveData<List<MyCourse>> getAllCourses() {
+    public LiveData<List<MyCourse>> getAllCoursesByName() {
+        courseList = courseDao.getAllCoursesByName();
+        return courseList;
+    }
+
+    public LiveData<List<MyCourse>> getAllCoursesByCode() {
+        courseList = courseDao.getAllCoursesByCode();
         return courseList;
     }
 

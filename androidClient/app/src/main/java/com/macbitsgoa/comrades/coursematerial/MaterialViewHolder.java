@@ -27,13 +27,14 @@ import androidx.recyclerview.widget.RecyclerView;
 /**
  * @author aayush singla
  */
-public class MaterialViewHolder extends RecyclerView.ViewHolder {
+public class MaterialViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
     private final TextView tvFileName;
     private final TextView tvOwnerName;
     private final View rootView;
     private final CircularProgressBar donutProgress;
     private final TextView tvDownloadStatus;
     private final SimpleDraweeView iconDraweeView;
+    private CourseMaterial data;
 
     public MaterialViewHolder(final View itemView) {
         super(itemView);
@@ -51,72 +52,31 @@ public class MaterialViewHolder extends RecyclerView.ViewHolder {
      * @param data  object of class @{@link CourseMaterial}
      */
     public void populate(CourseMaterial data) {
+        this.data = data;
         tvOwnerName.setText("Added by " + data.getAddedBy());
         tvFileName.setText(data.getFileName());
         Boolean isDownloading = data.getDownloading();
         Boolean isWaiting = data.getWaiting();
+        Boolean fileAvailable = data.getFileAvailable();
 
-        if (isDownloading) {
+        if (fileAvailable) {
+            donutProgress.setProgress(100);
+            tvDownloadStatus.setText("Click to Open");
+        } else if (isDownloading) {
             donutProgress.setProgress(data.getProgress());
             tvDownloadStatus.setText("Downloading");
         } else if (isWaiting) {
             donutProgress.enableIndeterminateMode(true);
             tvDownloadStatus.setText("Waiting");
         } else {
-            Boolean fileAvailable = data.getFileAvailable();
-            if (fileAvailable) {
-                donutProgress.setProgress(100);
-                tvDownloadStatus.setText("Click to Open");
-            } else {
-                donutProgress.setProgress(0);
-                tvDownloadStatus.setText("Click to Download");
-            }
+            donutProgress.setProgress(0);
+            tvDownloadStatus.setText("Click to Download");
         }
 
+        rootView.setOnClickListener(this);
         if (data.getIconLink() != null)
             iconDraweeView.setImageURI(data.getIconLink());
 
-        rootView.setOnClickListener(view -> {
-            final Context context = rootView.getContext();
-            final boolean signedIn = GoogleSignIn.getLastSignedInAccount(context) != null;
-            boolean storagePermission = true;
-
-            if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.M) {
-                storagePermission =
-                        context.checkSelfPermission(Manifest.permission.WRITE_EXTERNAL_STORAGE)
-                                == PackageManager.PERMISSION_GRANTED;
-            }
-
-            if (signedIn && storagePermission) {
-                if (data.getFileAvailable()) {
-                    openFile(data);
-                } else {
-                    data.setDownloading(false);
-                    data.setWaiting(true);
-                    MaterialVm materialVm = ViewModelProviders.of((AppCompatActivity) context).get(MaterialVm.class);
-                    materialVm.update(data);
-
-                    final Intent downloadIntent =
-                            DownloadService.makeDownloadIntent(itemView.getContext(), data.getLink(),
-                                    data.getFileName(), data.getExtension(), data.getFilePath(),
-                                    data.getId(), data.getFileSize());
-                    itemView.getContext().startService(downloadIntent);
-                }
-            } else if (signedIn) {
-                Snackbar.make(rootView, context.getString(R.string.storage_permission_needed),
-                        Snackbar.LENGTH_LONG)
-                        .setAction(context.getString(R.string.allow), v ->
-                                handleSignInAndStorage(context))
-                        .show();
-            } else {
-                Snackbar.make(rootView, context.getString(R.string.login_to_download_file),
-                        Snackbar.LENGTH_LONG)
-                        .setAction(context.getString(R.string.login), v ->
-                                handleSignInAndStorage(context))
-                        .show();
-            }
-
-        });
 
     }
 
@@ -137,5 +97,45 @@ public class MaterialViewHolder extends RecyclerView.ViewHolder {
     }
 
 
+    @Override
+    public void onClick(View view) {
+        final Context context = rootView.getContext();
+        final boolean signedIn = GoogleSignIn.getLastSignedInAccount(context) != null;
+        boolean storagePermission = true;
 
+        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.M) {
+            storagePermission =
+                    context.checkSelfPermission(Manifest.permission.WRITE_EXTERNAL_STORAGE)
+                            == PackageManager.PERMISSION_GRANTED;
+        }
+
+        if (signedIn && storagePermission) {
+            if (data.getFileAvailable()) {
+                openFile(data);
+            } else if (!data.getDownloading()) {
+                data.setDownloading(false);
+                data.setWaiting(true);
+                MaterialVm materialVm = ViewModelProviders.of((AppCompatActivity) context).get(MaterialVm.class);
+                materialVm.update(data);
+
+                final Intent downloadIntent =
+                        DownloadService.makeDownloadIntent(itemView.getContext(), data.getLink(),
+                                data.getFileName(), data.getExtension(), data.getFilePath(),
+                                data.getId(), data.getFileSize());
+                itemView.getContext().startService(downloadIntent);
+            }
+        } else if (signedIn) {
+            Snackbar.make(rootView, context.getString(R.string.storage_permission_needed),
+                    Snackbar.LENGTH_LONG)
+                    .setAction(context.getString(R.string.allow), v ->
+                            handleSignInAndStorage(context))
+                    .show();
+        } else {
+            Snackbar.make(rootView, context.getString(R.string.login_to_download_file),
+                    Snackbar.LENGTH_LONG)
+                    .setAction(context.getString(R.string.login), v ->
+                            handleSignInAndStorage(context))
+                    .show();
+        }
+    }
 }

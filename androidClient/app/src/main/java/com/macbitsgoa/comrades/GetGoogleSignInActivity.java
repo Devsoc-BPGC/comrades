@@ -33,8 +33,10 @@ import java.io.IOException;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
+import androidx.core.content.ContextCompat;
 
 import static android.Manifest.permission.READ_EXTERNAL_STORAGE;
+import static android.Manifest.permission.WRITE_EXTERNAL_STORAGE;
 import static androidx.core.content.PermissionChecker.PERMISSION_DENIED;
 import static androidx.core.content.PermissionChecker.PERMISSION_GRANTED;
 import static com.macbitsgoa.comrades.CHCKt.BITS_EMAIL_SUFFIX;
@@ -108,7 +110,10 @@ public class GetGoogleSignInActivity extends Activity {
                         Toast.LENGTH_SHORT).show();
                 askStoragePermission();
             } else if (grantResults.length > 0 && grantResults[0] == PERMISSION_GRANTED) {
+                Log.e(TAG, "Permission Granted");
                 finish();
+            } else {
+                Log.e(TAG, grantResults[0] + "");
             }
         }
     }
@@ -207,17 +212,18 @@ public class GetGoogleSignInActivity extends Activity {
 
     private void askStoragePermission() {
         if (Build.VERSION.SDK_INT < Build.VERSION_CODES.M
-                || checkSelfPermission(READ_EXTERNAL_STORAGE) == PERMISSION_GRANTED) {
+                || (ContextCompat.checkSelfPermission(this, READ_EXTERNAL_STORAGE) == PERMISSION_GRANTED
+                && ContextCompat.checkSelfPermission(this, WRITE_EXTERNAL_STORAGE) == PERMISSION_GRANTED)) {
             return;
         }
         if (shouldShowRequestPermissionRationale(READ_EXTERNAL_STORAGE)) {
             final AlertDialog.Builder alertBuilder = new
                     AlertDialog.Builder(GetGoogleSignInActivity.this);
             alertBuilder.setCancelable(true);
-            alertBuilder.setTitle("read access of external storage");
-            alertBuilder.setMessage("Permission to read storage is required.");
+            alertBuilder.setTitle("Access to device storage");
+            alertBuilder.setMessage("Permission to read and write storage is required.");
             alertBuilder.setPositiveButton("Proceed", (dialog, which) ->
-                    requestPermissions(new String[]{READ_EXTERNAL_STORAGE}, 7));
+                    requestPermissions(new String[]{READ_EXTERNAL_STORAGE, WRITE_EXTERNAL_STORAGE}, 7));
             final AlertDialog alert = alertBuilder.create();
             alert.show();
         } else {

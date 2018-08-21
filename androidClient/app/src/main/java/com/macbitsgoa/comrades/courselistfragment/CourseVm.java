@@ -20,7 +20,6 @@ public class CourseVm extends AndroidViewModel {
     public CourseVm(@NonNull final Application application) {
         super(application);
         mRepository = new CourseRepository(application);
-        courseList = mRepository.getAllCourses();
         followingList = mRepository.getFollowingCourses();
     }
 
@@ -29,8 +28,12 @@ public class CourseVm extends AndroidViewModel {
         return mRepository.getCourseExist();
     }
 
-    public LiveData<List<MyCourse>> getAll() {
-        return courseList;
+    public LiveData<List<MyCourse>> getAllCoursesByName() {
+        return mRepository.getAllCoursesByName();
+    }
+
+    public LiveData<List<MyCourse>> getAllCoursesByCode() {
+        return mRepository.getAllCoursesByCode();
     }
 
     public LiveData<List<MyCourse>> getFollowingList() {

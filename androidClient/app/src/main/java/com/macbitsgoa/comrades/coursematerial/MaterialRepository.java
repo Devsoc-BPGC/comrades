@@ -17,13 +17,23 @@ public class MaterialRepository {
     private MaterialDao courseDao;
     private LiveData<List<CourseMaterial>> materialList;
 
-    MaterialRepository(Application application, String courseId) {
+    MaterialRepository(Application application) {
         Database db = Database.getInstance(application);
         courseDao = db.getMaterialDao();
-        materialList = courseDao.getCourseMaterial(courseId);
     }
 
-    public LiveData<List<CourseMaterial>> getAllMaterial() {
+    public LiveData<List<CourseMaterial>> getAllMaterialByName(String courseId) {
+        materialList = courseDao.getCourseMaterialByName(courseId);
+        return materialList;
+    }
+
+    public LiveData<List<CourseMaterial>> getAllMaterialBySize(String courseId) {
+        materialList = courseDao.getCourseMaterialBySize(courseId);
+        return materialList;
+    }
+
+    public LiveData<List<CourseMaterial>> getAllMaterialByFileType(String courseId) {
+        materialList = courseDao.getCourseMaterialByFileType(courseId);
         return materialList;
     }
 

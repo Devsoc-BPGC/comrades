@@ -59,6 +59,9 @@ public class CourseMaterial {
     @ColumnInfo(name = "link")
     private String link;
 
+    @ColumnInfo(name = "webViewLink")
+    private String webViewLink;
+
     @ColumnInfo(name = "mimeType")
     private String mimeType;
 
@@ -231,4 +234,13 @@ public class CourseMaterial {
     public void setHashId(String hashId) {
         this.hashId = hashId;
     }
+
+    public String getWebViewLink() {
+        return webViewLink;
+    }
+
+    public void setWebViewLink(String webViewLink) {
+        this.webViewLink = webViewLink;
+    }
+
 }
