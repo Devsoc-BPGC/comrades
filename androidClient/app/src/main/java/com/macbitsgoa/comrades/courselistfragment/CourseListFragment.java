@@ -1,17 +1,16 @@
 package com.macbitsgoa.comrades.courselistfragment;
 
-import android.Manifest;
+import android.app.AlertDialog;
 import android.content.Context;
 import android.content.Intent;
-import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
-import com.google.android.gms.auth.api.signin.GoogleSignIn;
 import com.google.android.material.snackbar.Snackbar;
+import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.ChildEventListener;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
@@ -25,6 +24,7 @@ import java.util.Objects;
 
 import androidx.annotation.NonNull;
 import androidx.coordinatorlayout.widget.CoordinatorLayout;
+import androidx.core.content.ContextCompat;
 import androidx.fragment.app.DialogFragment;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
@@ -33,6 +33,9 @@ import androidx.lifecycle.ViewModelProviders;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import static android.Manifest.permission.READ_EXTERNAL_STORAGE;
+import static android.Manifest.permission.WRITE_EXTERNAL_STORAGE;
+import static androidx.core.content.PermissionChecker.PERMISSION_GRANTED;
 import static com.macbitsgoa.comrades.CHCKt.TAG_PREFIX;
 
 
@@ -44,6 +47,7 @@ public class CourseListFragment extends Fragment implements ChildEventListener {
     private CoordinatorLayout rootCl;
     private final static String TAG = TAG_PREFIX + CourseListFragment.class.getSimpleName();
     private CourseVm courseVm;
+    private int currentSortOrder = 0;
 
     public static Fragment newInstance() {
         return new CourseListFragment();
@@ -55,40 +59,68 @@ public class CourseListFragment extends Fragment implements ChildEventListener {
                              final Bundle savedInstanceState) {
         super.onCreateView(inflater, container, savedInstanceState);
         courseVm = ViewModelProviders.of(this).get(CourseVm.class);
-        courseAdapter = new CourseAdapter(arrayList);
         final View view = inflater.inflate(R.layout.fragment_course_list, container, false);
+        view.findViewById(R.id.sortButton).setOnClickListener(view1 -> handleSort());
         view.findViewById(R.id.fab_add_course).setOnClickListener(v -> handleAddCourse());
         rootCl = view.findViewById(R.id.cl_main_activity);
-        final RecyclerView coursesRv = view.findViewById(R.id.rv_course_list);
-        coursesRv.setLayoutManager(new LinearLayoutManager(getContext()));
+        RecyclerView coursesRv = view.findViewById(R.id.rv_course_list);
+        courseAdapter = new CourseAdapter(arrayList);
         coursesRv.setAdapter(courseAdapter);
-        courseVm.getAll().observe(this, courses -> {
+        coursesRv.setLayoutManager(new LinearLayoutManager(getContext()));
+        courseVm.getAllCoursesByName().observe(this, courses -> {
             arrayList.clear();
             arrayList.addAll(courses);
             courseAdapter.notifyDataSetChanged();
         });
-
         FirebaseDatabase.getInstance().getReference().child(BuildConfig.BUILD_TYPE)
                 .child("/courses/").addChildEventListener(this);
         return view;
     }
 
+    private void handleSort() {
+        final CharSequence[] sortOrders = new CharSequence[]{
+                "Course Name",
+                "Course Code",
+        };
+        new AlertDialog.Builder(getActivity())
+                .setTitle("Sort By")
+                .setSingleChoiceItems(sortOrders, currentSortOrder, (dialog, which) -> {
+                    if (which == 0) {
+                        currentSortOrder = 0;
+                        courseVm.getAllCoursesByName().observe(this, courses -> {
+                            arrayList.clear();
+                            arrayList.addAll(courses);
+                            courseAdapter.notifyDataSetChanged();
+                        });
+                    } else {
+                        currentSortOrder = 1;
+                        courseVm.getAllCoursesByCode().observe(this, courses -> {
+                            arrayList.clear();
+                            arrayList.addAll(courses);
+                            courseAdapter.notifyDataSetChanged();
+                        });
+                    }
+                    dialog.dismiss();
+                }).show();
+    }
+
+
 
     private void handleAddCourse() {
-        final boolean signedIn = GoogleSignIn.getLastSignedInAccount(Objects.requireNonNull(getContext())) != null;
+        final boolean signedIn = FirebaseAuth.getInstance().getCurrentUser() != null;
         boolean storagePermission = true;
 
         if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.M) {
             storagePermission =
-                    getContext().checkSelfPermission(Manifest.permission.WRITE_EXTERNAL_STORAGE)
-                            == PackageManager.PERMISSION_GRANTED;
+                    (ContextCompat.checkSelfPermission(Objects.requireNonNull(getActivity()), READ_EXTERNAL_STORAGE) == PERMISSION_GRANTED
+                            && ContextCompat.checkSelfPermission(getActivity(), WRITE_EXTERNAL_STORAGE) == PERMISSION_GRANTED);
         }
+
         if (signedIn && storagePermission) {
             final FragmentManager fm = Objects.requireNonNull(getActivity()).getSupportFragmentManager();
             final FragmentTransaction ft = fm.beginTransaction();
             final DialogFragment addCourseFragment = new AddCourseFragment();
             addCourseFragment.show(ft, ADD_COURSE_FRAGMENT);
-
 
         } else if (signedIn) {
             Snackbar.make(rootCl, getString(R.string.storage_permission_needed),

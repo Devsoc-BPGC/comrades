@@ -7,11 +7,42 @@
     android:layout_height="match_parent"
     tools:context="com.macbitsgoa.comrades.coursematerial.CourseActivity">
 
-    <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/rv_content_list"
-        android:layout_marginTop="?android:attr/actionBarSize"
+    <androidx.core.widget.NestedScrollView
         android:layout_width="match_parent"
-        android:layout_height="match_parent" />
+        android:layout_height="match_parent"
+        android:layout_marginTop="?android:attr/actionBarSize">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="vertical">
+
+            <FrameLayout
+                android:layout_width="match_parent"
+                android:layout_height="40dp"
+                android:background="@color/white">
+
+                <ImageView
+                    android:id="@+id/sortButton"
+                    android:layout_width="30dp"
+                    android:layout_height="30dp"
+                    android:layout_gravity="end"
+                    android:layout_margin="5dp"
+                    android:foreground="@drawable/ic_sort_black_24dp"
+                    android:foregroundTint="@color/grey" />
+
+            </FrameLayout>
+
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/rv_content_list"
+                android:nestedScrollingEnabled="false"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent" />
+
+        </LinearLayout>
+
+    </androidx.core.widget.NestedScrollView>
+
 
     <com.google.android.material.floatingactionbutton.FloatingActionButton
         android:id="@+id/fab_add_material"
@@ -32,6 +63,7 @@
         android:theme="@style/AppTheme.ToolBarStyle"
         app:layout_scrollFlags="enterAlways|scroll"
         app:popupTheme="@style/ThemeOverlay.AppCompat.Light" />
+
 
     <ProgressBar
         android:id="@+id/progressBar"

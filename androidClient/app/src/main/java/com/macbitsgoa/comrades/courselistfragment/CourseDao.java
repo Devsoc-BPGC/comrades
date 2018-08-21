@@ -19,8 +19,11 @@ import androidx.room.Update;
 @Dao
 public interface CourseDao {
 
-    @Query("SELECT * FROM MyCourse")
-    LiveData<List<MyCourse>> getAllCourses();
+    @Query("SELECT * FROM MyCourse ORDER BY name ASC")
+    LiveData<List<MyCourse>> getAllCoursesByName();
+
+    @Query("SELECT * FROM MyCourse ORDER BY code ASC")
+    LiveData<List<MyCourse>> getAllCoursesByCode();
 
     @Query("SELECT * FROM MyCourse WHERE isFollowing ")
     LiveData<List<MyCourse>> getFollowingCourses();

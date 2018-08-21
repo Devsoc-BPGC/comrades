@@ -19,8 +19,15 @@ import androidx.room.Update;
 @Dao
 public interface MaterialDao {
 
-    @Query("SELECT * FROM CourseMaterial WHERE courseId = :courseId ")
-    LiveData<List<CourseMaterial>> getCourseMaterial(String courseId);
+    @Query("SELECT * FROM CourseMaterial WHERE courseId = :courseId ORDER BY fileName ASC")
+    LiveData<List<CourseMaterial>> getCourseMaterialByName(String courseId);
+
+    @Query("SELECT * FROM CourseMaterial WHERE courseId = :courseId ORDER BY fileSize ASC")
+    LiveData<List<CourseMaterial>> getCourseMaterialBySize(String courseId);
+
+    @Query("SELECT * FROM CourseMaterial WHERE courseId = :courseId ORDER BY extension ASC")
+    LiveData<List<CourseMaterial>> getCourseMaterialByFileType(String courseId);
+
 
     @Query("SELECT * FROM CourseMaterial WHERE hashId = :hashId ")
     CourseMaterial checkHashId(String hashId);

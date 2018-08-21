@@ -2,6 +2,7 @@ package com.macbitsgoa.comrades.coursematerial;
 
 import android.Manifest;
 import android.annotation.SuppressLint;
+import android.app.AlertDialog;
 import android.app.SearchManager;
 import android.content.BroadcastReceiver;
 import android.content.Context;
@@ -72,6 +73,7 @@ public class CourseActivity extends AppCompatActivity
     private MaterialVm materialVm;
     private SearchView searchView;
     private ProgressBar progressBar;
+    private int currentSortOrder = 0;
 
     public static void launchCourse(final Context context, final String courseId, final String courseName) {
         final Intent intent = new Intent(context, CourseActivity.class);
@@ -98,9 +100,8 @@ public class CourseActivity extends AppCompatActivity
         initBroadCastReceiver();
         initUi();
 
-        materialVm = ViewModelProviders.of(this,
-                new MaterialVmFactoryClass(this.getApplication(), courseId)).get(MaterialVm.class);
-        materialVm.getMaterialList().observe(CourseActivity.this, courseMaterials -> {
+        materialVm = ViewModelProviders.of(this).get(MaterialVm.class);
+        materialVm.getMaterialListByName(courseId).observe(CourseActivity.this, courseMaterials -> {
             materialArrayList.clear();
             materialArrayList.addAll(courseMaterials);
             materialAdapter.notifyDataSetChanged();
@@ -173,6 +174,7 @@ public class CourseActivity extends AppCompatActivity
         progressBar = findViewById(R.id.progressBar);
         progressBar.setVisibility(View.VISIBLE);
         final RecyclerView recyclerView = findViewById(R.id.rv_content_list);
+        findViewById(R.id.sortButton).setOnClickListener(view1 -> handleSort());
         final Toolbar toolbar = findViewById(R.id.toolbar_course_activity);
         setSupportActionBar(toolbar);
         toolbar.inflateMenu(R.menu.course_activity_toolbar);
@@ -189,6 +191,41 @@ public class CourseActivity extends AppCompatActivity
         materialAdapter = new MaterialAdapter(materialArrayList);
         recyclerView.setLayoutManager(linearLayoutManager);
         recyclerView.setAdapter(materialAdapter);
+    }
+
+    private void handleSort() {
+        final CharSequence[] sortOrders = new CharSequence[]{
+                "File Name",
+                "File Size",
+                "File Type"
+        };
+        new AlertDialog.Builder(this)
+                .setTitle("Sort By")
+                .setSingleChoiceItems(sortOrders, currentSortOrder, (dialog, which) -> {
+                    if (which == 0) {
+                        currentSortOrder = 0;
+                        materialVm.getMaterialListByName(courseId).observe(this, courses -> {
+                            materialArrayList.clear();
+                            materialArrayList.addAll(courses);
+                            materialAdapter.notifyDataSetChanged();
+                        });
+                    } else if (which == 1) {
+                        currentSortOrder = 1;
+                        materialVm.getMaterialListBySize(courseId).observe(this, materials -> {
+                            materialArrayList.clear();
+                            materialArrayList.addAll(materials);
+                            materialAdapter.notifyDataSetChanged();
+                        });
+                    } else {
+                        currentSortOrder = 2;
+                        materialVm.getMaterialListByFileType(courseId).observe(this, materials -> {
+                            materialArrayList.clear();
+                            materialArrayList.addAll(materials);
+                            materialAdapter.notifyDataSetChanged();
+                        });
+                    }
+                    dialog.dismiss();
+                }).show();
     }
 
     @Override

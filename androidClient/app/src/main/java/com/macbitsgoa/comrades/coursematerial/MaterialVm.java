@@ -17,21 +17,26 @@ public class MaterialVm extends AndroidViewModel {
     private LiveData<List<CourseMaterial>> materialList;
 
 
-    public MaterialVm(Application application, String courseId) {
-        super(application);
-        mRepository = new MaterialRepository(application, courseId);
-        materialList = mRepository.getAllMaterial();
-    }
-
     public MaterialVm(Application application) {
         super(application);
+        mRepository = new MaterialRepository(application);
     }
 
 
-    public LiveData<List<CourseMaterial>> getMaterialList() {
+    public LiveData<List<CourseMaterial>> getMaterialListByName(String courseid) {
+        materialList = mRepository.getAllMaterialByName(courseid);
         return materialList;
     }
 
+    public LiveData<List<CourseMaterial>> getMaterialListBySize(String courseid) {
+        materialList = mRepository.getAllMaterialBySize(courseid);
+        return materialList;
+    }
+
+    public LiveData<List<CourseMaterial>> getMaterialListByFileType(String courseid) {
+        materialList = mRepository.getAllMaterialByFileType(courseid);
+        return materialList;
+    }
     public void insert(CourseMaterial courseMaterial) {
         mRepository.insert(courseMaterial);
     }
