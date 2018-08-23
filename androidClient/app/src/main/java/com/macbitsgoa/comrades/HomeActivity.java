@@ -1,5 +1,6 @@
 package com.macbitsgoa.comrades;
 
+import android.annotation.SuppressLint;
 import android.app.SearchManager;
 import android.content.Context;
 import android.content.Intent;
@@ -12,6 +13,7 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
+import android.view.View;
 import android.widget.Toast;
 
 import com.google.android.gms.auth.api.Auth;
@@ -19,6 +21,7 @@ import com.google.android.gms.auth.api.signin.GoogleSignIn;
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
+import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.macbitsgoa.comrades.aboutmac.AboutMacActivity;
@@ -28,14 +31,16 @@ import com.macbitsgoa.comrades.persistance.Database;
 import com.macbitsgoa.comrades.profilefragment.ProfileFragment;
 import com.macbitsgoa.comrades.search.SearchCoursesCursorAdapter;
 
+import java.util.Objects;
+
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.SearchView;
+import androidx.coordinatorlayout.widget.CoordinatorLayout;
 import androidx.core.view.MenuItemCompat;
+import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import io.reactivex.Observable;
 import io.reactivex.android.schedulers.AndroidSchedulers;
-import io.reactivex.functions.Consumer;
-import io.reactivex.functions.Function;
 import io.reactivex.schedulers.Schedulers;
 
 
@@ -46,20 +51,41 @@ public class HomeActivity extends AppCompatActivity {
     private FragmentManager fragmentManager = getSupportFragmentManager();
     private SearchView searchView;
     private MySimpleDraweeView userProfileImage;
+    private FloatingActionButton fab_add_course;
+    public static CoordinatorLayout snack;
+    @SuppressLint("RestrictedApi")
     private BottomNavigationView.OnNavigationItemSelectedListener mOnNavigationItemSelectedListener
             = item -> {
         switch (item.getItemId()) {
             case R.id.navigation_home:
+                fab_add_course.setVisibility(View.GONE);
+                fab_add_course.setOnClickListener(null);
+                Fragment homeFragment=fragmentManager.findFragmentByTag("HomeFragment");
+                if(homeFragment==null){
+                    homeFragment=HomeFragment.newInstance();
+                }
                 fragmentManager.beginTransaction().replace(R.id.container_fragment,
-                        HomeFragment.newInstance()).commit();
+                        homeFragment,"HomeFragment").commit();
                 return true;
             case R.id.navigation_courses:
+                fab_add_course.setVisibility(View.VISIBLE);
+                fab_add_course.setOnClickListener(v -> CourseListFragment.handleAddCourse(HomeActivity.this));
+                Fragment courseListFragment=fragmentManager.findFragmentByTag("CourseListFragment");
+                if(courseListFragment==null){
+                    courseListFragment= CourseListFragment.newInstance();
+                }
                 fragmentManager.beginTransaction().replace(R.id.container_fragment,
-                        CourseListFragment.newInstance()).commit();
+                        courseListFragment,"CourseListFragment").addToBackStack(null).commit();
                 return true;
             case R.id.navigation_profile:
+                fab_add_course.setVisibility(View.GONE);
+                fab_add_course.setOnClickListener(null);
+                Fragment profileFragment=fragmentManager.findFragmentByTag("ProfileFragment");
+                if(profileFragment==null){
+                    profileFragment=ProfileFragment.newInstance();
+                }
                 fragmentManager.beginTransaction().replace(R.id.container_fragment,
-                        ProfileFragment.newInstance()).commit();
+                        profileFragment,"ProfileFragment").addToBackStack(null).commit();
                 return true;
         }
         return false;
@@ -71,11 +97,13 @@ public class HomeActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_home);
         setSupportActionBar(findViewById(R.id.toolbar_main_act));
-        getSupportActionBar().setDisplayShowTitleEnabled(false);
+        Objects.requireNonNull(getSupportActionBar()).setDisplayShowTitleEnabled(false);
         userProfileImage = findViewById(R.id.profile_user_toolbar);
         navigation = findViewById(R.id.navigation);
+        snack=findViewById(R.id.container);
+        fab_add_course=findViewById(R.id.fab_add_course);
         navigation.setOnNavigationItemSelectedListener(mOnNavigationItemSelectedListener);
-
+        fragmentManager.addOnBackStackChangedListener(getListener());
         SharedPreferences sharedPreferences =
                 PreferenceManager.getDefaultSharedPreferences(this);
         // Check if we need to display our OnboardingFragment
@@ -138,7 +166,7 @@ public class HomeActivity extends AppCompatActivity {
 
         SearchManager searchManager = (SearchManager) getSystemService(Context.SEARCH_SERVICE);
         searchView = (SearchView) MenuItemCompat.getActionView(menu.findItem(R.id.action_search));
-        searchView.setSearchableInfo(searchManager.getSearchableInfo(getComponentName()));
+        searchView.setSearchableInfo(searchManager != null ? searchManager.getSearchableInfo(getComponentName()) : null);
         searchView.setIconifiedByDefault(true);
         searchView.setIconified(false);
         searchView.setSubmitButtonEnabled(true);
@@ -169,26 +197,12 @@ public class HomeActivity extends AppCompatActivity {
 
     }
 
+    @SuppressLint("CheckResult")
     private void getCoursesFromDb(String query) {
         String searchText = "%" + query + "%";
         Observable.just(searchText).observeOn(Schedulers.computation())
-                .map(new Function<String, Cursor>() {
-                    @Override
-                    public Cursor apply(String searchStrt) {
-                        return Database.getInstance(HomeActivity.this).getCourseDao().getSearchCursor(searchStrt);
-                    }
-                }).observeOn(AndroidSchedulers.mainThread())
-                .subscribe(new Consumer<Cursor>() {
-                    @Override
-                    public void accept(Cursor cursor) {
-                        handleResults(cursor);
-                    }
-                }, new Consumer<Throwable>() {
-                    @Override
-                    public void accept(Throwable throwable) {
-                        handleError(throwable);
-                    }
-                });
+                .map(searchStrt -> Database.getInstance(HomeActivity.this).getCourseDao().getSearchCursor(searchStrt)).observeOn(AndroidSchedulers.mainThread())
+                .subscribe(this::handleResults, this::handleError);
 
     }
 
@@ -207,7 +221,7 @@ public class HomeActivity extends AppCompatActivity {
         super.onResume();
         invalidateOptionsMenu();
         SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(getBaseContext());
-        Boolean previousStarted = preferences.getBoolean("Previously Started", false);
+        boolean previousStarted = preferences.getBoolean("Previously Started", false);
 
         if (!previousStarted) {
             SharedPreferences.Editor edit = preferences.edit();
@@ -220,9 +234,20 @@ public class HomeActivity extends AppCompatActivity {
     @Override
     public void onBackPressed() {
         if (navigation.getSelectedItemId() == R.id.navigation_home) {
-            super.onBackPressed();
+            finish();
         } else {
             navigation.setSelectedItemId(R.id.navigation_home);
         }
+    }
+
+    private FragmentManager.OnBackStackChangedListener getListener() {
+        return () -> {
+            if (fragmentManager != null) {
+                Fragment currFrag = fragmentManager.findFragmentByTag("ProfileFragment");
+                if(navigation.getSelectedItemId()==R.id.navigation_profile && currFrag != null){
+                        currFrag.onResume();
+                }
+            }
+        };
     }
 }

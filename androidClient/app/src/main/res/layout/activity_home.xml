@@ -1,20 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.coordinatorlayout.widget.CoordinatorLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/container"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context="com.macbitsgoa.comrades.HomeActivity">
-
-    <FrameLayout
-        android:id="@+id/container_fragment"
-        app:layout_constraintTop_toBottomOf="@id/toolbar_main_act"
-        app:layout_constraintBottom_toTopOf="@id/navigation"
-        android:layout_width="match_parent"
-        android:layout_height="0dp">
-
-    </FrameLayout>
 
     <androidx.appcompat.widget.Toolbar
         android:id="@+id/toolbar_main_act"
@@ -26,42 +18,71 @@
         android:theme="@style/AppTheme.ToolBarStyle"
         app:layout_scrollFlags="enterAlways|scroll"
         app:popupTheme="@style/AppTheme"
-        app:theme="@style/MyToolbar" >
+        app:theme="@style/MyToolbar">
 
         <com.macbitsgoa.comrades.MySimpleDraweeView
             android:id="@+id/profile_user_toolbar"
-            app:roundingBorderWidth="2dp"
-            app:roundAsCircle="true"
-            android:layout_margin="5dp"
             android:layout_width="30dp"
-            android:layout_height="30dp" />
+            android:layout_height="30dp"
+            android:layout_margin="5dp"
+            app:roundAsCircle="true"
+            app:roundingBorderWidth="2dp" />
 
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="@string/app_name"
-            android:fontFamily="@font/ps_bold"
-            android:textSize="24sp"
             android:layout_gravity="center_horizontal"
-            android:textColor="#fff"
             android:layout_margin="2dp"
+            android:fontFamily="@font/ps_bold"
+            android:gravity="center"
+            android:text="@string/app_name"
             android:textAlignment="center"
-            android:gravity="center" />
+            android:textColor="#fff"
+            android:textSize="24sp" />
 
 
     </androidx.appcompat.widget.Toolbar>
 
+    <FrameLayout
+        android:id="@+id/container_fragment"
+        android:layout_marginTop="?android:attr/actionBarSize"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+    </FrameLayout>
+
+    <FrameLayout
+        android:id="@+id/container_snackbar"
+        android:layout_marginBottom="66dp"
+        android:layout_gravity="bottom"
+        android:layout_width="match_parent"
+        android:layout_height="22dp">
+
+    </FrameLayout>
+
+    <com.google.android.material.floatingactionbutton.FloatingActionButton
+        android:id="@+id/fab_add_course"
+        style="@style/Widget.MaterialComponents.FloatingActionButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="top"
+        android:src="@drawable/ic_add"
+        app:layout_anchor="@id/navigation"
+        app:layout_anchorGravity="top|end"
+        app:useCompatPadding="true"
+        app:layout_behavior="com.macbitsgoa.comrades.BottomNavigationFabBehavior"
+        android:tint="@color/colorAccentContrast" />
+
     <com.google.android.material.bottomnavigation.BottomNavigationView
         android:id="@+id/navigation"
-        android:layout_width="0dp"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginEnd="0dp"
-        android:layout_marginStart="0dp"
+        app:layout_behavior="com.macbitsgoa.comrades.BottomNavigationViewBehavior"
         android:elevation="16dp"
         android:background="?android:attr/windowBackground"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintRight_toRightOf="parent"
-        app:menu="@menu/navigation" />
+        android:layout_gravity="bottom"
+        app:menu="@menu/navigation"
+        app:labelVisibilityMode="selected"/>
 
-</androidx.constraintlayout.widget.ConstraintLayout>
+
+</androidx.coordinatorlayout.widget.CoordinatorLayout>

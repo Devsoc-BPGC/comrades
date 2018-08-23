@@ -91,7 +91,9 @@ public class ProfileFragment extends Fragment {
                         @Override
                         public void onDataChange(DataSnapshot dataSnapshot) {
                             UserObject obj = dataSnapshot.getValue(UserObject.class);
-                            initiateView(obj);
+                            if (obj != null) {
+                                initiateView(obj);
+                            }
                         }
 
                         @Override
@@ -100,6 +102,11 @@ public class ProfileFragment extends Fragment {
                         }
                     });
         } else {
+            tvUserName.setText("Anonymous");
+            tvUserAuthority.setText("Click to Sign In");
+            tvScore.setText("-");
+            tvUploads.setText("-");
+            tvRank.setText("-");
             tvUserImage.setImageResource(R.drawable.ic_profile_black);
             tvUserAuthority.setOnClickListener(view1 -> {
                 final Intent intent = new Intent(getContext(), GetGoogleSignInActivity.class);

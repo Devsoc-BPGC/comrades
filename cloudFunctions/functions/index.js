@@ -417,4 +417,3 @@ exports.debugRanks = functions.database.ref("/debug/users/{uuid}/score")
             return 0;
         });
     });
-
