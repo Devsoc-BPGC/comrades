@@ -17,13 +17,13 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.FirebaseDatabase;
 import com.macbitsgoa.comrades.BuildConfig;
 import com.macbitsgoa.comrades.GetGoogleSignInActivity;
+import com.macbitsgoa.comrades.HomeActivity;
 import com.macbitsgoa.comrades.R;
 
 import java.util.ArrayList;
 import java.util.Objects;
 
 import androidx.annotation.NonNull;
-import androidx.coordinatorlayout.widget.CoordinatorLayout;
 import androidx.core.content.ContextCompat;
 import androidx.fragment.app.DialogFragment;
 import androidx.fragment.app.Fragment;
@@ -37,6 +37,7 @@ import static android.Manifest.permission.READ_EXTERNAL_STORAGE;
 import static android.Manifest.permission.WRITE_EXTERNAL_STORAGE;
 import static androidx.core.content.PermissionChecker.PERMISSION_GRANTED;
 import static com.macbitsgoa.comrades.CHCKt.TAG_PREFIX;
+import static com.macbitsgoa.comrades.HomeActivity.snack;
 
 
 public class CourseListFragment extends Fragment implements ChildEventListener {
@@ -44,7 +45,6 @@ public class CourseListFragment extends Fragment implements ChildEventListener {
     private static final String ADD_COURSE_FRAGMENT = "addCourseFragment";
     private final ArrayList<MyCourse> arrayList = new ArrayList<>(0);
     private CourseAdapter courseAdapter;
-    private CoordinatorLayout rootCl;
     private final static String TAG = TAG_PREFIX + CourseListFragment.class.getSimpleName();
     private CourseVm courseVm;
     private int currentSortOrder = 0;
@@ -61,8 +61,6 @@ public class CourseListFragment extends Fragment implements ChildEventListener {
         courseVm = ViewModelProviders.of(this).get(CourseVm.class);
         final View view = inflater.inflate(R.layout.fragment_course_list, container, false);
         view.findViewById(R.id.sortButton).setOnClickListener(view1 -> handleSort());
-        view.findViewById(R.id.fab_add_course).setOnClickListener(v -> handleAddCourse());
-        rootCl = view.findViewById(R.id.cl_main_activity);
         RecyclerView coursesRv = view.findViewById(R.id.rv_course_list);
         courseAdapter = new CourseAdapter(arrayList);
         coursesRv.setAdapter(courseAdapter);
@@ -106,33 +104,33 @@ public class CourseListFragment extends Fragment implements ChildEventListener {
 
 
 
-    private void handleAddCourse() {
+    public static void handleAddCourse(Context context) {
         final boolean signedIn = FirebaseAuth.getInstance().getCurrentUser() != null;
         boolean storagePermission = true;
 
         if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.M) {
             storagePermission =
-                    (ContextCompat.checkSelfPermission(Objects.requireNonNull(getActivity()), READ_EXTERNAL_STORAGE) == PERMISSION_GRANTED
-                            && ContextCompat.checkSelfPermission(getActivity(), WRITE_EXTERNAL_STORAGE) == PERMISSION_GRANTED);
+                    (ContextCompat.checkSelfPermission(Objects.requireNonNull(context), READ_EXTERNAL_STORAGE) == PERMISSION_GRANTED
+                            && ContextCompat.checkSelfPermission(context, WRITE_EXTERNAL_STORAGE) == PERMISSION_GRANTED);
         }
 
         if (signedIn && storagePermission) {
-            final FragmentManager fm = Objects.requireNonNull(getActivity()).getSupportFragmentManager();
+            final FragmentManager fm = ((HomeActivity)context).getSupportFragmentManager();
             final FragmentTransaction ft = fm.beginTransaction();
             final DialogFragment addCourseFragment = new AddCourseFragment();
             addCourseFragment.show(ft, ADD_COURSE_FRAGMENT);
 
         } else if (signedIn) {
-            Snackbar.make(rootCl, getString(R.string.storage_permission_needed),
+            Snackbar.make(snack, context.getString(R.string.storage_permission_needed),
                     Snackbar.LENGTH_LONG)
-                    .setAction(getString(R.string.allow), v ->
-                            handleSignInAndStorage(getContext()))
+                    .setAction(context.getString(R.string.allow), v ->
+                            handleSignInAndStorage(context))
                     .show();
         } else {
-            Snackbar.make(rootCl, getString(R.string.login_to_add_course),
+            Snackbar.make(snack, context.getString(R.string.login_to_add_course),
                     Snackbar.LENGTH_LONG)
-                    .setAction(getString(R.string.login), v ->
-                            handleSignInAndStorage(getContext()))
+                    .setAction(context.getString(R.string.login), v ->
+                            handleSignInAndStorage(context))
                     .show();
         }
     }
