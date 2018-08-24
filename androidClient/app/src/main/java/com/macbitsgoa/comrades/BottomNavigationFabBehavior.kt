@@ -6,9 +6,9 @@ import android.view.View
 import androidx.coordinatorlayout.widget.CoordinatorLayout
 import com.google.android.material.snackbar.Snackbar
 
-/*
-* Determines the Behaviour of FAB when the navigation bar hides on Scroll
-* */
+/**
+ * Determines the Behaviour of FAB when the navigation bar hides on Scroll.
+ */
 class BottomNavigationFabBehavior(context: Context?, attrs:AttributeSet?) : CoordinatorLayout.Behavior<View>(context,attrs) {
 
     override fun layoutDependsOn(parent: CoordinatorLayout, child: View, dependency: View): Boolean {
