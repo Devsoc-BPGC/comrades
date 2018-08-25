@@ -27,6 +27,7 @@ import androidx.annotation.NonNull;
 import androidx.core.content.ContextCompat;
 import androidx.fragment.app.DialogFragment;
 import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentActivity;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
 import androidx.lifecycle.ViewModelProviders;
@@ -40,17 +41,54 @@ import static com.macbitsgoa.comrades.CHCKt.TAG_PREFIX;
 import static com.macbitsgoa.comrades.HomeActivity.snack;
 
 
-public class CourseListFragment extends Fragment implements ChildEventListener {
+public class CourseListFragment extends Fragment
+        implements ChildEventListener{
 
     private static final String ADD_COURSE_FRAGMENT = "addCourseFragment";
+    private final static String TAG = TAG_PREFIX + CourseListFragment.class.getSimpleName();
     private final ArrayList<MyCourse> arrayList = new ArrayList<>(0);
     private CourseAdapter courseAdapter;
-    private final static String TAG = TAG_PREFIX + CourseListFragment.class.getSimpleName();
     private CourseVm courseVm;
     private int currentSortOrder = 0;
 
     public static Fragment newInstance() {
         return new CourseListFragment();
+    }
+
+    public static void handleAddCourse(Context context) {
+        final boolean signedIn = FirebaseAuth.getInstance().getCurrentUser() != null;
+        boolean storagePermission = true;
+
+        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.M) {
+            storagePermission =
+                    (ContextCompat.checkSelfPermission(Objects.requireNonNull(context), READ_EXTERNAL_STORAGE) == PERMISSION_GRANTED
+                            && ContextCompat.checkSelfPermission(context, WRITE_EXTERNAL_STORAGE) == PERMISSION_GRANTED);
+        }
+
+        if (signedIn && storagePermission) {
+            final FragmentManager fm = ((FragmentActivity) context).getSupportFragmentManager();
+            final FragmentTransaction ft = fm.beginTransaction();
+            final DialogFragment addCourseFragment = new AddCourseFragment();
+            addCourseFragment.show(ft, ADD_COURSE_FRAGMENT);
+
+        } else if (signedIn) {
+            Snackbar.make(snack, context.getString(R.string.storage_permission_needed),
+                    Snackbar.LENGTH_LONG)
+                    .setAction(context.getString(R.string.allow), v ->
+                            handleSignInAndStorage(context))
+                    .show();
+        } else {
+            Snackbar.make(snack, context.getString(R.string.login_to_add_course),
+                    Snackbar.LENGTH_LONG)
+                    .setAction(context.getString(R.string.login), v ->
+                            handleSignInAndStorage(context))
+                    .show();
+        }
+    }
+
+    private static void handleSignInAndStorage(final Context context) {
+        final Intent intent = new Intent(context, GetGoogleSignInActivity.class);
+        context.startActivity(intent);
     }
 
     @Override
@@ -60,7 +98,6 @@ public class CourseListFragment extends Fragment implements ChildEventListener {
         super.onCreateView(inflater, container, savedInstanceState);
         courseVm = ViewModelProviders.of(this).get(CourseVm.class);
         final View view = inflater.inflate(R.layout.fragment_course_list, container, false);
-        view.findViewById(R.id.sortButton).setOnClickListener(view1 -> handleSort());
         RecyclerView coursesRv = view.findViewById(R.id.rv_course_list);
         courseAdapter = new CourseAdapter(arrayList);
         coursesRv.setAdapter(courseAdapter);
@@ -75,7 +112,7 @@ public class CourseListFragment extends Fragment implements ChildEventListener {
         return view;
     }
 
-    private void handleSort() {
+    public void handleSort() {
         final CharSequence[] sortOrders = new CharSequence[]{
                 "Course Name",
                 "Course Code",
@@ -100,44 +137,6 @@ public class CourseListFragment extends Fragment implements ChildEventListener {
                     }
                     dialog.dismiss();
                 }).show();
-    }
-
-
-
-    public static void handleAddCourse(Context context) {
-        final boolean signedIn = FirebaseAuth.getInstance().getCurrentUser() != null;
-        boolean storagePermission = true;
-
-        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.M) {
-            storagePermission =
-                    (ContextCompat.checkSelfPermission(Objects.requireNonNull(context), READ_EXTERNAL_STORAGE) == PERMISSION_GRANTED
-                            && ContextCompat.checkSelfPermission(context, WRITE_EXTERNAL_STORAGE) == PERMISSION_GRANTED);
-        }
-
-        if (signedIn && storagePermission) {
-            final FragmentManager fm = ((HomeActivity)context).getSupportFragmentManager();
-            final FragmentTransaction ft = fm.beginTransaction();
-            final DialogFragment addCourseFragment = new AddCourseFragment();
-            addCourseFragment.show(ft, ADD_COURSE_FRAGMENT);
-
-        } else if (signedIn) {
-            Snackbar.make(snack, context.getString(R.string.storage_permission_needed),
-                    Snackbar.LENGTH_LONG)
-                    .setAction(context.getString(R.string.allow), v ->
-                            handleSignInAndStorage(context))
-                    .show();
-        } else {
-            Snackbar.make(snack, context.getString(R.string.login_to_add_course),
-                    Snackbar.LENGTH_LONG)
-                    .setAction(context.getString(R.string.login), v ->
-                            handleSignInAndStorage(context))
-                    .show();
-        }
-    }
-
-    private static void handleSignInAndStorage(final Context context) {
-        final Intent intent = new Intent(context, GetGoogleSignInActivity.class);
-        context.startActivity(intent);
     }
 
     @Override
@@ -182,4 +181,5 @@ public class CourseListFragment extends Fragment implements ChildEventListener {
     public void onCancelled(final @NonNull DatabaseError databaseError) {
         Log.e(TAG, databaseError.getMessage(), databaseError.toException());
     }
+
 }

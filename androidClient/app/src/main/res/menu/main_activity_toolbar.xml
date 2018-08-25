@@ -13,15 +13,25 @@
         app:actionViewClass="androidx.appcompat.widget.SearchView"
         app:showAsAction="collapseActionView|ifRoom"
         tools:ignore="AppCompatResource" />
+    <item
+        android:id="@+id/action_sort"
+        android:icon="@drawable/ic_sort_white_24dp"
+        android:iconTint="@android:color/white"
+        android:showAsAction="collapseActionView|ifRoom"
+        android:title="Sort"
+        app:showAsAction="collapseActionView|ifRoom"
+        tools:ignore="AppCompatResource" />
 
     <item
         android:id="@+id/action_sign_out"
         android:iconTint="@android:color/white"
-        android:title="@string/sign_out"
-        android:showAsAction="never"/>
+        android:showAsAction="never"
+        android:title="@string/sign_out" />
     <item
         android:id="@+id/action_about_mac"
         android:iconTint="@android:color/white"
         android:showAsAction="never"
         android:title="@string/action_about_mac" />
+
+
 </menu>
