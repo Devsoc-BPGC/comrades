@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layer-list xmlns:android="http://schemas.android.com/apk/res/android">
+    <item>
+        <bitmap android:src="@drawable/education"/>
+    </item>
+
+
+    <item>
+        <color android:color="#49bc3908"/>
+    </item>
+
+    <item
+        android:height="180dp"
+        android:width="180dp"
+        android:gravity="center_horizontal|bottom"
+        android:bottom="80dp">
+
+        <bitmap android:src="@drawable/maclogopng"/>
+
+    </item>
+
+    <item
+        android:width="180dp"
+        android:height="52sp"
+        android:gravity="center_horizontal|top"
+        android:top="120dp">
+
+        <bitmap android:src="@drawable/text_comrades"/>
+
+    </item>
+
+</layer-list>

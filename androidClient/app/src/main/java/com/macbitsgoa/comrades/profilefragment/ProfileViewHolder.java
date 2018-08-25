@@ -68,7 +68,7 @@ public class ProfileViewHolder extends RecyclerView.ViewHolder implements View.O
                 popupWindow.showAtLocation(view.getRootView(),
                         Gravity.CENTER, 0, 0);
                 break;
-            case "Privacy":
+            case "Privacy Policy":
                 View v1 = LayoutInflater.from(view.getContext())
                         .inflate(R.layout.layout_privacy, null);
                 PopupWindow popupWindowPrivacy = new PopupWindow(v1, MATCH_PARENT, MATCH_PARENT, true);

@@ -4,6 +4,7 @@ package com.macbitsgoa.comrades;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
+import android.transition.Slide;
 
 import com.github.paolorotolo.appintro.AppIntro2;
 import com.github.paolorotolo.appintro.AppIntroFragment;
@@ -97,7 +98,7 @@ public class TutorialActivity extends AppIntro2 {
     @Override
     public void onSlideChanged(@Nullable Fragment oldFragment, @Nullable Fragment newFragment) {
         super.onSlideChanged(oldFragment, newFragment);
-        // Do something when the slide changes.
+        getWindow().setStatusBarColor(ContextCompat.getColor(this, backgroundColor.get(getPager().getCurrentItem())));
     }
 
     @Override

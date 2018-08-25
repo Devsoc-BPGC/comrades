@@ -3,6 +3,11 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
+    android:layout_marginLeft="4dp"
+    android:layout_marginRight="4dp"
+    android:layout_marginTop="4dp"
+    android:padding="8dp"
+    app:cardBackgroundColor="@color/colorAccentContrast"
     android:layout_height="wrap_content">
 
     <TextView
@@ -27,6 +32,7 @@
         android:layout_margin="10dp"
         android:background="@android:color/transparent"
         android:padding="10dp"
+        android:visibility="gone"
         android:src="@drawable/ic_notifications_active_black_24dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
