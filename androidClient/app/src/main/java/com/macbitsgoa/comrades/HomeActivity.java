@@ -58,7 +58,6 @@ public class HomeActivity extends AppCompatActivity {
     private SearchView searchView;
     private MySimpleDraweeView userProfileImage;
     private FloatingActionButton fab_add_course;
-    @SuppressLint("RestrictedApi")
     private BottomNavigationView.OnNavigationItemSelectedListener mOnNavigationItemSelectedListener
             = item -> {
         switch (item.getItemId()) {
@@ -70,8 +69,8 @@ public class HomeActivity extends AppCompatActivity {
                     homeFragment = HomeFragment.newInstance();
                 }
                 fragmentManager.beginTransaction().replace(R.id.container_fragment,
-                        homeFragment, "HomeFragment").addToBackStack(null).commit();
-                return true;
+                        homeFragment, TAG_HOME_FRAG).addToBackStack(null).commit();
+                break;
             case R.id.navigation_courses:
                 fab_add_course.setVisibility(View.VISIBLE);
                 fab_add_course.setOnClickListener(v -> CourseListFragment.handleAddCourse(HomeActivity.this));
