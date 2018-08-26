@@ -22,10 +22,16 @@ public interface CourseDao {
     @Query("SELECT * FROM MyCourse ORDER BY name ASC")
     LiveData<List<MyCourse>> getAllCoursesByName();
 
+    @Query("SELECT * FROM MyCourse ORDER BY isFollowing DESC")
+    LiveData<List<MyCourse>> getAllCoursesByFollowing();
+
+    @Query("SELECT * FROM MyCourse ORDER BY timeStamp DESC")
+    LiveData<List<MyCourse>> getAllCoursesByTimestamp();
+
     @Query("SELECT * FROM MyCourse ORDER BY code ASC")
     LiveData<List<MyCourse>> getAllCoursesByCode();
 
-    @Query("SELECT * FROM MyCourse WHERE isFollowing ")
+    @Query("SELECT * FROM MyCourse WHERE isFollowing")
     LiveData<List<MyCourse>> getFollowingCourses();
 
     @Query("SELECT * FROM MyCourse WHERE name LIKE :search OR addedByName LIKE :search OR code LIKE :search ")
@@ -36,6 +42,9 @@ public interface CourseDao {
 
     @Query("SELECT * FROM MyCourse WHERE name LIKE :name OR code LIKE :code")
     MyCourse ifCourseExists(String name, String code);
+
+    @Query("SELECT COUNT(_id) FROM MyCourse")
+    LiveData<Integer> countCourses();
 
     @Insert()
     void insertAll(List<MyCourse> products);

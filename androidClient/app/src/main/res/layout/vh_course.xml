@@ -1,62 +1,65 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.cardview.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
     android:layout_marginLeft="4dp"
     android:layout_marginRight="4dp"
-    android:layout_marginTop="4dp"
-    app:cardElevation="4dp"
-    app:cardCornerRadius="4dp"
-    android:padding="8dp"
-    app:cardBackgroundColor="@color/colorAccentContrast"
-    android:layout_width="match_parent"
-    android:layout_height="wrap_content">
+    android:padding="8dp">
 
-    <androidx.constraintlayout.widget.ConstraintLayout
-        android:layout_width="match_parent"
-        android:layout_height="match_parent">
+    <TextView
+        android:id="@+id/tv_course_name"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="4dp"
+        android:layout_marginEnd="4dp"
+        android:drawablePadding="4dp"
+        android:fontFamily="@font/ps_regular"
+        android:padding="4dp"
+        android:textColor="#ff000000"
+        android:textSize="18sp"
+        app:layout_constraintRight_toLeftOf="@id/notification_icon"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        tools:text="Mechanics Oscillations and Waves" />
 
-        <TextView
-            android:id="@+id/tv_course_name"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_margin="4dp"
-            android:drawablePadding="4dp"
-            android:padding="4dp"
-            android:fontFamily="@font/ps_regular"
-            android:textColor="#ff000000"
-            android:textSize="18sp"
-            app:layout_constraintRight_toLeftOf="@id/notification_icon"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
-            tools:text="Mechanics Oscillations and Waves" />
+    <com.google.android.material.chip.Chip
+        android:id="@+id/chip_course_code"
+        style="@style/Widget.MaterialComponents.Chip.Entry"
+        android:layout_width="wrap_content"
+        android:layout_height="21dp"
+        android:layout_marginBottom="12dp"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="6dp"
+        android:checkable="false"
+        android:clickable="false"
+        app:closeIconEnabled="false"
+        app:layout_constraintBottom_toTopOf="@id/v_line"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/tv_course_name"
+        tools:text="PHY - F111" />
 
-        <com.google.android.material.chip.Chip
-            android:id="@+id/chip_course_code"
-            style="@style/Widget.MaterialComponents.Chip.Entry"
-            android:layout_width="wrap_content"
-            android:layout_height="21dp"
-            android:layout_marginBottom="12dp"
-            android:layout_marginStart="8dp"
-            android:layout_marginTop="6dp"
-            app:closeIconEnabled="false"
-            android:checkable="false"
-            android:clickable="false"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/tv_course_name"
-            tools:text="PHY - F111" />
+    <ImageButton
+        android:id="@+id/notification_icon"
+        android:layout_width="40dp"
+        android:layout_height="40dp"
+        android:layout_marginEnd="10dp"
+        android:background="@android:color/transparent"
+        android:backgroundTint="@color/colorAccentContrast"
+        android:padding="10dp"
+        app:layout_constraintBottom_toTopOf="@id/v_line"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
 
-        <ImageButton
-            android:id="@+id/notification_icon"
-            android:layout_width="40dp"
-            android:layout_height="40dp"
-            android:padding="10dp"
-            app:layout_constraintRight_toRightOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
-            android:layout_marginEnd="10dp"
-            app:layout_constraintBottom_toBottomOf="parent"
-            android:backgroundTint="@color/colorAccentContrast" />
+    <View
+        android:id="@+id/v_line"
+        android:layout_width="0dp"
+        android:layout_height="1px"
+        android:foreground="@color/black"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/chip_course_code" />
 
-    </androidx.constraintlayout.widget.ConstraintLayout>
-</androidx.cardview.widget.CardView>
+</androidx.constraintlayout.widget.ConstraintLayout>

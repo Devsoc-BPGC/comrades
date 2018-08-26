@@ -18,6 +18,7 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.ProgressBar;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.google.android.gms.auth.api.signin.GoogleSignIn;
@@ -108,6 +109,8 @@ public class CourseActivity extends AppCompatActivity
             materialAdapter.notifyDataSetChanged();
             progressBar.setVisibility(View.GONE);
         });
+        materialVm.getMaterialCount(courseId).observe(this,
+                count -> ((TextView) findViewById(R.id.tv_file_count)).setText(count + " files"));
 
         databaseInstance
                 .getReferenceFromUrl(dbUrl)
@@ -175,7 +178,7 @@ public class CourseActivity extends AppCompatActivity
         progressBar = findViewById(R.id.progressBar);
         progressBar.setVisibility(View.VISIBLE);
         final RecyclerView recyclerView = findViewById(R.id.rv_content_list);
-        findViewById(R.id.sortButton).setOnClickListener(view1 -> handleSort());
+        findViewById(R.id.ib_sort).setOnClickListener(v -> handleSort());
         final Toolbar toolbar = findViewById(R.id.toolbar_course_activity);
         setSupportActionBar(toolbar);
         toolbar.inflateMenu(R.menu.course_activity_toolbar);
@@ -198,7 +201,8 @@ public class CourseActivity extends AppCompatActivity
         final CharSequence[] sortOrders = new CharSequence[]{
                 "File Name",
                 "File Size",
-                "File Type"
+                "File Type",
+                "TimeStamp"
         };
         new AlertDialog.Builder(this)
                 .setTitle("Sort By")
@@ -217,9 +221,16 @@ public class CourseActivity extends AppCompatActivity
                             materialArrayList.addAll(materials);
                             materialAdapter.notifyDataSetChanged();
                         });
-                    } else {
+                    } else if (which == 2) {
                         currentSortOrder = 2;
                         materialVm.getMaterialListByFileType(courseId).observe(this, materials -> {
+                            materialArrayList.clear();
+                            materialArrayList.addAll(materials);
+                            materialAdapter.notifyDataSetChanged();
+                        });
+                    } else if (which == 3) {
+                        currentSortOrder = 3;
+                        materialVm.getMaterialListByTimestamp(courseId).observe(this, materials -> {
                             materialArrayList.clear();
                             materialArrayList.addAll(materials);
                             materialAdapter.notifyDataSetChanged();

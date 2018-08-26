@@ -28,6 +28,9 @@ public interface MaterialDao {
     @Query("SELECT * FROM CourseMaterial WHERE courseId = :courseId ORDER BY extension ASC")
     LiveData<List<CourseMaterial>> getCourseMaterialByFileType(String courseId);
 
+    @Query("SELECT * FROM CourseMaterial WHERE courseId = :courseId ORDER BY timeStamp DESC")
+    LiveData<List<CourseMaterial>> getCourseMaterialByTimestamp(String courseId);
+
 
     @Query("SELECT * FROM CourseMaterial WHERE hashId = :hashId ")
     CourseMaterial checkHashId(String hashId);
@@ -35,6 +38,9 @@ public interface MaterialDao {
     @Query("SELECT * FROM CourseMaterial WHERE courseId = :courseId " +
             "AND fileName LIKE :search OR addedBy LIKE :search")
     LiveData<List<CourseMaterial>> searchMaterial(String courseId, String search);
+
+    @Query("SELECT COUNT(_id) FROM CourseMaterial WHERE courseId = :courseId")
+    LiveData<Integer> countMaterials(String courseId);
 
     @Query("SELECT * FROM CourseMaterial WHERE courseId = :courseId " +
             "AND fileName LIKE :search OR addedBy LIKE :search")

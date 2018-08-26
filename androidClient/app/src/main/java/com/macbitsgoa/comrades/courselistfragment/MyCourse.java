@@ -25,6 +25,9 @@ public class MyCourse {
     @ColumnInfo(name = "code")
     private String code;
 
+    @ColumnInfo(name = "timeStamp")
+    private Long timeStamp;
+
     @ColumnInfo(name = "isFollowing")
     public Boolean isFollowing;
 
@@ -46,6 +49,15 @@ public class MyCourse {
     public String getName() {
         return name;
     }
+
+    public Long getTimeStamp() {
+        return timeStamp;
+    }
+
+    public void setTimeStamp(Long timeStamp) {
+        this.timeStamp = timeStamp;
+    }
+
 
     public void setAddedById(String addedById) {
         this.addedById = addedById;

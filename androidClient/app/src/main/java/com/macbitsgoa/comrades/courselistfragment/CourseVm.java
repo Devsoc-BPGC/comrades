@@ -14,13 +14,14 @@ import androidx.lifecycle.LiveData;
 
 public class CourseVm extends AndroidViewModel {
     private CourseRepository mRepository;
-    private LiveData<List<MyCourse>> courseList;
     private LiveData<List<MyCourse>> followingList;
+    public LiveData<Integer> courseCount;
 
     public CourseVm(@NonNull final Application application) {
         super(application);
         mRepository = new CourseRepository(application);
         followingList = mRepository.getFollowingCourses();
+        courseCount = mRepository.getCourseCount();
     }
 
     public MyCourse getCourseExist(@NonNull final Application application, String code, String name) {
@@ -30,6 +31,14 @@ public class CourseVm extends AndroidViewModel {
 
     public LiveData<List<MyCourse>> getAllCoursesByName() {
         return mRepository.getAllCoursesByName();
+    }
+
+    public LiveData<List<MyCourse>> getAllCoursesByFollowing() {
+        return mRepository.getAllCoursesByFollowing();
+    }
+
+    public LiveData<List<MyCourse>> getAllCoursesByTimestamp() {
+        return mRepository.getAllCoursesByTimestamp();
     }
 
     public LiveData<List<MyCourse>> getAllCoursesByCode() {
