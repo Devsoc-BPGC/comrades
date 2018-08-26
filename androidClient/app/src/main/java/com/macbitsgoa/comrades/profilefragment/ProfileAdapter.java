@@ -24,7 +24,7 @@ public class ProfileAdapter extends RecyclerView.Adapter<ProfileViewHolder> {
         items.add("Menus");
         items.add("Imp. Documents");
         items.add("Terms And Conditions");
-        items.add("Privacy");
+        items.add("Privacy Policy");
     }
 
     @Override

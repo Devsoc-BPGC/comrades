@@ -2,9 +2,7 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    tools:context="com.macbitsgoa.comrades.courselistfragment.CourseListFragment"
-    tools:ignore="AppCompatResource,UnusedAttribute">
-
+    tools:context="com.macbitsgoa.comrades.HomeActivity">
     <item
         android:id="@+id/action_search"
         android:icon="@drawable/ic_search"
@@ -16,12 +14,11 @@
 
     <item
         android:id="@+id/action_sign_out"
-        android:iconTint="@android:color/white"
         android:showAsAction="never"
         android:title="@string/sign_out" />
+
     <item
         android:id="@+id/action_about_mac"
-        android:iconTint="@android:color/white"
         android:showAsAction="never"
         android:title="@string/action_about_mac" />
 

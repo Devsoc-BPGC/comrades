@@ -41,6 +41,11 @@ public class MaterialRepository {
         return materialList;
     }
 
+    public LiveData<List<CourseMaterial>> getAllMaterialByTimestamp(String courseId) {
+        materialList = courseDao.getCourseMaterialByTimestamp(courseId);
+        return materialList;
+    }
+
     public void insert(CourseMaterial courseMaterial) {
         new MaterialRepository.insertAsyncTask(courseDao).execute(courseMaterial);
     }

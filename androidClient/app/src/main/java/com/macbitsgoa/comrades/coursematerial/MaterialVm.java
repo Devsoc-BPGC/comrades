@@ -46,6 +46,11 @@ public class MaterialVm extends AndroidViewModel {
         return materialList;
     }
 
+    public LiveData<List<CourseMaterial>> getMaterialListByTimestamp(String courseid) {
+        materialList = mRepository.getAllMaterialByTimestamp(courseid);
+        return materialList;
+    }
+
     public void insert(CourseMaterial courseMaterial) {
         mRepository.insert(courseMaterial);
     }

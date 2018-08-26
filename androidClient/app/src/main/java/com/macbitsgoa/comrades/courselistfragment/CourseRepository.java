@@ -51,6 +51,16 @@ public class CourseRepository {
         return courseList;
     }
 
+    public LiveData<List<MyCourse>> getAllCoursesByTimestamp() {
+        courseList = courseDao.getAllCoursesByTimestamp();
+        return courseList;
+    }
+
+    public LiveData<List<MyCourse>> getAllCoursesByFollowing() {
+        courseList = courseDao.getAllCoursesByFollowing();
+        return courseList;
+    }
+
     public LiveData<List<MyCourse>> getAllCoursesByCode() {
         courseList = courseDao.getAllCoursesByCode();
         return courseList;

@@ -28,6 +28,9 @@ public interface MaterialDao {
     @Query("SELECT * FROM CourseMaterial WHERE courseId = :courseId ORDER BY extension ASC")
     LiveData<List<CourseMaterial>> getCourseMaterialByFileType(String courseId);
 
+    @Query("SELECT * FROM CourseMaterial WHERE courseId = :courseId ORDER BY timeStamp DESC")
+    LiveData<List<CourseMaterial>> getCourseMaterialByTimestamp(String courseId);
+
 
     @Query("SELECT * FROM CourseMaterial WHERE hashId = :hashId ")
     CourseMaterial checkHashId(String hashId);

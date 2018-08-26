@@ -160,6 +160,7 @@ public class HomeActivity extends AppCompatActivity {
     public boolean onCreateOptionsMenu(final Menu menu) {
         final MenuInflater inflater = getMenuInflater();
         inflater.inflate(R.menu.main_activity_toolbar, menu);
+
         final boolean signedIn = GoogleSignIn.getLastSignedInAccount(this) != null;
         final MenuItem signOut = menu.findItem(R.id.action_sign_out);
         FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();

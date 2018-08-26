@@ -49,7 +49,7 @@ public class CourseListFragment extends Fragment
     private final ArrayList<MyCourse> arrayList = new ArrayList<>(0);
     private CourseAdapter courseAdapter;
     private CourseVm courseVm;
-    private int currentSortOrder = 0;
+    private int currentSortOrder = 2;
 
     public static Fragment newInstance() {
         return new CourseListFragment();
@@ -102,7 +102,7 @@ public class CourseListFragment extends Fragment
         courseAdapter = new CourseAdapter(arrayList);
         coursesRv.setAdapter(courseAdapter);
         coursesRv.setLayoutManager(new LinearLayoutManager(getContext()));
-        courseVm.getAllCoursesByName().observe(this, courses -> {
+        courseVm.getAllCoursesByFollowing().observe(this, courses -> {
             arrayList.clear();
             arrayList.addAll(courses);
             courseAdapter.notifyDataSetChanged();
@@ -119,6 +119,8 @@ public class CourseListFragment extends Fragment
         final CharSequence[] sortOrders = new CharSequence[]{
                 "Course Name",
                 "Course Code",
+                "Subscription",
+                "TimeStamp"
         };
         new AlertDialog.Builder(getActivity())
                 .setTitle("Sort By")
@@ -130,9 +132,23 @@ public class CourseListFragment extends Fragment
                             arrayList.addAll(courses);
                             courseAdapter.notifyDataSetChanged();
                         });
-                    } else {
+                    } else if (which == 1) {
                         currentSortOrder = 1;
                         courseVm.getAllCoursesByCode().observe(this, courses -> {
+                            arrayList.clear();
+                            arrayList.addAll(courses);
+                            courseAdapter.notifyDataSetChanged();
+                        });
+                    } else if (which == 2) {
+                        currentSortOrder = 2;
+                        courseVm.getAllCoursesByFollowing().observe(this, courses -> {
+                            arrayList.clear();
+                            arrayList.addAll(courses);
+                            courseAdapter.notifyDataSetChanged();
+                        });
+                    } else if (which == 3) {
+                        currentSortOrder = 3;
+                        courseVm.getAllCoursesByTimestamp().observe(this, courses -> {
                             arrayList.clear();
                             arrayList.addAll(courses);
                             courseAdapter.notifyDataSetChanged();

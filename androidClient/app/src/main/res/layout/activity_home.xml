@@ -16,8 +16,8 @@
         android:foregroundTint="@color/colorPrimaryDark"
         android:theme="@style/AppTheme.ToolBarStyle"
         app:layout_scrollFlags="enterAlways|scroll"
-        app:popupTheme="@style/AppTheme"
-        app:theme="@style/MyToolbar">
+        app:collapseIcon="@drawable/ic_arrow_back"
+        app:popupTheme="@style/ThemeOverlay.AppCompat.Light">
 
         <com.macbitsgoa.comrades.MySimpleDraweeView
             android:id="@+id/profile_user_toolbar"

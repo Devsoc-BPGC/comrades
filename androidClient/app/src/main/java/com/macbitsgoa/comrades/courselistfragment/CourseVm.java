@@ -33,6 +33,14 @@ public class CourseVm extends AndroidViewModel {
         return mRepository.getAllCoursesByName();
     }
 
+    public LiveData<List<MyCourse>> getAllCoursesByFollowing() {
+        return mRepository.getAllCoursesByFollowing();
+    }
+
+    public LiveData<List<MyCourse>> getAllCoursesByTimestamp() {
+        return mRepository.getAllCoursesByTimestamp();
+    }
+
     public LiveData<List<MyCourse>> getAllCoursesByCode() {
         return mRepository.getAllCoursesByCode();
     }

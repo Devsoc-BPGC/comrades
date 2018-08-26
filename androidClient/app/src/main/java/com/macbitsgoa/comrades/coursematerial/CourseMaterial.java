@@ -50,6 +50,9 @@ public class CourseMaterial {
     @ColumnInfo(name = "addedBy")
     private String addedBy;
 
+    @ColumnInfo(name = "timeStamp")
+    private Long timeStamp;
+
     @ColumnInfo(name = "addedById")
     private String addedById;
 
@@ -243,4 +246,11 @@ public class CourseMaterial {
         this.webViewLink = webViewLink;
     }
 
+    public Long getTimeStamp() {
+        return timeStamp;
+    }
+
+    public void setTimeStamp(Long timeStamp) {
+        this.timeStamp = timeStamp;
+    }
 }
