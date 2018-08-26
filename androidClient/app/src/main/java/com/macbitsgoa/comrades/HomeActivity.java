@@ -14,10 +14,6 @@ import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.Button;
-import android.widget.EditText;
-import android.widget.ImageButton;
-import android.widget.ImageView;
 import android.widget.Toast;
 
 import com.google.android.gms.auth.api.Auth;
@@ -69,7 +65,7 @@ public class HomeActivity extends AppCompatActivity {
                     homeFragment=HomeFragment.newInstance();
                 }
                 fragmentManager.beginTransaction().replace(R.id.container_fragment,
-                        homeFragment,"HomeFragment").commit();
+                        homeFragment, "HomeFragment").addToBackStack(null).commit();
                 return true;
             case R.id.navigation_courses:
                 fab_add_course.setVisibility(View.VISIBLE);

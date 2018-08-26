@@ -5,7 +5,7 @@ let db;
 
 admin.initializeApp(functions.config().firebase);
 db = admin.database();
-
+/*
 exports.notifyDebugUserUpdate = functions.database.ref("/debug/users/{id}")
     .onUpdate((snapshot) => {
         const newData = snapshot.after.val();
@@ -65,7 +65,7 @@ exports.notifyDebugMaterialUpdate = functions.database.ref("/debug/materials/{id
             throw error;
         });
     });
-
+*/
 
 exports.newDebugCourseAdded = functions.database.ref(`/debug/courses/{courseId}/`).onCreate((snapshot, context) => {
     const newItem = snapshot.val();
@@ -87,7 +87,7 @@ exports.newDebugCourseAdded = functions.database.ref(`/debug/courses/{courseId}/
                 message: `${user_name} added a new course ${newItem.name}`,
                 type: `recent_course`
             });
-
+            admin.database().ref(`/debug/courses/${newItem.id}/timeStamp`).set(admin.database.ServerValue.TIMESTAMP);
             return admin.database().ref(`/debug/stats/totalCourses`).set(total_courses + 1);
         })
 
@@ -126,6 +126,7 @@ exports.newDebugMaterialAdded = functions.database.ref(`/debug/courseMaterial/{c
                 admin.database().ref(`/debug/users/${newItem.addedById}/score`).set(current_score + 10);
                 admin.database().ref(`/debug/stats/totalUploads`).set(total_uploads + 1);
                 admin.database().ref(`/debug/users/${newItem.addedById}/uploads`).set(number_uploads + 1);
+                admin.database().ref(`/debug/courseMaterial/${course}/${newItem.hashId}/timeStamp`).set(admin.database.ServerValue.TIMESTAMP);
             
                 msg={
                     data: {
@@ -152,7 +153,7 @@ exports.newDebugMaterialAdded = functions.database.ref(`/debug/courseMaterial/{c
 
     });
 })
-
+/*
 exports.notifyReleaseUserUpdate = functions.database.ref("/release/users/{id}")
     .onUpdate((snapshot) => {
         const newData = snapshot.after.val();
@@ -213,7 +214,7 @@ exports.notifyReleaseMaterialUpdate = functions.database.ref("/release/materials
         });
     });
 
-
+*/
 exports.newReleaseCourseAdded = functions.database.ref(`/release/courses/{courseId}/`).onCreate((snapshot, context) => {
     const newItem = snapshot.val();
 
@@ -234,7 +235,7 @@ exports.newReleaseCourseAdded = functions.database.ref(`/release/courses/{course
                 message: `${user_name} added a new course ${newItem.name}`,
                 type: `recent_course`
             });
-
+            admin.database().ref(`/release/courses/${newItem.id}/timeStamp`).set(admin.database.ServerValue.TIMESTAMP);
             return admin.database().ref(`/release/stats/totalCourses`).set(total_courses + 1);
         })
 
@@ -273,6 +274,7 @@ exports.newReleaseMaterialAdded = functions.database.ref(`/release/courseMateria
                 admin.database().ref(`/release/users/${newItem.addedById}/score`).set(current_score + 10);
                 admin.database().ref(`/release/stats/totalUploads`).set(total_uploads + 1);
                 admin.database().ref(`/release/users/${newItem.addedById}/uploads`).set(number_uploads + 1);
+                admin.database().ref(`/release/courseMaterial/${course}/${newItem.hashId}/timeStamp`).set(admin.database.ServerValue.TIMESTAMP);
             
                 msg={
                     data: {

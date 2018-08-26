@@ -14,7 +14,14 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 import com.macbitsgoa.comrades.courselistfragment.MyCourse;
+import com.macbitsgoa.comrades.coursematerial.CourseMaterial;
+import com.macbitsgoa.comrades.homefragment.ItemRecent;
 import com.macbitsgoa.comrades.persistance.Database;
+
+import java.util.ArrayList;
+import java.util.Objects;
+
+import androidx.annotation.NonNull;
 
 import static com.macbitsgoa.comrades.CHCKt.TAG_PREFIX;
 import static com.macbitsgoa.comrades.HomeActivity.SETTINGS;
@@ -36,6 +43,28 @@ public class Comrades extends Application {
         SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(getBaseContext());
         Boolean coursesPresent = preferences.getBoolean("Courses Present", false);
         FirebaseDatabase.getInstance().setPersistenceEnabled(true);
+
+        ArrayList<CourseMaterial> arrayList = new ArrayList<>(0);
+
+        FirebaseDatabase.getInstance().getReference().child("release").child("courseMaterial").addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
+                    for (DataSnapshot sp : snapshot.getChildren()) {
+                        CourseMaterial courseMaterial = sp.getValue(CourseMaterial.class);
+                        arrayList.add(courseMaterial);
+                    }
+                }
+                Log.e("vhgvjhbnkm", arrayList.size() + "");
+                (new Asyc()).execute(arrayList);
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+
+            }
+        });
+
         if (!coursesPresent) {
             FirebaseDatabase.getInstance().getReference(BuildConfig.BUILD_TYPE).child("courses")
                     .addListenerForSingleValueEvent(new ValueEventListener() {
@@ -75,6 +104,44 @@ public class Comrades extends Application {
             edit.putBoolean(SETTINGS, true);
             edit.putBoolean("Courses Present", Boolean.TRUE);
             edit.apply();
+            return null;
+        }
+    }
+
+    private class Asyc extends AsyncTask<ArrayList<CourseMaterial>, Void, Void> {
+
+        @Override
+        protected Void doInBackground(ArrayList<CourseMaterial>... arrayLists) {
+            ArrayList<CourseMaterial> arrayList = arrayLists[0];
+            Log.e("vhgvjhbnkm", arrayList.size() + "");
+            FirebaseDatabase.getInstance().getReference().child("release").child("recents").addValueEventListener(new ValueEventListener() {
+                @Override
+                public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                    for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
+                        ItemRecent itemRecent = snapshot.getValue(ItemRecent.class);
+                        Log.e("vhgvjhbnkm", itemRecent.getCourseId() + " courseId");
+                        if (Objects.equals(Objects.requireNonNull(itemRecent).getType(), "recent_material")) {
+                            Log.e("vhgvjhbnkm", itemRecent.getFileId() + " fileId");
+                            for (int i = 0; i < arrayList.size(); i++) {
+                                if (Objects.equals(arrayList.get(i).getId(), itemRecent.getFileId())) {
+                                    FirebaseDatabase.getInstance().getReference().child("release").child("courseMaterial").child(itemRecent.getCourseId()).child(arrayList.get(i).getHashId()).child("timeStamp").setValue(itemRecent.getTimeStamp());
+                                    Log.e("vhgvjhbnkm", arrayList.get(i).getHashId() + " hashId");
+                                    break;
+                                }
+                            }
+                        }
+
+                    }
+
+                }
+
+                @Override
+                public void onCancelled(@NonNull DatabaseError databaseError) {
+
+                }
+            });
+
+
             return null;
         }
     }
