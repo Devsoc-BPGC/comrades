@@ -19,6 +19,8 @@ import com.macbitsgoa.comrades.coursematerial.CourseActivity;
 import com.macbitsgoa.comrades.eateries.EateriesActivity;
 import com.macbitsgoa.comrades.subscribedcourses.SubscribedCoursesActivity;
 
+import org.jetbrains.annotations.NotNull;
+
 import java.util.ArrayList;
 import java.util.Objects;
 
@@ -43,7 +45,7 @@ public class HomeFragment extends Fragment implements ChildEventListener {
     }
 
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
+    public View onCreateView(@NotNull LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.fragment_home, container, false);
@@ -66,6 +68,8 @@ public class HomeFragment extends Fragment implements ChildEventListener {
         LinearLayoutManager linearLayoutManager = new LinearLayoutManager(getContext());
         recentRv.setLayoutManager(linearLayoutManager);
         recentRv.setAdapter(recentAdapter);
+        recentRv.setHasFixedSize(true);
+        recent.clear();
         FirebaseDatabase.getInstance().getReference().child(BuildConfig.BUILD_TYPE)
                 .child("/recents/").orderByChild("timeStamp")
                 .limitToLast(25).addChildEventListener(this);
@@ -73,16 +77,16 @@ public class HomeFragment extends Fragment implements ChildEventListener {
     }
 
     @Override
-    public void onChildAdded(DataSnapshot dataSnapshot, String s) {
+    public void onChildAdded(@NotNull DataSnapshot dataSnapshot, String s) {
         recent.add(0, dataSnapshot.getValue(ItemRecent.class));
         recentAdapter.notifyDataSetChanged();
     }
 
     @Override
-    public void onChildChanged(DataSnapshot dataSnapshot, String s) {
+    public void onChildChanged(@NotNull DataSnapshot dataSnapshot, String s) {
         ItemRecent itemRecent = dataSnapshot.getValue(ItemRecent.class);
         for (int i = 0; i < recent.size(); i++) {
-            if (Objects.equals(recent.get(i).getFileId(), itemRecent.getFileId())) {
+            if (Objects.equals(recent.get(i).getFileId(), Objects.requireNonNull(itemRecent).getFileId())) {
                 recent.remove(i);
                 recent.add(i, itemRecent);
                 recentAdapter.notifyDataSetChanged();
@@ -92,10 +96,10 @@ public class HomeFragment extends Fragment implements ChildEventListener {
     }
 
     @Override
-    public void onChildRemoved(DataSnapshot dataSnapshot) {
+    public void onChildRemoved(@NotNull DataSnapshot dataSnapshot) {
         ItemRecent itemRecent = dataSnapshot.getValue(ItemRecent.class);
         for (int i = 0; i < recent.size(); i++) {
-            if (Objects.equals(recent.get(i).getFileId(), itemRecent.getFileId())) {
+            if (Objects.equals(recent.get(i).getFileId(), Objects.requireNonNull(itemRecent).getFileId())) {
                 recent.remove(i);
                 recentAdapter.notifyDataSetChanged();
                 Log.e(TAG, "Child Updated");
@@ -105,13 +109,13 @@ public class HomeFragment extends Fragment implements ChildEventListener {
     }
 
     @Override
-    public void onChildMoved(DataSnapshot dataSnapshot, String s) {
+    public void onChildMoved(@NotNull DataSnapshot dataSnapshot, String s) {
         Log.e(TAG, "Child Moved");
 
     }
 
     @Override
-    public void onCancelled(DatabaseError databaseError) {
+    public void onCancelled(@NotNull DatabaseError databaseError) {
         Log.e(TAG, databaseError.getMessage());
     }
 }

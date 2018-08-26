@@ -70,7 +70,7 @@ public class HomeActivity extends AppCompatActivity {
                     homeFragment = HomeFragment.newInstance();
                 }
                 fragmentManager.beginTransaction().replace(R.id.container_fragment,
-                        homeFragment, "HomeFragment").addToBackStack(null).commit();
+                        homeFragment, TAG_HOME_FRAG).addToBackStack(null).commit();
                 return true;
             case R.id.navigation_courses:
                 fab_add_course.setVisibility(View.VISIBLE);
