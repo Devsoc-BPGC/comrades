@@ -25,6 +25,8 @@ public abstract class Database extends RoomDatabase {
     static final Migration MIGRATION_1_2 = new Migration(1, 2) {
         @Override
         public void migrate(@NonNull final SupportSQLiteDatabase database) {
+            database.execSQL("ALTER TABLE CourseMaterial " +
+                    "ADD COLUMN webViewLink TEXT");
             database.execSQL("ALTER TABLE MyCourse " +
                     "ADD COLUMN timeStamp INTEGER");
             database.execSQL("ALTER TABLE CourseMaterial " +
