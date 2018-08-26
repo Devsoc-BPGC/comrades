@@ -58,7 +58,6 @@ public class HomeActivity extends AppCompatActivity {
     private SearchView searchView;
     private MySimpleDraweeView userProfileImage;
     private FloatingActionButton fab_add_course;
-    private Screens currentScreen = Screens.HOME;
     private BottomNavigationView.OnNavigationItemSelectedListener mOnNavigationItemSelectedListener
             = item -> {
         switch (item.getItemId()) {
@@ -71,7 +70,6 @@ public class HomeActivity extends AppCompatActivity {
                 }
                 fragmentManager.beginTransaction().replace(R.id.container_fragment,
                         homeFragment, TAG_HOME_FRAG).addToBackStack(null).commit();
-                currentScreen = Screens.HOME;
                 break;
             case R.id.navigation_courses:
                 fab_add_course.setVisibility(View.VISIBLE);
@@ -82,7 +80,6 @@ public class HomeActivity extends AppCompatActivity {
                 }
                 fragmentManager.beginTransaction().replace(R.id.container_fragment,
                         courseListFragment, TAG_COURSE_LIST_FRAG).addToBackStack(null).commit();
-                currentScreen = Screens.COURSE_LIST;
                 break;
             case R.id.navigation_profile:
                 fab_add_course.setVisibility(View.GONE);
@@ -93,12 +90,10 @@ public class HomeActivity extends AppCompatActivity {
                 }
                 fragmentManager.beginTransaction().replace(R.id.container_fragment,
                         profileFragment, TAG_PROFILE_FRAG).addToBackStack(null).commit();
-                currentScreen = Screens.PROFILE;
                 break;
             default:
                 return false;
         }
-        invalidateOptionsMenu();
         return true;
     };
 
@@ -186,9 +181,8 @@ public class HomeActivity extends AppCompatActivity {
             return true;
         });
 
-        MenuItem search = menu.findItem(R.id.action_search);
         SearchManager searchManager = (SearchManager) getSystemService(Context.SEARCH_SERVICE);
-        searchView = (SearchView) search.getActionView();
+        searchView = (SearchView) menu.findItem(R.id.action_search).getActionView();
         searchView.setSearchableInfo(searchManager != null ? searchManager.getSearchableInfo(getComponentName()) : null);
         searchView.setIconifiedByDefault(true);
         searchView.setIconified(false);
@@ -210,46 +204,12 @@ public class HomeActivity extends AppCompatActivity {
             }
         });
 
-        final MenuItem sort = menu.findItem(R.id.action_sort);
-        search.setOnActionExpandListener(new MenuItem.OnActionExpandListener() {
-            @Override
-            public boolean onMenuItemActionExpand(final MenuItem menuItem) {
-                sort.setVisible(false);
-                return true;
-            }
-
-            @Override
-            public boolean onMenuItemActionCollapse(final MenuItem menuItem) {
-                invalidateOptionsMenu();
-                return true;
-            }
-        });
-
         final MenuItem aboutMac = menu.findItem(R.id.action_about_mac);
         aboutMac.setOnMenuItemClickListener(menuItem1 -> {
             startActivity(new Intent(this, AboutMacActivity.class));
             return true;
-
         });
-
-        if (currentScreen == Screens.COURSE_LIST) {
-            sort.setOnMenuItemClickListener(new MenuItem.OnMenuItemClickListener() {
-                @Override
-                public boolean onMenuItemClick(final MenuItem menuItem) {
-                    Fragment fragment = fragmentManager.findFragmentByTag(TAG_COURSE_LIST_FRAG);
-                    if (fragment != null && fragment instanceof CourseListFragment) {
-                        ((CourseListFragment) fragment).handleSort();
-                    } else {
-                        Log.e(TAG, "sort icon was shown but, currently not in course list fragment");
-                    }
-                    return true;
-                }
-            });
-        } else {
-            sort.setVisible(false);
-        }
         return true;
-
     }
 
     @SuppressLint("CheckResult")
@@ -293,11 +253,5 @@ public class HomeActivity extends AppCompatActivity {
             edit.putBoolean("Previously Started", Boolean.TRUE);
             edit.apply();
         }
-    }
-
-    public enum Screens {
-        HOME,
-        COURSE_LIST,
-        PROFILE
     }
 }

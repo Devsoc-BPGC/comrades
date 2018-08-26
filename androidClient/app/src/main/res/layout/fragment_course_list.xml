@@ -1,7 +1,51 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.recyclerview.widget.RecyclerView xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.coordinatorlayout.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:id="@+id/rv_course_list"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    app:layout_dodgeInsetEdges="bottom|top" />
+    android:layout_height="match_parent">
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/cl_secondary_app_bar"
+        android:layout_width="match_parent"
+        android:layout_height="48dp"
+        android:background="@color/white"
+        android:elevation="4dp">
+
+        <TextView
+            android:id="@+id/tv_file_count"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            android:fontFamily="@font/ps_bold"
+            android:gravity="center_vertical"
+            android:padding="16dp"
+            android:text="21 Courses"
+            android:textAllCaps="true"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toStartOf="@id/ib_sort"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            tools:text="21 Courses" />
+
+        <ImageButton
+            android:id="@+id/ib_sort"
+            android:layout_width="wrap_content"
+            android:layout_height="0dp"
+            android:background="@android:color/transparent"
+            android:padding="16dp"
+            android:src="@drawable/ic_sort_black_24dp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/rv_course_list"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_gravity="bottom"
+        android:layout_marginTop="48dp"
+        app:layout_anchor="@id/cl_secondary_app_bar"
+        app:layout_anchorGravity="bottom" />
+
+</androidx.coordinatorlayout.widget.CoordinatorLayout>

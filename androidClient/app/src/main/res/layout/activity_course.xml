@@ -1,58 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.coordinatorlayout.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/cl_main_activity"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context="com.macbitsgoa.comrades.coursematerial.CourseActivity">
-
-    <androidx.core.widget.NestedScrollView
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_marginTop="?android:attr/actionBarSize">
-
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:orientation="vertical">
-
-            <FrameLayout
-                android:layout_width="match_parent"
-                android:layout_height="40dp"
-                android:background="@color/white">
-
-                <ImageView
-                    android:id="@+id/sortButton"
-                    android:layout_width="30dp"
-                    android:layout_height="30dp"
-                    android:layout_gravity="end"
-                    android:layout_margin="5dp"
-                    android:foreground="@drawable/ic_sort_black_24dp"
-                    android:foregroundTint="@color/grey" />
-
-            </FrameLayout>
-
-            <androidx.recyclerview.widget.RecyclerView
-                android:id="@+id/rv_content_list"
-                android:nestedScrollingEnabled="false"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent" />
-
-        </LinearLayout>
-
-    </androidx.core.widget.NestedScrollView>
-
-
-    <com.google.android.material.floatingactionbutton.FloatingActionButton
-        android:id="@+id/fab_add_material"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_gravity="end|bottom"
-        android:layout_marginBottom="16dp"
-        android:layout_marginEnd="16dp"
-        android:tint="@color/colorAccentContrast"
-        android:src="@drawable/ic_file_upload_black_24dp" />
 
     <androidx.appcompat.widget.Toolbar
         android:id="@+id/toolbar_course_activity"
@@ -61,9 +14,62 @@
         android:background="?android:attr/colorPrimary"
         android:elevation="4dp"
         android:theme="@style/AppTheme.ToolBarStyle"
-        app:layout_scrollFlags="enterAlways|scroll"
         app:popupTheme="@style/ThemeOverlay.AppCompat.Light" />
 
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/cl_secondary_app_bar"
+        android:layout_width="match_parent"
+        android:layout_height="48dp"
+        android:layout_gravity="bottom"
+        android:background="@color/white"
+        android:elevation="4dp"
+        app:layout_anchor="@id/toolbar_course_activity"
+        app:layout_anchorGravity="bottom">
+
+        <TextView
+            android:id="@+id/tv_file_count"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            android:fontFamily="@font/ps_bold"
+            android:gravity="center_vertical"
+            android:padding="16dp"
+            android:textAllCaps="true"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toStartOf="@id/ib_sort"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            tools:text="21 Files" />
+
+        <ImageButton
+            android:id="@+id/ib_sort"
+            android:layout_width="wrap_content"
+            android:layout_height="0dp"
+            android:background="@android:color/transparent"
+            android:padding="16dp"
+            android:src="@drawable/ic_sort_black_24dp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/rv_content_list"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_gravity="bottom"
+        android:layout_marginTop="102dp"
+        app:layout_anchor="@id/cl_secondary_app_bar"
+        app:layout_anchorGravity="bottom" />
+
+    <com.google.android.material.floatingactionbutton.FloatingActionButton
+        android:id="@+id/fab_add_material"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="end|bottom|right"
+        android:layout_marginBottom="16dp"
+        android:layout_marginEnd="16dp"
+        android:src="@drawable/ic_file_upload_black_24dp"
+        android:tint="@color/colorAccentContrast" />
 
     <ProgressBar
         android:id="@+id/progressBar"
@@ -72,4 +78,4 @@
         android:layout_gravity="center"
         android:theme="@style/AppTheme" />
 
-</FrameLayout>
+</androidx.coordinatorlayout.widget.CoordinatorLayout>

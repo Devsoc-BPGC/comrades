@@ -8,6 +8,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.TextView;
 
 import com.google.android.material.snackbar.Snackbar;
 import com.google.firebase.auth.FirebaseAuth;
@@ -17,7 +18,6 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.FirebaseDatabase;
 import com.macbitsgoa.comrades.BuildConfig;
 import com.macbitsgoa.comrades.GetGoogleSignInActivity;
-import com.macbitsgoa.comrades.HomeActivity;
 import com.macbitsgoa.comrades.R;
 
 import java.util.ArrayList;
@@ -42,7 +42,7 @@ import static com.macbitsgoa.comrades.HomeActivity.snack;
 
 
 public class CourseListFragment extends Fragment
-        implements ChildEventListener{
+        implements ChildEventListener {
 
     private static final String ADD_COURSE_FRAGMENT = "addCourseFragment";
     private final static String TAG = TAG_PREFIX + CourseListFragment.class.getSimpleName();
@@ -107,6 +107,9 @@ public class CourseListFragment extends Fragment
             arrayList.addAll(courses);
             courseAdapter.notifyDataSetChanged();
         });
+        courseVm.courseCount.observe(this,
+                count -> ((TextView) view.findViewById(R.id.tv_file_count)).setText(count + " Courses"));
+        view.findViewById(R.id.ib_sort).setOnClickListener(v -> handleSort());
         FirebaseDatabase.getInstance().getReference().child(BuildConfig.BUILD_TYPE)
                 .child("/courses/").addChildEventListener(this);
         return view;

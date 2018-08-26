@@ -37,6 +37,9 @@ public interface CourseDao {
     @Query("SELECT * FROM MyCourse WHERE name LIKE :name OR code LIKE :code")
     MyCourse ifCourseExists(String name, String code);
 
+    @Query("SELECT COUNT(_id) FROM MyCourse")
+    LiveData<Integer> countCourses();
+
     @Insert()
     void insertAll(List<MyCourse> products);
 

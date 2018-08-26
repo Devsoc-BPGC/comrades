@@ -22,6 +22,10 @@ public class MaterialRepository {
         courseDao = db.getMaterialDao();
     }
 
+    public LiveData<Integer> getMaterialCount(String courseId) {
+        return courseDao.countMaterials(courseId);
+    }
+
     public LiveData<List<CourseMaterial>> getAllMaterialByName(String courseId) {
         materialList = courseDao.getCourseMaterialByName(courseId);
         return materialList;
@@ -37,16 +41,16 @@ public class MaterialRepository {
         return materialList;
     }
 
-    public void insert(CourseMaterial CourseMaterial) {
-        new MaterialRepository.insertAsyncTask(courseDao).execute(CourseMaterial);
+    public void insert(CourseMaterial courseMaterial) {
+        new MaterialRepository.insertAsyncTask(courseDao).execute(courseMaterial);
     }
 
-    public void delete(CourseMaterial CourseMaterial) {
-        new MaterialRepository.deleteAsyncTask(courseDao).execute(CourseMaterial);
+    public void delete(CourseMaterial courseMaterial) {
+        new MaterialRepository.deleteAsyncTask(courseDao).execute(courseMaterial);
     }
 
-    public void update(CourseMaterial CourseMaterial) {
-        new MaterialRepository.updateAsyncTask(courseDao).execute(CourseMaterial);
+    public void update(CourseMaterial courseMaterial) {
+        new MaterialRepository.updateAsyncTask(courseDao).execute(courseMaterial);
     }
 
 

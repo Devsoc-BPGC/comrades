@@ -36,6 +36,9 @@ public interface MaterialDao {
             "AND fileName LIKE :search OR addedBy LIKE :search")
     LiveData<List<CourseMaterial>> searchMaterial(String courseId, String search);
 
+    @Query("SELECT COUNT(_id) FROM CourseMaterial WHERE courseId = :courseId")
+    LiveData<Integer> countMaterials(String courseId);
+
     @Query("SELECT * FROM CourseMaterial WHERE courseId = :courseId " +
             "AND fileName LIKE :search OR addedBy LIKE :search")
     Cursor searchMaterialCursor(String courseId, String search);

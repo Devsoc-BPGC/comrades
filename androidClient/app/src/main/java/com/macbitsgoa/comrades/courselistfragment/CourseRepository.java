@@ -21,12 +21,14 @@ public class CourseRepository {
     private CourseDao courseDao;
     private LiveData<List<MyCourse>> courseList;
     private LiveData<List<MyCourse>> followingList;
+    private LiveData<Integer> courseCount;
     private MyCourse courseExist;
 
     public CourseRepository(final Application application) {
         final Database db = Database.getInstance(application);
         courseDao = db.getCourseDao();
         followingList = courseDao.getFollowingCourses();
+        courseCount = courseDao.countCourses();
     }
 
     public CourseRepository(final Application application, String code, String name) {
@@ -133,6 +135,10 @@ public class CourseRepository {
         }
 
 
+    }
+
+    public LiveData<Integer> getCourseCount() {
+        return courseCount;
     }
 
 }
