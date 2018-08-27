@@ -103,6 +103,7 @@ public class CourseActivity extends AppCompatActivity
         initUi();
 
         materialVm = ViewModelProviders.of(this).get(MaterialVm.class);
+        removeObservers();
         materialVm.getMaterialListByName(courseId).observe(CourseActivity.this, courseMaterials -> {
             materialArrayList.clear();
             materialArrayList.addAll(courseMaterials);
@@ -209,6 +210,7 @@ public class CourseActivity extends AppCompatActivity
                 .setSingleChoiceItems(sortOrders, currentSortOrder, (dialog, which) -> {
                     if (which == 0) {
                         currentSortOrder = 0;
+                        removeObservers();
                         materialVm.getMaterialListByName(courseId).observe(this, courses -> {
                             materialArrayList.clear();
                             materialArrayList.addAll(courses);
@@ -216,6 +218,7 @@ public class CourseActivity extends AppCompatActivity
                         });
                     } else if (which == 1) {
                         currentSortOrder = 1;
+                        removeObservers();
                         materialVm.getMaterialListBySize(courseId).observe(this, materials -> {
                             materialArrayList.clear();
                             materialArrayList.addAll(materials);
@@ -223,6 +226,7 @@ public class CourseActivity extends AppCompatActivity
                         });
                     } else if (which == 2) {
                         currentSortOrder = 2;
+                        removeObservers();
                         materialVm.getMaterialListByFileType(courseId).observe(this, materials -> {
                             materialArrayList.clear();
                             materialArrayList.addAll(materials);
@@ -230,6 +234,7 @@ public class CourseActivity extends AppCompatActivity
                         });
                     } else if (which == 3) {
                         currentSortOrder = 3;
+                        removeObservers();
                         materialVm.getMaterialListByTimestamp(courseId).observe(this, materials -> {
                             materialArrayList.clear();
                             materialArrayList.addAll(materials);
@@ -405,5 +410,11 @@ public class CourseActivity extends AppCompatActivity
                 .registerReceiver(broadcastReceiver, new IntentFilter(DownloadService.ACTION));
     }
 
+    private void removeObservers() {
+        materialVm.getMaterialListByFileType(courseId).removeObservers(this);
+        materialVm.getMaterialListByName(courseId).removeObservers(this);
+        materialVm.getMaterialListByTimestamp(courseId).removeObservers(this);
+        materialVm.getMaterialListBySize(courseId).removeObservers(this);
+    }
 }
 

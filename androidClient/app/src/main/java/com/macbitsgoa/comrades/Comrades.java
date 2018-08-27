@@ -13,11 +13,19 @@ import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
+import com.google.firebase.remoteconfig.FirebaseRemoteConfig;
 import com.macbitsgoa.comrades.courselistfragment.MyCourse;
 import com.macbitsgoa.comrades.persistance.Database;
 
+import org.jetbrains.annotations.NotNull;
+
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Objects;
+
 import static com.macbitsgoa.comrades.CHCKt.TAG_PREFIX;
 import static com.macbitsgoa.comrades.HomeActivity.SETTINGS;
+
 
 /**
  * @author aayush
@@ -34,25 +42,47 @@ public class Comrades extends Application {
         Fresco.initialize(this);
         Comrades.context = getApplicationContext();
         SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(getBaseContext());
-        Boolean coursesPresent = preferences.getBoolean("Courses Present", false);
+        boolean coursesPresent = preferences.getBoolean("Courses Present", false);
+        keepVersionUpdated();
+
         FirebaseDatabase.getInstance().setPersistenceEnabled(true);
         if (!coursesPresent) {
             FirebaseDatabase.getInstance().getReference(BuildConfig.BUILD_TYPE).child("courses")
                     .addListenerForSingleValueEvent(new ValueEventListener() {
                         @Override
-                        public void onDataChange(DataSnapshot dataSnapshot) {
+                        public void onDataChange(@NotNull DataSnapshot dataSnapshot) {
                             FetchAllCourses fetchAllCourses = new FetchAllCourses();
                             fetchAllCourses.execute(dataSnapshot);
                         }
 
                         @Override
-                        public void onCancelled(DatabaseError databaseError) {
+                        public void onCancelled(@NotNull DatabaseError databaseError) {
                             Log.e(TAG, databaseError.getMessage());
                         }
                     });
 
         }
 
+    }
+
+    private void keepVersionUpdated() {
+        final FirebaseRemoteConfig firebaseRemoteConfig = FirebaseRemoteConfig.getInstance();
+        // set in-app defaults
+        Map<String, Object> remoteConfigDefaults = new HashMap<>();
+        remoteConfigDefaults.put(ForceUpdateChecker.KEY_UPDATE_REQUIRED, false);
+        remoteConfigDefaults.put(ForceUpdateChecker.KEY_CURRENT_VERSION, "1.0.0");
+        remoteConfigDefaults.put(ForceUpdateChecker.KEY_NOTIFY, false);
+        remoteConfigDefaults.put(ForceUpdateChecker.KEY_UPDATE_URL,
+                "https://play.google.com/store/apps/details?id=com.macbitsgoa.comrades");
+
+        firebaseRemoteConfig.setDefaults(remoteConfigDefaults);
+        firebaseRemoteConfig.fetch(60) // fetch every minutes
+                .addOnCompleteListener(task -> {
+                    if (task.isSuccessful()) {
+                        Log.d(TAG, "remote config is fetched.");
+                        firebaseRemoteConfig.activateFetched();
+                    }
+                });
     }
 
     public static Context getAppContext() {
@@ -67,7 +97,7 @@ public class Comrades extends Application {
             DataSnapshot dataSnapshot = params[0];
             for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
                 MyCourse myCourse = snapshot.getValue(MyCourse.class);
-                myCourse.setFollowing(false);
+                Objects.requireNonNull(myCourse).setFollowing(false);
                 Database.getInstance(getAppContext()).getCourseDao().insert(myCourse);
             }
             SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(getAppContext());

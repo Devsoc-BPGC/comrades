@@ -1,11 +1,13 @@
 package com.macbitsgoa.comrades;
 
 import android.annotation.SuppressLint;
+import android.app.AlertDialog;
 import android.app.SearchManager;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.database.Cursor;
+import android.net.Uri;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.text.Html;
@@ -45,7 +47,7 @@ import io.reactivex.schedulers.Schedulers;
 import static com.macbitsgoa.comrades.CHCKt.TAG_PREFIX;
 
 
-public class HomeActivity extends AppCompatActivity {
+public class HomeActivity extends AppCompatActivity implements ForceUpdateChecker.OnUpdateNeededListener {
     public static final String SETTINGS = "NotificationSetting";
     public static final String TAG_HOME_FRAG = "HomeFragment";
     public static final String TAG_COURSE_LIST_FRAG = "CourseListFragment";
@@ -58,6 +60,7 @@ public class HomeActivity extends AppCompatActivity {
     private SearchView searchView;
     private MySimpleDraweeView userProfileImage;
     private FloatingActionButton fab_add_course;
+    @SuppressLint("RestrictedApi")
     private BottomNavigationView.OnNavigationItemSelectedListener mOnNavigationItemSelectedListener
             = item -> {
         switch (item.getItemId()) {
@@ -70,7 +73,7 @@ public class HomeActivity extends AppCompatActivity {
                 }
                 fragmentManager.beginTransaction().replace(R.id.container_fragment,
                         homeFragment, TAG_HOME_FRAG).addToBackStack(null).commit();
-                break;
+                return true;
             case R.id.navigation_courses:
                 fab_add_course.setVisibility(View.VISIBLE);
                 fab_add_course.setOnClickListener(v -> CourseListFragment.handleAddCourse(HomeActivity.this));
@@ -110,6 +113,7 @@ public class HomeActivity extends AppCompatActivity {
         fab_add_course = findViewById(R.id.fab_add_course);
         navigation.setOnNavigationItemSelectedListener(mOnNavigationItemSelectedListener);
         fragmentManager.addOnBackStackChangedListener(getListener());
+        ForceUpdateChecker.with(this).onUpdateNeeded(this).check();
         SharedPreferences sharedPreferences =
                 PreferenceManager.getDefaultSharedPreferences(this);
         // Check if we need to display our OnboardingFragment
@@ -254,5 +258,27 @@ public class HomeActivity extends AppCompatActivity {
             edit.putBoolean("Previously Started", Boolean.TRUE);
             edit.apply();
         }
+    }
+
+    @Override
+    public void onUpdateNeeded(String updateUrl, boolean forcedUpdate) {
+        AlertDialog.Builder dialog = new AlertDialog.Builder(this)
+                .setTitle("New version available")
+                .setMessage("Please, update the app to new version.")
+                .setPositiveButton("Update",
+                        (dialog1, which) -> redirectStore(updateUrl));
+        if (forcedUpdate) {
+            dialog.setNegativeButton("Exit",
+                    (dialog12, which) -> finish());
+        } else {
+            dialog.setNegativeButton("No, thanks", (d, which) -> d.dismiss());
+        }
+        dialog.create().show();
+    }
+
+    private void redirectStore(String updateUrl) {
+        final Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(updateUrl));
+        intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+        startActivity(intent);
     }
 }

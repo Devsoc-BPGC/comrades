@@ -102,6 +102,7 @@ public class CourseListFragment extends Fragment
         courseAdapter = new CourseAdapter(arrayList);
         coursesRv.setAdapter(courseAdapter);
         coursesRv.setLayoutManager(new LinearLayoutManager(getContext()));
+        removeObservers();
         courseVm.getAllCoursesByFollowing().observe(this, courses -> {
             arrayList.clear();
             arrayList.addAll(courses);
@@ -127,6 +128,7 @@ public class CourseListFragment extends Fragment
                 .setSingleChoiceItems(sortOrders, currentSortOrder, (dialog, which) -> {
                     if (which == 0) {
                         currentSortOrder = 0;
+                        removeObservers();
                         courseVm.getAllCoursesByName().observe(this, courses -> {
                             arrayList.clear();
                             arrayList.addAll(courses);
@@ -134,6 +136,7 @@ public class CourseListFragment extends Fragment
                         });
                     } else if (which == 1) {
                         currentSortOrder = 1;
+                        removeObservers();
                         courseVm.getAllCoursesByCode().observe(this, courses -> {
                             arrayList.clear();
                             arrayList.addAll(courses);
@@ -141,6 +144,7 @@ public class CourseListFragment extends Fragment
                         });
                     } else if (which == 2) {
                         currentSortOrder = 2;
+                        removeObservers();
                         courseVm.getAllCoursesByFollowing().observe(this, courses -> {
                             arrayList.clear();
                             arrayList.addAll(courses);
@@ -148,6 +152,7 @@ public class CourseListFragment extends Fragment
                         });
                     } else if (which == 3) {
                         currentSortOrder = 3;
+                        removeObservers();
                         courseVm.getAllCoursesByTimestamp().observe(this, courses -> {
                             arrayList.clear();
                             arrayList.addAll(courses);
@@ -175,8 +180,8 @@ public class CourseListFragment extends Fragment
         assert myCourse != null;
         for (int i = 0; i < arrayList.size(); i++) {
             if (Objects.equals(arrayList.get(i)._id, myCourse._id)) {
-                arrayList.remove(i);
                 myCourse.isFollowing = arrayList.get(i).isFollowing;
+                arrayList.remove(i);
                 courseVm.update(myCourse);
                 break;
             }
@@ -199,6 +204,13 @@ public class CourseListFragment extends Fragment
     @Override
     public void onCancelled(final @NonNull DatabaseError databaseError) {
         Log.e(TAG, databaseError.getMessage(), databaseError.toException());
+    }
+
+    private void removeObservers() {
+        courseVm.getAllCoursesByName().removeObservers(this);
+        courseVm.getAllCoursesByCode().removeObservers(this);
+        courseVm.getAllCoursesByFollowing().removeObservers(this);
+        courseVm.getAllCoursesByTimestamp().removeObservers(this);
     }
 
 }
