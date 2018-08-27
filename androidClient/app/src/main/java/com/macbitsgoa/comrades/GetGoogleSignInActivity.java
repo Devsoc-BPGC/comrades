@@ -1,7 +1,9 @@
 package com.macbitsgoa.comrades;
 
 import android.app.Activity;
+import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.StrictMode;
@@ -32,10 +34,13 @@ import org.json.JSONObject;
 import java.io.IOException;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.RequiresApi;
+import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 
 import static android.Manifest.permission.READ_EXTERNAL_STORAGE;
 import static android.Manifest.permission.WRITE_EXTERNAL_STORAGE;
+import static android.Manifest.permission_group.STORAGE;
 import static androidx.core.content.PermissionChecker.PERMISSION_DENIED;
 import static androidx.core.content.PermissionChecker.PERMISSION_GRANTED;
 import static com.macbitsgoa.comrades.CHCKt.BITS_EMAIL_SUFFIX;
@@ -61,6 +66,7 @@ public class GetGoogleSignInActivity extends Activity {
     private static final int RC_SIGN_IN = 0;
     private static final int ERROR_CODE_PERMISSION_DENIED = 12501;
     private static final int RC_PERM_REQ_EXT_STORAGE = 7;
+    private static final String PREFS_FILE_NAME = "first_time_asking";
     private boolean returnResult;
     private GoogleSignInClient mGoogleSignInClient;
     private FirebaseAuth firebaseAuth;
@@ -99,21 +105,9 @@ public class GetGoogleSignInActivity extends Activity {
         }
     }
 
-    @Override
-    public void onRequestPermissionsResult(final int requestCode,
-                                           @NonNull final String[] permissions,
-                                           @NonNull final int[] grantResults) {
-        if (requestCode == RC_PERM_REQ_EXT_STORAGE) {
-            if (Build.VERSION.SDK_INT >= 23 && !shouldShowRequestPermissionRationale(permissions[0])) {
-                Toast.makeText(GetGoogleSignInActivity.this, "Go to Settings and Grant the permission to use this feature.", Toast.LENGTH_SHORT).show();
-            } else if (grantResults.length > 0 && grantResults[0] == PERMISSION_DENIED) {
-                Toast.makeText(this, "Permission Denied!",
-                        Toast.LENGTH_SHORT).show();
-            } else if (grantResults.length > 0 && grantResults[0] == PERMISSION_GRANTED) {
-                Toast.makeText(GetGoogleSignInActivity.this, "Permission Granted", Toast.LENGTH_SHORT).show();
-            }
-            finish();
-        }
+    public static void firstTimeAskingPermission(Context context, String permission, boolean isFirstTime) {
+        SharedPreferences sharedPreference = context.getSharedPreferences(PREFS_FILE_NAME, MODE_PRIVATE);
+        sharedPreference.edit().putBoolean(permission, isFirstTime).apply();
     }
 
     @Override
@@ -206,18 +200,8 @@ public class GetGoogleSignInActivity extends Activity {
         return null;
     }
 
-    private void askStoragePermission() {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-            if (ContextCompat.checkSelfPermission(this, READ_EXTERNAL_STORAGE) == PERMISSION_GRANTED
-                    && ContextCompat.checkSelfPermission(this, WRITE_EXTERNAL_STORAGE) == PERMISSION_GRANTED) {
-                finish();
-            } else if (shouldShowRequestPermissionRationale(READ_EXTERNAL_STORAGE)) {
-                requestPermissions(new String[]{READ_EXTERNAL_STORAGE, WRITE_EXTERNAL_STORAGE}, 7);
-            } else {
-                Toast.makeText(GetGoogleSignInActivity.this, "Go to Settings and Grant the permission to use this feature.", Toast.LENGTH_SHORT).show();
-                finish();
-            }
-        }
+    public static boolean isFirstTimeAskingPermission(Context context, String permission) {
+        return context.getSharedPreferences(PREFS_FILE_NAME, MODE_PRIVATE).getBoolean(permission, true);
     }
 
     public void firebaseAuthWithGoogle(GoogleSignInAccount account) {
@@ -234,6 +218,57 @@ public class GetGoogleSignInActivity extends Activity {
                         // ...
                     }
                 });
+    }
+
+    @RequiresApi(api = Build.VERSION_CODES.M)
+    @Override
+    public void onRequestPermissionsResult(final int requestCode,
+                                           @NonNull final String[] permissions,
+                                           @NonNull final int[] grantResults) {
+        if (requestCode == RC_PERM_REQ_EXT_STORAGE) {
+            if (grantResults.length > 0 && grantResults[0] == PERMISSION_GRANTED) {
+                Toast.makeText(GetGoogleSignInActivity.this, "Permission Granted", Toast.LENGTH_SHORT).show();
+            } else if (grantResults.length > 0 && grantResults[0] == PERMISSION_DENIED) {
+                Toast.makeText(this, "Permission Denied!",
+                        Toast.LENGTH_SHORT).show();
+            } else if (!shouldShowRequestPermissionRationale(permissions[0])) {
+                Toast.makeText(GetGoogleSignInActivity.this, "Go to Settings and Grant the permission to use this feature.", Toast.LENGTH_SHORT).show();
+            }
+            finish();
+        }
+    }
+
+    private void askStoragePermission() {
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M && ContextCompat.checkSelfPermission(GetGoogleSignInActivity.this,
+                READ_EXTERNAL_STORAGE) != PERMISSION_GRANTED && ContextCompat.checkSelfPermission(GetGoogleSignInActivity.this,
+                READ_EXTERNAL_STORAGE) != PERMISSION_GRANTED) {
+
+            if (ActivityCompat.shouldShowRequestPermissionRationale(GetGoogleSignInActivity.this,
+                    READ_EXTERNAL_STORAGE) && ActivityCompat.shouldShowRequestPermissionRationale(GetGoogleSignInActivity.this,
+                    WRITE_EXTERNAL_STORAGE)) {
+
+                String[] permission = {READ_EXTERNAL_STORAGE, WRITE_EXTERNAL_STORAGE};
+                ActivityCompat.requestPermissions(GetGoogleSignInActivity.this, permission, 7);
+
+            } else {
+
+                if (isFirstTimeAskingPermission(this, STORAGE)) {
+
+                    firstTimeAskingPermission(this, STORAGE, false);
+                    String[] permission = {READ_EXTERNAL_STORAGE, WRITE_EXTERNAL_STORAGE};
+                    ActivityCompat.requestPermissions(GetGoogleSignInActivity.this, permission, 7);
+
+                } else {
+
+                    Toast.makeText(GetGoogleSignInActivity.this, "Go to Settings and Grant the Storage permission " +
+                            "or clear Data to use this feature.", Toast.LENGTH_SHORT).show();
+                    finish();
+                }
+            }
+        } else {
+            finish();
+        }
     }
 }
 
