@@ -45,6 +45,8 @@
         android:layout_height="match_parent"
         android:layout_gravity="bottom"
         android:layout_marginTop="48dp"
+        android:clipToPadding="false"
+        android:paddingBottom="88dp"
         app:layout_anchor="@id/cl_secondary_app_bar"
         app:layout_anchorGravity="bottom" />
 
