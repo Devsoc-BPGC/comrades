@@ -7,6 +7,7 @@ import android.content.Intent;
 import android.util.Log;
 import android.webkit.MimeTypeMap;
 
+import com.crashlytics.android.Crashlytics;
 import com.macbitsgoa.comrades.R;
 
 import java.io.File;
@@ -14,7 +15,9 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.UnsupportedEncodingException;
 import java.math.BigInteger;
+import java.net.URLEncoder;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 
@@ -25,6 +28,7 @@ import static com.macbitsgoa.comrades.CHCKt.TAG_PREFIX;
 
 /**
  * Helpful methods and constants for {@link Uploader} class.
+ *
  * @author aayush singla
  */
 public class UploadUtil {
@@ -102,24 +106,29 @@ public class UploadUtil {
     }
 
     public static byte[] fileToBytes(final File file) {
-        byte[] bytes = new byte[0];
-        try (final FileInputStream inputStream = new FileInputStream(file)) {
-            bytes = new byte[inputStream.available()];
-            //noinspection ResultOfMethodCallIgnored
+        byte[] bytes;
+        try {
+            final FileInputStream inputStream = new FileInputStream(file);
+            int available = inputStream.available();
+            bytes = new byte[available];
             inputStream.read(bytes);
         } catch (final IOException e) {
             Log.e(TAG, e.getMessage(), e.fillInStackTrace());
+            return null;
         }
         return bytes;
     }
 
 
-    public static String getMimeType(String filePath) {
+    public static String getMimeType(String filePath) throws UnsupportedEncodingException {
         String type = null;
         final String filePath1 = filePath.replaceAll(" ", "");
-        final String extension = getFileExtensionFromUrl(filePath1);
+        final String extension = getFileExtensionFromUrl(URLEncoder.encode(filePath1, "UTF-8"));
         if (extension != null) {
             type = MimeTypeMap.getSingleton().getMimeTypeFromExtension(extension);
+        } else {
+            Crashlytics.log(Log.DEBUG, TAG, "got null extension for file path "
+                    + filePath + " The sanitized version was " + filePath1);
         }
         return type;
     }

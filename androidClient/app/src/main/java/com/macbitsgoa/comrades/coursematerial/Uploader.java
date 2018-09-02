@@ -15,6 +15,7 @@ import com.squareup.okhttp.OkHttpClient;
 import com.squareup.okhttp.Request;
 import com.squareup.okhttp.RequestBody;
 import com.squareup.okhttp.Response;
+import com.squareup.okhttp.ResponseBody;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -178,28 +179,48 @@ public class Uploader extends Worker {
         try {
             File file = new File(path);
             fileSize = file.length();
+            byte content[] = fileToBytes(file);
+            if (content == null) {
+                Log.e(TAG, "content was null");
+                return null;
+            }
+            String mimeType = getMimeType(path);
+            if (mimeType == null) {
+                Log.e(TAG, "mime type was null");
+                return null;
+            }
+            MediaType mediaType = MediaType.parse(mimeType);
             final OkHttpClient okHttpClient = new OkHttpClient();
             okHttpClient.setRetryOnConnectionFailure(true);
             okHttpClient.setWriteTimeout(30, TimeUnit.SECONDS);
             okHttpClient.setConnectTimeout(30, TimeUnit.SECONDS);
             okHttpClient.setReadTimeout(30, TimeUnit.SECONDS);
-            final RequestBody requestBody = RequestBody.create(MediaType.parse(getMimeType(path)),
-                    fileToBytes(file));
+            final RequestBody requestBody = RequestBody.create(mediaType, content);
 
             final String driveUploadUrl =
                     "https://www.googleapis.com/upload/drive/v3/files?uploadType=media";
             final Request request = new Request.Builder()
                     .url(driveUploadUrl)
-                    .addHeader("Content-Type", getMimeType(path))
-                    .addHeader("Content-Length", String.valueOf(file.length()))
+                    .addHeader("Content-Type", mimeType)
+                    .addHeader("Content-Length", String.valueOf(fileSize))
                     .addHeader(AUTHORIZATION_FIELD_KEY,
                             AUTHORIZATION_FIELD_VALUE_PREFIX + accessToken
                     )
                     .post(requestBody)
                     .build();
             final Response response = okHttpClient.newCall(request).execute();
-
-            return response.body().string();
+            if (response == null) {
+                Log.e(TAG, "null response");
+                return null;
+            }
+            ResponseBody responseBody = response.body();
+            if (responseBody == null) {
+                Log.e(TAG, "response body is null");
+                return null;
+            }
+            String responseString = responseBody.string();
+            responseBody.close();
+            return responseString;
         } catch (final Exception e) {
             Log.e(TAG, e.getMessage(), e.fillInStackTrace());
         }
