@@ -47,7 +47,9 @@ import androidx.lifecycle.ViewModelProviders;
 import androidx.localbroadcastmanager.content.LocalBroadcastManager;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
+import androidx.work.Constraints;
 import androidx.work.Data;
+import androidx.work.NetworkType;
 import androidx.work.OneTimeWorkRequest;
 import androidx.work.WorkManager;
 import io.reactivex.Observable;
@@ -345,7 +347,7 @@ public class CourseActivity extends AppCompatActivity
     private void showFragment() {
         final FragmentManager fm = getSupportFragmentManager();
         final FragmentTransaction ft = fm.beginTransaction();
-        final DialogFragment uploadFileFragment = new UploadFileFragment(courseId, this::upload);
+        final DialogFragment uploadFileFragment = new UploadFileFragment(courseId);
         uploadFileFragment.show(ft, ADD_FILE_FRAGMENT);
         ft.addToBackStack(ADD_FILE_FRAGMENT);
     }
@@ -423,43 +425,5 @@ public class CourseActivity extends AppCompatActivity
                 .registerReceiver(broadcastReceiver, new IntentFilter(DownloadService.ACTION));
     }
 
-    public void upload(final String filePath, final String accessToken, final String fileName, final String courseId) {
-        Data uploaderData = new Data.Builder()
-                .putString(KEY_PATH, filePath)
-                .putString(KEY_ACCESS_TOKEN, accessToken)
-                .putString(KEY_FILE_NAME, fileName)
-                .putString(KEY_COURSE_ID, courseId)
-                .build();
-        OneTimeWorkRequest uploadRequest = new OneTimeWorkRequest.Builder(Uploader.class)
-                .setInputData(uploaderData)
-                .build();
-        WorkManager.getInstance()
-                .enqueue(uploadRequest);
-        WorkManager.getInstance().getStatusById(uploadRequest.getId())
-                .observe(this, workStatus -> {
-                    String message;
-                    switch (workStatus.getState()) {
-                        case ENQUEUED:
-                        case RUNNING:
-                            message = "Uploading " + fileName;
-                            break;
-                        case FAILED:
-                            message = "Failed to upload " + fileName;
-                            break;
-                        case SUCCEEDED:
-                            message = "Uploaded " + fileName;
-                            break;
-                        case BLOCKED:
-                            message = "Waiting to upload " + fileName;
-                            break;
-                        case CANCELLED:
-                            message = "Cancelled uploading " + fileName;
-                            break;
-                        default:
-                            message = "";
-                    }
-                    Toast.makeText(this, message, Toast.LENGTH_SHORT).show();
-                });
-    }
 }
 

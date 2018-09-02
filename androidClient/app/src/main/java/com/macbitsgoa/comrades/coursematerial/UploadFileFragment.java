@@ -18,18 +18,12 @@ import java.io.File;
 
 import androidx.appcompat.app.AlertDialog;
 import androidx.fragment.app.DialogFragment;
-import androidx.work.Data;
-import androidx.work.OneTimeWorkRequest;
-import androidx.work.WorkManager;
 
 import static android.app.Activity.RESULT_CANCELED;
 import static android.app.Activity.RESULT_OK;
 import static com.macbitsgoa.comrades.CHCKt.TAG_PREFIX;
 import static com.macbitsgoa.comrades.GetGoogleSignInActivity.KEY_TOKEN;
-import static com.macbitsgoa.comrades.coursematerial.Uploader.KEY_ACCESS_TOKEN;
-import static com.macbitsgoa.comrades.coursematerial.Uploader.KEY_COURSE_ID;
-import static com.macbitsgoa.comrades.coursematerial.Uploader.KEY_FILE_NAME;
-import static com.macbitsgoa.comrades.coursematerial.Uploader.KEY_PATH;
+import static com.macbitsgoa.comrades.coursematerial.Uploader.upload;
 
 public class UploadFileFragment extends DialogFragment
         implements View.OnClickListener {
@@ -44,11 +38,9 @@ public class UploadFileFragment extends DialogFragment
     private TextView file;
     private String filePath;
     private String courseId;
-    private UploaderActivity uploaderActivity;
 
-    public UploadFileFragment(final String courseId, final UploaderActivity uploaderActivity) {
+    public UploadFileFragment(final String courseId) {
         this.courseId = courseId;
-        this.uploaderActivity = uploaderActivity;
     }
 
     @Override
@@ -152,12 +144,7 @@ public class UploadFileFragment extends DialogFragment
 
         if (requestCode == SIGN_IN_REQUEST_CODE && resultCode == RESULT_OK) {
             final String accessToken = data.getStringExtra(KEY_TOKEN);
-            uploaderActivity.upload(filePath, accessToken, fileName.getText().toString(), courseId);
-/*            Intent uploadIntent = UploadService.makeUploadIntent(getContext(), filePath,
-                    accessToken, fileName.getText().toString());
-            Toast.makeText(getContext(), "Upload Started.Check NotificationBar for progress.",
-                    Toast.LENGTH_LONG).show();
-            getActivity().startService(uploadIntent);*/
+            upload(filePath, accessToken, fileName.getText().toString(), courseId);
         } else if (resultCode == RESULT_OK) {
             filePath = PathUtil.getPath(getContext(), data.getData());
             if (filePath != null) {
@@ -171,12 +158,4 @@ public class UploadFileFragment extends DialogFragment
             Toast.makeText(getContext(), "No File Selected", Toast.LENGTH_LONG).show();
         }
     }
-
-    public interface UploaderActivity {
-        void upload(String filePath,
-                    String accessToken,
-                    String fileName,
-                    String courseId);
-    }
-
 }
