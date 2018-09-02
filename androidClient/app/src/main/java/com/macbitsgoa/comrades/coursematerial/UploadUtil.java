@@ -90,7 +90,7 @@ public class UploadUtil {
             output = String.format("%32s", output).replace(' ', '0');
             return output;
         } catch (IOException e) {
-            throw new RuntimeException("Unable to process file for MD5", e);
+            Log.e(TAG, e.getMessage(), e.fillInStackTrace());
         } finally {
             try {
                 is.close();
@@ -98,6 +98,7 @@ public class UploadUtil {
                 Log.e(TAG, "Exception on closing MD5 input stream", e);
             }
         }
+        return null;
     }
 
     public static byte[] fileToBytes(final File file) {

@@ -47,11 +47,6 @@ import androidx.lifecycle.ViewModelProviders;
 import androidx.localbroadcastmanager.content.LocalBroadcastManager;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
-import androidx.work.Constraints;
-import androidx.work.Data;
-import androidx.work.NetworkType;
-import androidx.work.OneTimeWorkRequest;
-import androidx.work.WorkManager;
 import io.reactivex.Observable;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.schedulers.Schedulers;
@@ -59,9 +54,6 @@ import io.reactivex.schedulers.Schedulers;
 import static android.os.Environment.getExternalStorageDirectory;
 import static com.macbitsgoa.comrades.CHCKt.TAG_PREFIX;
 import static com.macbitsgoa.comrades.ComradesConstants.DOWNLOAD_DIRECTORY;
-import static com.macbitsgoa.comrades.coursematerial.Uploader.KEY_ACCESS_TOKEN;
-import static com.macbitsgoa.comrades.coursematerial.Uploader.KEY_FILE_NAME;
-import static com.macbitsgoa.comrades.coursematerial.Uploader.KEY_PATH;
 
 public class CourseActivity extends AppCompatActivity
         implements View.OnClickListener, ChildEventListener {
