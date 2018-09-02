@@ -47,6 +47,9 @@ import androidx.lifecycle.ViewModelProviders;
 import androidx.localbroadcastmanager.content.LocalBroadcastManager;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
+import androidx.work.Data;
+import androidx.work.OneTimeWorkRequest;
+import androidx.work.WorkManager;
 import io.reactivex.Observable;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.schedulers.Schedulers;
@@ -54,6 +57,9 @@ import io.reactivex.schedulers.Schedulers;
 import static android.os.Environment.getExternalStorageDirectory;
 import static com.macbitsgoa.comrades.CHCKt.TAG_PREFIX;
 import static com.macbitsgoa.comrades.ComradesConstants.DOWNLOAD_DIRECTORY;
+import static com.macbitsgoa.comrades.coursematerial.Uploader.KEY_ACCESS_TOKEN;
+import static com.macbitsgoa.comrades.coursematerial.Uploader.KEY_FILE_NAME;
+import static com.macbitsgoa.comrades.coursematerial.Uploader.KEY_PATH;
 
 public class CourseActivity extends AppCompatActivity
         implements View.OnClickListener, ChildEventListener {
@@ -245,6 +251,13 @@ public class CourseActivity extends AppCompatActivity
                 }).show();
     }
 
+    private void removeObservers() {
+        materialVm.getMaterialListByFileType(courseId).removeObservers(this);
+        materialVm.getMaterialListByName(courseId).removeObservers(this);
+        materialVm.getMaterialListByTimestamp(courseId).removeObservers(this);
+        materialVm.getMaterialListBySize(courseId).removeObservers(this);
+    }
+
     @Override
     public void onSaveInstanceState(final Bundle savedInstanceState) {
         super.onSaveInstanceState(savedInstanceState);
@@ -332,7 +345,7 @@ public class CourseActivity extends AppCompatActivity
     private void showFragment() {
         final FragmentManager fm = getSupportFragmentManager();
         final FragmentTransaction ft = fm.beginTransaction();
-        final DialogFragment uploadFileFragment = new UploadFileFragment();
+        final DialogFragment uploadFileFragment = new UploadFileFragment(courseId, this::upload);
         uploadFileFragment.show(ft, ADD_FILE_FRAGMENT);
         ft.addToBackStack(ADD_FILE_FRAGMENT);
     }
@@ -410,11 +423,43 @@ public class CourseActivity extends AppCompatActivity
                 .registerReceiver(broadcastReceiver, new IntentFilter(DownloadService.ACTION));
     }
 
-    private void removeObservers() {
-        materialVm.getMaterialListByFileType(courseId).removeObservers(this);
-        materialVm.getMaterialListByName(courseId).removeObservers(this);
-        materialVm.getMaterialListByTimestamp(courseId).removeObservers(this);
-        materialVm.getMaterialListBySize(courseId).removeObservers(this);
+    public void upload(final String filePath, final String accessToken, final String fileName, final String courseId) {
+        Data uploaderData = new Data.Builder()
+                .putString(KEY_PATH, filePath)
+                .putString(KEY_ACCESS_TOKEN, accessToken)
+                .putString(KEY_FILE_NAME, fileName)
+                .putString(KEY_COURSE_ID, courseId)
+                .build();
+        OneTimeWorkRequest uploadRequest = new OneTimeWorkRequest.Builder(Uploader.class)
+                .setInputData(uploaderData)
+                .build();
+        WorkManager.getInstance()
+                .enqueue(uploadRequest);
+        WorkManager.getInstance().getStatusById(uploadRequest.getId())
+                .observe(this, workStatus -> {
+                    String message;
+                    switch (workStatus.getState()) {
+                        case ENQUEUED:
+                        case RUNNING:
+                            message = "Uploading " + fileName;
+                            break;
+                        case FAILED:
+                            message = "Failed to upload " + fileName;
+                            break;
+                        case SUCCEEDED:
+                            message = "Uploaded " + fileName;
+                            break;
+                        case BLOCKED:
+                            message = "Waiting to upload " + fileName;
+                            break;
+                        case CANCELLED:
+                            message = "Cancelled uploading " + fileName;
+                            break;
+                        default:
+                            message = "";
+                    }
+                    Toast.makeText(this, message, Toast.LENGTH_SHORT).show();
+                });
     }
 }
 

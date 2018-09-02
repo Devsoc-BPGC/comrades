@@ -48,7 +48,7 @@ import static com.macbitsgoa.comrades.CHCKt.TAG_PREFIX;
 
 public class UploadService extends IntentService {
 
-    private final String driveApiBaseUrl = "https://www.googleapis.com/drive/v3/files/";
+    public static final String DRIVE_API_BASE_URL = "https://www.googleapis.com/drive/v3/files/";
     public static final String AUTHORIZATION_FIELD_KEY = "Authorization";
     public static final String AUTHORIZATION_FIELD_VALUE_PREFIX = "Bearer ";
     private static final String KEY_ACCESS_TOKEN = "accessToken";
@@ -240,7 +240,7 @@ public class UploadService extends IntentService {
     }
 
 
-    private static byte[] fileToBytes(final File file) {
+    public static byte[] fileToBytes(final File file) {
         byte[] bytes = new byte[0];
         try (final FileInputStream inputStream = new FileInputStream(file)) {
             bytes = new byte[inputStream.available()];
@@ -253,7 +253,7 @@ public class UploadService extends IntentService {
     }
 
 
-    private static String getMimeType(String filePath) {
+    public static String getMimeType(String filePath) {
         String type = null;
         final String filePath1 = filePath.replaceAll(" ", "");
         final String extension = getFileExtensionFromUrl(filePath1);
@@ -277,7 +277,7 @@ public class UploadService extends IntentService {
         final Request permission = new Request.Builder()
                 .addHeader(AUTHORIZATION_FIELD_KEY,
                         AUTHORIZATION_FIELD_VALUE_PREFIX + accessToken)
-                .url(driveApiBaseUrl + fileId + "/permissions")
+                .url(DRIVE_API_BASE_URL + fileId + "/permissions")
                 .post(requestBody)
                 .build();
 
@@ -293,7 +293,7 @@ public class UploadService extends IntentService {
     private JSONObject getMetadata() {
         final OkHttpClient okHttpClient = new OkHttpClient();
         final Request request = new Request.Builder()
-                .url(driveApiBaseUrl + fileId + "?access_token=" + accessToken + "&fields=*")
+                .url(DRIVE_API_BASE_URL + fileId + "?access_token=" + accessToken + "&fields=*")
                 .get()
                 .build();
         try {
@@ -340,7 +340,7 @@ public class UploadService extends IntentService {
         dbRef.child(hashId).setValue(itemCourseMaterial);
     }
 
-    private String getFileExtension(final String path) {
+    public static String getFileExtension(final String path) {
         final File file = new File(path);
         final String name = file.getName();
         final int i = name.lastIndexOf('.');

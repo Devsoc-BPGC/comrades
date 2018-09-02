@@ -15,7 +15,7 @@ const val TAG_PREFIX = "mac."
 const val BITS_EMAIL_SUFFIX = ".bits-pilani.ac.in"
 val firebaseRootRef: DatabaseReference = FirebaseDatabase.getInstance().reference
         .child(BuildConfig.BUILD_TYPE)
-
+val courseMaterialRef: DatabaseReference = firebaseRootRef.child(FB_NODE_COURSE_MATERIAL)
 /**
  * [ValueEventListener] logging the error and delegating the user to implement
  * only [ValueEventListener.onDataChange]
