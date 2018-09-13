@@ -245,6 +245,13 @@ public class CourseActivity extends AppCompatActivity
                 }).show();
     }
 
+    private void removeObservers() {
+        materialVm.getMaterialListByFileType(courseId).removeObservers(this);
+        materialVm.getMaterialListByName(courseId).removeObservers(this);
+        materialVm.getMaterialListByTimestamp(courseId).removeObservers(this);
+        materialVm.getMaterialListBySize(courseId).removeObservers(this);
+    }
+
     @Override
     public void onSaveInstanceState(final Bundle savedInstanceState) {
         super.onSaveInstanceState(savedInstanceState);
@@ -332,7 +339,7 @@ public class CourseActivity extends AppCompatActivity
     private void showFragment() {
         final FragmentManager fm = getSupportFragmentManager();
         final FragmentTransaction ft = fm.beginTransaction();
-        final DialogFragment uploadFileFragment = new UploadFileFragment();
+        final DialogFragment uploadFileFragment = new UploadFileFragment(courseId);
         uploadFileFragment.show(ft, ADD_FILE_FRAGMENT);
         ft.addToBackStack(ADD_FILE_FRAGMENT);
     }
@@ -410,11 +417,5 @@ public class CourseActivity extends AppCompatActivity
                 .registerReceiver(broadcastReceiver, new IntentFilter(DownloadService.ACTION));
     }
 
-    private void removeObservers() {
-        materialVm.getMaterialListByFileType(courseId).removeObservers(this);
-        materialVm.getMaterialListByName(courseId).removeObservers(this);
-        materialVm.getMaterialListByTimestamp(courseId).removeObservers(this);
-        materialVm.getMaterialListBySize(courseId).removeObservers(this);
-    }
 }
 

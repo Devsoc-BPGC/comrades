@@ -35,24 +35,24 @@ android {
 
 dependencies {
     implementation fileTree(include: ['*.jar'], dir: 'libs')
-    implementation 'androidx.appcompat:appcompat:1.0.0-rc01'
-    implementation 'androidx.legacy:legacy-support-v4:1.0.0-rc01'
-    implementation 'androidx.constraintlayout:constraintlayout:1.1.2'
+    implementation 'androidx.appcompat:appcompat:1.0.0-rc02'
+    implementation 'androidx.legacy:legacy-support-v4:1.0.0-rc02'
+    implementation 'androidx.constraintlayout:constraintlayout:1.1.3'
     implementation 'com.google.android.material:material:1.0.0-rc01'
     implementation 'pub.devrel:easypermissions:1.2.0'
     implementation('com.google.api-client:google-api-client-android:1.23.0') {
         exclude group: 'org.apache.httpcomponents'
     }
-    implementation 'com.crashlytics.sdk.android:crashlytics:2.9.4'
+    implementation 'com.crashlytics.sdk.android:crashlytics:2.9.5'
     implementation('com.google.apis:google-api-services-drive:v3-rev117-1.23.0') {
         exclude group: 'org.apache.httpcomponents'
     }
-    implementation 'com.google.firebase:firebase-core:16.0.1'
+    implementation 'com.google.firebase:firebase-core:16.0.3'
     implementation 'com.google.firebase:firebase-database:16.0.1'
-    implementation 'com.google.firebase:firebase-auth:16.0.2'
-    implementation 'com.google.firebase:firebase-messaging:17.1.0'
+    implementation 'com.google.firebase:firebase-auth:16.0.3'
+    implementation 'com.google.firebase:firebase-messaging:17.3.0'
     implementation 'com.google.firebase:firebase-config:16.0.0'
-    implementation 'com.google.android.gms:play-services-auth:15.0.1'
+    implementation 'com.google.android.gms:play-services-auth:16.0.0'
     implementation 'com.facebook.fresco:fresco:1.10.0'
     implementation 'com.squareup.okhttp:okhttp:2.7.5'
     def lifecycle_version = "2.0.0-rc01"
@@ -73,6 +73,10 @@ dependencies {
     implementation 'com.github.chrisbanes:PhotoView:2.1.4'
     implementation 'com.squareup.picasso:picasso:2.71828'
     implementation 'com.github.apl-devs:appintro:v4.2.3'
+    def work_version = "1.0.0-alpha08"
+    implementation "android.arch.work:work-runtime:$work_version" // use -ktx for Kotlin
+    // optional - Firebase JobDispatcher support
+    implementation "android.arch.work:work-firebase:$work_version"
 }
 apply plugin: 'com.google.gms.google-services'
 repositories {

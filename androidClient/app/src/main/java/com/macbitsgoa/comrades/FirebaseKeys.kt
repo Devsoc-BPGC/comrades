@@ -13,6 +13,7 @@ const val TOPIC_COURSE_UPDATES = BuildConfig.BUILD_TYPE + "CourseUpdates"
 const val COURSES = "courses"
 const val CONTRIBUTORS = "contributors"
 const val CONTRIBUTORS_NAME = "name"
+const val FB_NODE_COURSE_MATERIAL = "courseMaterial"
 /**
  * Get fcm channel name corresponding to the course
  */
