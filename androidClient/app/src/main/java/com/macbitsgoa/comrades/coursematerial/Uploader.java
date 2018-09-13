@@ -1,7 +1,11 @@
 package com.macbitsgoa.comrades.coursematerial;
 
 import android.app.NotificationManager;
+import android.app.PendingIntent;
+import android.content.BroadcastReceiver;
 import android.content.Context;
+import android.content.Intent;
+import android.content.IntentFilter;
 import android.media.RingtoneManager;
 import android.util.Log;
 
@@ -10,6 +14,7 @@ import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DatabaseReference;
 import com.macbitsgoa.comrades.R;
 import com.macbitsgoa.comrades.persistance.Database;
+import com.squareup.okhttp.Call;
 import com.squareup.okhttp.MediaType;
 import com.squareup.okhttp.OkHttpClient;
 import com.squareup.okhttp.Request;
@@ -23,6 +28,7 @@ import org.json.JSONObject;
 import java.io.File;
 import java.io.IOException;
 import java.security.SecureRandom;
+import java.util.Objects;
 import java.util.concurrent.TimeUnit;
 
 import androidx.annotation.NonNull;
@@ -58,6 +64,9 @@ public class Uploader extends Worker {
     public static final String KEY_FILE_NAME = "fileName";
     public static final String KEY_COURSE_ID = "courseId";
     private static final String TAG = TAG_PREFIX + Uploader.class.getSimpleName();
+    private static final String ACTION_CANCEL_UPLOAD = Uploader.class.getName() + ".action.cancel.upload";
+    private static final String KEY_FILE_HASH = Uploader.class.getName() + ".key.fileHash";
+    private static IntentFilter cancelUploadFilter = new IntentFilter(ACTION_CANCEL_UPLOAD);
     private String path;
     private String accessToken;
     private String fileName;
@@ -68,6 +77,8 @@ public class Uploader extends Worker {
     private NotificationManager notificationManager;
     private NotificationCompat.Builder builder;
     private int notificationId;
+    private Call uploadCall;
+    private boolean cancelledByUser = false;
 
     /**
      * Handy method to access this class.
@@ -108,7 +119,6 @@ public class Uploader extends Worker {
         notificationManager = (NotificationManager)
                 getApplicationContext().getSystemService(Context.NOTIFICATION_SERVICE);
 
-        notifyInit();
         fileHash = calculateMD5(new File(path));
         CourseMaterial duplicate = findDuplicate();
         if (duplicate != null) {
@@ -118,6 +128,10 @@ public class Uploader extends Worker {
 
         String response = uploadFile();
         if (response == null) {
+            if (cancelledByUser) {
+                notificationManager.cancel(notificationId);
+                return Result.SUCCESS;
+            }
             notifyFailure();
             return Result.FAILURE;
         }
@@ -208,7 +222,9 @@ public class Uploader extends Worker {
                     )
                     .post(requestBody)
                     .build();
-            final Response response = okHttpClient.newCall(request).execute();
+            uploadCall = okHttpClient.newCall(request);
+            notifyInit();
+            final Response response = uploadCall.execute();
             if (response == null) {
                 Log.e(TAG, "null response");
                 return null;
@@ -307,7 +323,7 @@ public class Uploader extends Worker {
 
     private void notifyDuplicate(String originalFileName) {
         builder = sendNotification(getApplicationContext(), R.drawable.ic_cloud_done_black_24dp, fileName + " couldn't be uploaded",
-                "A similar file already exists in this course with name " + originalFileName);
+                "A similar file already exists in this course with name " + originalFileName, null);
         builder.setProgress(0, 0, false);
         builder.setOngoing(false);
         builder.setSound(RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION));
@@ -315,7 +331,21 @@ public class Uploader extends Worker {
     }
 
     private void notifyInit() {
-        builder = sendNotification(getApplicationContext(), R.drawable.ic_launcher_foreground, "Uploading " + fileName, "Please wait...");
+        final int cancelUploadRc = notificationId;
+        Intent broadcast = new Intent(ACTION_CANCEL_UPLOAD);
+        broadcast.putExtra(KEY_FILE_HASH, fileHash);
+        PendingIntent cancelIntent = PendingIntent.getBroadcast(getApplicationContext(), cancelUploadRc, broadcast, PendingIntent.FLAG_ONE_SHOT);
+        final NotificationCompat.Action cancelAction = new NotificationCompat.Action(R.drawable.ic_close_black_24dp, getApplicationContext().getString(R.string.cancel), cancelIntent);
+        getApplicationContext().registerReceiver(new BroadcastReceiver() {
+            @Override
+            public void onReceive(final Context context, final Intent intent) {
+                if (Objects.equals(fileHash, intent.getStringExtra(KEY_FILE_HASH))) {
+                    cancelledByUser = true;
+                    uploadCall.cancel();
+                }
+            }
+        }, cancelUploadFilter);
+        builder = sendNotification(getApplicationContext(), R.drawable.ic_launcher_foreground, "Uploading " + fileName, "Please wait...", cancelAction);
         builder.setProgress(0, 0, true);
         builder.setOngoing(true);
         notificationManager.notify(notificationId, builder.build());
@@ -323,7 +353,7 @@ public class Uploader extends Worker {
 
     private void notifyFailure() {
         builder = sendNotification(getApplicationContext(), R.drawable.ic_launcher_foreground, "Comrades",
-                "File Could not be uploaded.Please try again later.");
+                "File Could not be uploaded. Please try again later.", null);
         builder.setProgress(0, 0, false);
         builder.setOngoing(false);
         notificationManager.notify(notificationId, builder.build());
@@ -331,7 +361,7 @@ public class Uploader extends Worker {
 
     private void notifySuccess() {
         builder = sendNotification(getApplicationContext(), R.drawable.ic_cloud_done_black_24dp, fileName + " uploaded",
-                "Thanks for Contributing");
+                "Thanks for Contributing", null);
         builder.setProgress(0, 0, false);
         builder.setOngoing(false);
         builder.setSound(RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION));

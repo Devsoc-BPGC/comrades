@@ -1,9 +1,7 @@
 package com.macbitsgoa.comrades.coursematerial;
 
 import android.app.Notification;
-import android.app.PendingIntent;
 import android.content.Context;
-import android.content.Intent;
 import android.util.Log;
 import android.webkit.MimeTypeMap;
 
@@ -35,24 +33,9 @@ public class UploadUtil {
     public static final String DRIVE_API_BASE_URL = "https://www.googleapis.com/drive/v3/files/";
     public static final String AUTHORIZATION_FIELD_KEY = "Authorization";
     public static final String AUTHORIZATION_FIELD_VALUE_PREFIX = "Bearer ";
-    private static final String KEY_ACCESS_TOKEN = "accessToken";
-    private static final String KEY_FILE_PATH = "filepath";
-    private static final String KEY_FILE_NAME = "filename";
     private static final String TAG = TAG_PREFIX + UploadUtil.class.getSimpleName();
 
-    public static Intent makeUploadIntent(final Context context, final String path, final String accessToken,
-                                          final String fileName) {
-        Intent intent = new Intent(context, UploadUtil.class);
-        intent.putExtra(KEY_FILE_NAME, fileName);
-        intent.putExtra(KEY_ACCESS_TOKEN, accessToken);
-        intent.putExtra(KEY_FILE_PATH, path);
-        return intent;
-    }
-
-    public static NotificationCompat.Builder sendNotification(Context context, int drawable, CharSequence message, CharSequence messageDetails) {
-        PendingIntent contentIntent = PendingIntent.getActivity(context, 0,
-                new Intent(context, UploadUtil.class), 0);
-
+    public static NotificationCompat.Builder sendNotification(Context context, int drawable, CharSequence message, CharSequence messageDetails, NotificationCompat.Action action) {
         NotificationCompat.Builder mBuilder = new NotificationCompat.Builder(context, "progress")
                 .setSmallIcon(drawable)
                 .setContentTitle(message)
@@ -60,7 +43,9 @@ public class UploadUtil {
                 .setColor(R.color.colorAccent)
                 .setAutoCancel(false)
                 .setPriority(Notification.PRIORITY_HIGH);
-        mBuilder.setContentIntent(contentIntent);
+        if (action != null) {
+            mBuilder.addAction(action);
+        }
         return mBuilder;
     }
 
