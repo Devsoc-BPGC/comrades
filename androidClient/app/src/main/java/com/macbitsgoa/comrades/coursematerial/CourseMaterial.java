@@ -9,12 +9,16 @@ import androidx.annotation.NonNull;
 import androidx.room.ColumnInfo;
 import androidx.room.Entity;
 import androidx.room.ForeignKey;
-import androidx.room.Ignore;
 import androidx.room.PrimaryKey;
+import androidx.room.TypeConverter;
+import androidx.room.TypeConverters;
 
 import static android.os.Environment.getExternalStorageDirectory;
 import static androidx.room.ForeignKey.CASCADE;
 import static com.macbitsgoa.comrades.ComradesConstants.DOWNLOAD_DIRECTORY;
+import static com.macbitsgoa.comrades.coursematerial.CourseMaterial.Status.CLICK_TO_DOWNLOAD;
+import static com.macbitsgoa.comrades.coursematerial.CourseMaterial.Status.CLICK_TO_OPEN;
+import static com.macbitsgoa.comrades.coursematerial.CourseMaterial.Status.WAIT_DOWNLOADING;
 
 /**
  * @author aayush singla
@@ -26,15 +30,6 @@ import static com.macbitsgoa.comrades.ComradesConstants.DOWNLOAD_DIRECTORY;
         childColumns = "courseId",
         onDelete = CASCADE))
 public class CourseMaterial {
-    @ColumnInfo(name = "isDowloading") // OOPS, spelling mistake
-    public Boolean isDownloading;
-
-    @ColumnInfo(name = "isWaiting")
-    public Boolean isWaiting;
-
-    @Ignore
-    public int progress;
-
     @PrimaryKey
     @NonNull
     @ColumnInfo(name = "_id")
@@ -48,19 +43,19 @@ public class CourseMaterial {
     public String courseId;
 
     @ColumnInfo(name = "addedBy")
-    private String addedBy;
+    public String addedBy;
 
     @ColumnInfo(name = "timeStamp")
-    private Long timeStamp;
+    private long timeStamp;
 
     @ColumnInfo(name = "addedById")
     private String addedById;
 
     @ColumnInfo(name = "fileName")
-    private String fileName;
+    public String fileName;
 
     @ColumnInfo(name = "link")
-    private String link;
+    public String link;
 
     @ColumnInfo(name = "webViewLink")
     private String webViewLink;
@@ -69,19 +64,22 @@ public class CourseMaterial {
     private String mimeType;
 
     @ColumnInfo(name = "extension")
-    private String extension;
+    public String extension;
 
     @ColumnInfo(name = "thumbnailLink")
     private String thumbnailLink;
 
     @ColumnInfo(name = "iconLink")
-    private String iconLink;
+    public String iconLink;
 
     @ColumnInfo(name = "filePath")
     public String filePath;
 
     @ColumnInfo(name = "fileSize")
-    private Long fileSize;
+    public long fileSize;
+
+    @TypeConverters(CourseMaterial.class)
+    public Status downloadStatus;
 
     /**
      * Utility method to find a index of a material in list.
@@ -114,22 +112,6 @@ public class CourseMaterial {
 
     public void setCourseId(String course_id) {
         this.courseId = course_id;
-    }
-
-    public Boolean getDownloading() {
-        return isDownloading;
-    }
-
-    public void setDownloading(final Boolean downloading) {
-        isDownloading = downloading;
-    }
-
-    public Boolean getWaiting() {
-        return isWaiting;
-    }
-
-    public void setWaiting(Boolean waiting) {
-        isWaiting = waiting;
     }
 
     public String getAddedBy() {
@@ -212,14 +194,6 @@ public class CourseMaterial {
         this.fileSize = fileSize;
     }
 
-    public int getProgress() {
-        return progress;
-    }
-
-    public void setProgress(int progress) {
-        this.progress = progress;
-    }
-
     public boolean getFileAvailable() {
         File file = new File(String.format("%s/%s/%s/", getExternalStorageDirectory(),
                 DOWNLOAD_DIRECTORY, CourseActivity.courseId) + fileName + extension);
@@ -252,5 +226,39 @@ public class CourseMaterial {
 
     public void setTimeStamp(Long timeStamp) {
         this.timeStamp = timeStamp;
+    }
+
+    @TypeConverters(CourseMaterial.class)
+    public enum Status {
+        CLICK_TO_OPEN(0),
+        CLICK_TO_DOWNLOAD(1),
+        WAIT_DOWNLOADING(2);
+        private final int code;
+        Status (int code) {
+            this.code = code;
+        }
+
+        public int getCode() {
+            return code;
+        }
+    }
+
+    @TypeConverter
+    public static Status toStatus(int status) {
+        if (status == CLICK_TO_OPEN.getCode()) {
+            return CLICK_TO_OPEN;
+        }
+        if (status == CLICK_TO_DOWNLOAD.getCode()) {
+            return CLICK_TO_DOWNLOAD;
+        }
+        if (status == WAIT_DOWNLOADING.getCode()) {
+            return WAIT_DOWNLOADING;
+        }
+        throw new IllegalArgumentException("Could not recognize status");
+    }
+
+    @TypeConverter
+    public static int toInt(Status status) {
+        return status.getCode();
     }
 }

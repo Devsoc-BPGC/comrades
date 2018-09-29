@@ -4,10 +4,8 @@ import android.Manifest;
 import android.annotation.SuppressLint;
 import android.app.AlertDialog;
 import android.app.SearchManager;
-import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
-import android.content.IntentFilter;
 import android.content.pm.PackageManager;
 import android.database.Cursor;
 import android.os.Bundle;
@@ -44,7 +42,6 @@ import androidx.fragment.app.DialogFragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
 import androidx.lifecycle.ViewModelProviders;
-import androidx.localbroadcastmanager.content.LocalBroadcastManager;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import io.reactivex.Observable;
@@ -71,7 +68,6 @@ public class CourseActivity extends AppCompatActivity
     private final ArrayList<CourseMaterial> materialArrayList = new ArrayList<>(0);
     private MaterialAdapter materialAdapter;
     private FloatingActionButton btnAddMaterial;
-    private BroadcastReceiver broadcastReceiver;
     private MaterialVm materialVm;
     private SearchView searchView;
     private ProgressBar progressBar;
@@ -99,7 +95,6 @@ public class CourseActivity extends AppCompatActivity
                 courseName = getIntent().getStringExtra(KEY_COURSE_NAME);
             }
         }
-        initBroadCastReceiver();
         initUi();
 
         materialVm = ViewModelProviders.of(this).get(MaterialVm.class);
@@ -117,60 +112,6 @@ public class CourseActivity extends AppCompatActivity
                 .getReferenceFromUrl(dbUrl)
                 .child(courseId).addChildEventListener(this);
         btnAddMaterial.setOnClickListener(this);
-    }
-
-    private void initBroadCastReceiver() {
-        broadcastReceiver = new BroadcastReceiver() {
-            @Override
-            public void onReceive(final Context context, final Intent intent) {
-                final Bundle resultData = intent.getExtras();
-                if (resultData != null) {
-                    final String itemId = resultData.getString("id");
-                    if (itemId == null) {
-                        Log.e(TAG, "itemId was found null. Returning", new Throwable("Trace").fillInStackTrace());
-                        return;
-                    }
-                    final int resultCode = resultData.getInt("resultCode");
-                    final int index = CourseMaterial.findIndex(materialArrayList, itemId);
-                    if (index < 0) {
-                        Log.e(TAG, "material was null.", new Throwable("Trace").fillInStackTrace());
-                        return;
-                    }
-                    switch (resultCode) {
-
-                        // download starting
-                        case 0: {
-                            materialArrayList.get(index).isDownloading = true;
-                            materialArrayList.get(index).isWaiting = false;
-                            materialVm.update(materialArrayList.get(index));
-                        }
-                        break;
-
-                        //updating progress
-                        case 1: {
-                            materialArrayList.get(index).progress = resultData.getInt("progress");
-                            materialAdapter.notifyItemChanged(index);
-                        }
-                        break;
-
-                        // download successful
-                        case 2: {
-                            materialArrayList.get(index).isDownloading = false;
-                            materialArrayList.get(index).isWaiting = false;
-                            materialVm.update(materialArrayList.get(index));
-                        }
-                        break;
-
-                        default: {
-                            if (BuildConfig.DEBUG) {
-                                Log.e(TAG, "Downloading Failed", new Throwable("Trace").fillInStackTrace());
-                            }
-                        }
-                        break;
-                    }
-                }
-            }
-        };
     }
 
     private void initUi() {
@@ -360,9 +301,7 @@ public class CourseActivity extends AppCompatActivity
         courseMaterial.filePath = String.format("%s/%s/%s/", getExternalStorageDirectory(),
                 DOWNLOAD_DIRECTORY, courseId);
         courseMaterial.courseId = courseId;
-        courseMaterial.isWaiting = false;
-        courseMaterial.isDownloading = false;
-        courseMaterial.progress = 0;
+        courseMaterial.downloadStatus = CourseMaterial.Status.CLICK_TO_DOWNLOAD;
         materialVm.insert(courseMaterial);
     }
 
@@ -381,9 +320,7 @@ public class CourseActivity extends AppCompatActivity
         courseMaterial.filePath = String.format("%s/%s/%s/", getExternalStorageDirectory(),
                 DOWNLOAD_DIRECTORY, courseId);
         courseMaterial.setCourseId(courseId);
-        courseMaterial.isWaiting = materialArrayList.get(index).isWaiting;
-        courseMaterial.isDownloading = materialArrayList.get(index).isDownloading;
-        courseMaterial.progress = materialArrayList.get(index).progress;
+        courseMaterial.downloadStatus = materialArrayList.get(index).downloadStatus;
         materialVm.update(courseMaterial);
     }
 
@@ -400,21 +337,6 @@ public class CourseActivity extends AppCompatActivity
     @Override
     public void onCancelled(@NonNull final DatabaseError databaseError) {
         Log.e(TAG, databaseError.getCode() + databaseError.getMessage(), databaseError.toException());
-    }
-
-    @Override
-    public void onPause() {
-        super.onPause();
-        // Unregister broadcast receiver
-        LocalBroadcastManager.getInstance(this).unregisterReceiver(broadcastReceiver);
-    }
-
-    @Override
-    public void onResume() {
-        super.onResume();
-        // Register broadcast receiver
-        LocalBroadcastManager.getInstance(this)
-                .registerReceiver(broadcastReceiver, new IntentFilter(DownloadService.ACTION));
     }
 
 }

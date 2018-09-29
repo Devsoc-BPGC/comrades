@@ -8,6 +8,7 @@ import com.macbitsgoa.comrades.R;
 
 import java.util.ArrayList;
 
+import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 /**
@@ -31,6 +32,12 @@ public class MaterialAdapter extends RecyclerView.Adapter<MaterialViewHolder> {
     @Override
     public void onBindViewHolder(final MaterialViewHolder holder, final int position) {
         holder.populate(materialArrayList.get(position));
+    }
+
+    @Override
+    public void onViewRecycled(@NonNull final MaterialViewHolder holder) {
+        holder.cleanUp();
+        super.onViewRecycled(holder);
     }
 
     @Override

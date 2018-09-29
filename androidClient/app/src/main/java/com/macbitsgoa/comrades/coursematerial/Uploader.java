@@ -302,9 +302,6 @@ public class Uploader extends Worker {
         itemCourseMaterial.setIconLink(iconLink);
         itemCourseMaterial.setFileSize(fileSize);
         itemCourseMaterial.setFilePath(null);
-        itemCourseMaterial.setDownloading(null);
-        itemCourseMaterial.setWaiting(null);
-        itemCourseMaterial.setProgress(0);
         itemCourseMaterial.setHashId(fileHash);
         itemCourseMaterial.setWebViewLink(jsonObject.get("webViewLink").toString());
         itemCourseMaterial.setLink(jsonObject.get("webContentLink").toString());

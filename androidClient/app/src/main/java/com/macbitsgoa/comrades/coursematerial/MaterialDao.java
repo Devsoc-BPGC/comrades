@@ -55,5 +55,15 @@ public interface MaterialDao {
     @Delete()
     void deleteMaterial(CourseMaterial material);
 
+    @Query("SELECT progress FROM DownloadProgress WHERE materialId = :materialId")
+    LiveData<Integer> getDownloadProgress(String materialId);
 
+    @Delete()
+    void deleteDownloadProgress(DownloadProgress downloadProgress);
+
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    void insertDownloadProgress(DownloadProgress downloadProgress);
+
+    @Update()
+    void updateDownloadProgress(DownloadProgress downloadProgress);
 }

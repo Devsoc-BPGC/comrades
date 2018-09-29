@@ -5,6 +5,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.net.Uri;
+import android.util.Log;
 import android.view.View;
 import android.widget.TextView;
 
@@ -18,27 +19,35 @@ import com.mikhaellopez.circularprogressbar.CircularProgressBar;
 
 import java.io.File;
 
-import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.content.FileProvider;
-import androidx.lifecycle.ViewModelProviders;
+import androidx.lifecycle.LiveData;
+import androidx.lifecycle.Observer;
 import androidx.recyclerview.widget.RecyclerView;
+
+import static com.macbitsgoa.comrades.coursematerial.Downloader.download;
 
 
 /**
  * @author aayush singla
  */
-public class MaterialViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
+public class MaterialViewHolder extends RecyclerView.ViewHolder {
     private final TextView tvFileName;
     private final TextView tvOwnerName;
-    private final View rootView;
     private final CircularProgressBar donutProgress;
     private final TextView tvDownloadStatus;
     private final SimpleDraweeView iconDraweeView;
-    private CourseMaterial data;
+    /**
+     * Invariant: This observer will always be null unless observing for actual
+     * download progress.
+     */
+    private Observer<Integer> progressObserver = null;
+    /**
+     * This object will be null for inactive downloads.
+     */
+    private LiveData<Integer> progress = null;
 
     public MaterialViewHolder(final View itemView) {
         super(itemView);
-        rootView = itemView;
         tvFileName = itemView.findViewById(R.id.tv_file_name);
         iconDraweeView = itemView.findViewById(R.id.icon);
         tvOwnerName = itemView.findViewById(R.id.tv_owner_name);
@@ -49,35 +58,75 @@ public class MaterialViewHolder extends RecyclerView.ViewHolder implements View.
     /**
      * updates the view in recycler with the data and sets onClick listener to it.
      *
-     * @param data  object of class @{@link CourseMaterial}
+     * @param material object of class @{@link CourseMaterial}
      */
-    public void populate(CourseMaterial data) {
-        this.data = data;
-        tvOwnerName.setText("Added by " + data.getAddedBy());
-        tvFileName.setText(data.getFileName());
-        Boolean isDownloading = data.getDownloading();
-        Boolean isWaiting = data.getWaiting();
-        Boolean fileAvailable = data.getFileAvailable();
+    public void populate(CourseMaterial material) {
+        tvOwnerName.setText("Added by " + material.addedBy);
+        tvFileName.setText(material.fileName);
 
-        if (fileAvailable) {
-            donutProgress.setProgress(100);
-            tvDownloadStatus.setText("Click to Open");
-        } else if (isDownloading) {
-            donutProgress.setProgress(data.getProgress());
-            tvDownloadStatus.setText("Downloading");
-        } else if (isWaiting) {
-            donutProgress.enableIndeterminateMode(true);
-            tvDownloadStatus.setText("Waiting");
-        } else {
-            donutProgress.setProgress(0);
-            tvDownloadStatus.setText("Click to Download");
+        switch (material.downloadStatus) {
+            case CLICK_TO_OPEN:
+                donutProgress.setProgress(100);
+                tvDownloadStatus.setText("Click to Open");
+                break;
+
+            case WAIT_DOWNLOADING:
+                progressObserver = i -> {
+                    Log.e("mac", "i = " + i);
+                    donutProgress.setProgress(i);
+                };
+                progress = new MaterialRepository(itemView.getContext()).getDownloadProgress(material._id);
+                progress.observeForever(progressObserver);
+                tvDownloadStatus.setText("Downloading");
+                break;
+
+            case CLICK_TO_DOWNLOAD:
+                donutProgress.setProgress(0);
+                tvDownloadStatus.setText("Click to Download");
+                break;
         }
 
-        rootView.setOnClickListener(this);
-        if (data.getIconLink() != null)
-            iconDraweeView.setImageURI(data.getIconLink());
+        itemView.setOnClickListener(v -> onClick(material));
+        if (material.iconLink != null) {
+            iconDraweeView.setImageURI(material.iconLink);
+        }
+    }
 
+    public void onClick(CourseMaterial data) {
+        final Context context = itemView.getContext();
+        final boolean signedIn = GoogleSignIn.getLastSignedInAccount(context) != null;
+        boolean storagePermission = true;
 
+        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.M) {
+            storagePermission =
+                    context.checkSelfPermission(Manifest.permission.WRITE_EXTERNAL_STORAGE)
+                            == PackageManager.PERMISSION_GRANTED;
+        }
+
+        if (signedIn && storagePermission) {
+            switch (data.downloadStatus) {
+                case CLICK_TO_DOWNLOAD:
+                    download(data);
+                    break;
+                case WAIT_DOWNLOADING:
+                    break;
+                case CLICK_TO_OPEN:
+                    openFile(data);
+                    break;
+            }
+        } else if (signedIn) {
+            Snackbar.make(itemView, context.getString(R.string.storage_permission_needed),
+                    Snackbar.LENGTH_LONG)
+                    .setAction(context.getString(R.string.allow), v ->
+                            handleSignInAndStorage(context))
+                    .show();
+        } else {
+            Snackbar.make(itemView, context.getString(R.string.login_to_download_file),
+                    Snackbar.LENGTH_LONG)
+                    .setAction(context.getString(R.string.login), v ->
+                            handleSignInAndStorage(context))
+                    .show();
+        }
     }
 
     private static void handleSignInAndStorage(final Context context) {
@@ -96,46 +145,11 @@ public class MaterialViewHolder extends RecyclerView.ViewHolder implements View.
         itemView.getContext().startActivity(generic);
     }
 
-
-    @Override
-    public void onClick(View view) {
-        final Context context = rootView.getContext();
-        final boolean signedIn = GoogleSignIn.getLastSignedInAccount(context) != null;
-        boolean storagePermission = true;
-
-        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.M) {
-            storagePermission =
-                    context.checkSelfPermission(Manifest.permission.WRITE_EXTERNAL_STORAGE)
-                            == PackageManager.PERMISSION_GRANTED;
-        }
-
-        if (signedIn && storagePermission) {
-            if (data.getFileAvailable()) {
-                openFile(data);
-            } else if (!data.getDownloading()) {
-                data.setDownloading(false);
-                data.setWaiting(true);
-                MaterialVm materialVm = ViewModelProviders.of((AppCompatActivity) context).get(MaterialVm.class);
-                materialVm.update(data);
-
-                final Intent downloadIntent =
-                        DownloadService.makeDownloadIntent(itemView.getContext(), data.getLink(),
-                                data.getFileName(), data.getExtension(), data.getFilePath(),
-                                data.getId(), data.getFileSize());
-                itemView.getContext().startService(downloadIntent);
-            }
-        } else if (signedIn) {
-            Snackbar.make(rootView, context.getString(R.string.storage_permission_needed),
-                    Snackbar.LENGTH_LONG)
-                    .setAction(context.getString(R.string.allow), v ->
-                            handleSignInAndStorage(context))
-                    .show();
-        } else {
-            Snackbar.make(rootView, context.getString(R.string.login_to_download_file),
-                    Snackbar.LENGTH_LONG)
-                    .setAction(context.getString(R.string.login), v ->
-                            handleSignInAndStorage(context))
-                    .show();
+    public void cleanUp() {
+        if (progress != null) {
+            progress.removeObserver(progressObserver);
+            progressObserver = null;
+            progress = null;
         }
     }
 }
