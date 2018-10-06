@@ -40,7 +40,7 @@ public class UploadUtil {
                 .setSmallIcon(drawable)
                 .setContentTitle(message)
                 .setContentText(messageDetails)
-                .setColor(R.color.colorAccent)
+                .setColor(context.getResources().getColor(R.color.colorAccent))
                 .setAutoCancel(false)
                 .setPriority(Notification.PRIORITY_HIGH);
         if (action != null) {
