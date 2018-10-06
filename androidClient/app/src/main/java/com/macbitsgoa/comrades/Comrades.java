@@ -15,6 +15,7 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.remoteconfig.FirebaseRemoteConfig;
 import com.macbitsgoa.comrades.courselistfragment.MyCourse;
+import com.macbitsgoa.comrades.coursematerial.UploadUtil;
 import com.macbitsgoa.comrades.persistance.Database;
 
 import org.jetbrains.annotations.NotNull;
@@ -40,6 +41,7 @@ public class Comrades extends Application {
     public void onCreate() {
         super.onCreate();
         Fresco.initialize(this);
+        UploadUtil.createNotificationChannel(this);
         Comrades.context = getApplicationContext();
         SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(getBaseContext());
         boolean coursesPresent = preferences.getBoolean("Courses Present", false);

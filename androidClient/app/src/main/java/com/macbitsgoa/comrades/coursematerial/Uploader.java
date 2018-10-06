@@ -345,14 +345,14 @@ public class Uploader extends Worker {
                 }
             }
         }, cancelUploadFilter);
-        builder = sendNotification(getApplicationContext(), R.drawable.ic_launcher_foreground, "Uploading " + fileName, "Please wait...", cancelAction);
+        builder = sendNotification(getApplicationContext(), R.drawable.ic_cloud_upload, "Uploading " + fileName, "Please wait...", cancelAction);
         builder.setProgress(0, 0, true);
         builder.setOngoing(true);
         notificationManager.notify(notificationId, builder.build());
     }
 
     private void notifyFailure() {
-        builder = sendNotification(getApplicationContext(), R.drawable.ic_launcher_foreground, "Comrades",
+        builder = sendNotification(getApplicationContext(), R.drawable.ic_cloud_upload, "Comrades",
                 "File Could not be uploaded. Please try again later.", null);
         builder.setProgress(0, 0, false);
         builder.setOngoing(false);
