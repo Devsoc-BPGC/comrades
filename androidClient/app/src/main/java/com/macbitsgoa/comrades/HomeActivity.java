@@ -126,7 +126,7 @@ public class HomeActivity extends AppCompatActivity implements ForceUpdateChecke
         if (savedInstanceState != null) {
             navigation.setSelectedItemId(savedInstanceState.getInt("bottomNav"));
         } else {
-            navigation.setSelectedItemId(R.id.navigation_home);
+            navigation.setSelectedItemId(R.id.navigation_courses);
         }
 
     }

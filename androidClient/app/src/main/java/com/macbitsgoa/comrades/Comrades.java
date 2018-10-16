@@ -42,6 +42,7 @@ public class Comrades extends Application {
         super.onCreate();
         Fresco.initialize(this);
         UploadUtil.createNotificationChannel(this);
+        FcmReceiverService.Companion.createNotificationChannel(this);
         Comrades.context = getApplicationContext();
         SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(getBaseContext());
         boolean coursesPresent = preferences.getBoolean("Courses Present", false);

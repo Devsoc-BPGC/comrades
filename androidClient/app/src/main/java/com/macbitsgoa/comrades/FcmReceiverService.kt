@@ -1,10 +1,13 @@
 package com.macbitsgoa.comrades
 
 
+import android.app.Application
+import android.app.NotificationChannel
+import android.app.NotificationManager
 import android.app.PendingIntent
 import android.content.Intent
 import android.media.RingtoneManager
-import android.preference.PreferenceManager
+import android.os.Build
 import android.util.Log
 import androidx.core.app.NotificationCompat
 import androidx.core.app.NotificationManagerCompat
@@ -33,7 +36,6 @@ import com.macbitsgoa.comrades.persistance.Person
 @Suppress("ProtectedInFinal")
 class FcmReceiverService : FirebaseMessagingService() {
     protected val tag = TAG_PREFIX + FcmReceiverService::class.java.simpleName
-    var SETTINGS = "NotificationSetting"
 
     override fun onMessageReceived(message: RemoteMessage) {
         val repo = DataRepository(application)
@@ -48,24 +50,27 @@ class FcmReceiverService : FirebaseMessagingService() {
     }
 
     private fun materialAdded(data: Map<String, String>) {
-        val prefs = PreferenceManager.getDefaultSharedPreferences(baseContext)
-        if (prefs.getBoolean(SETTINGS, true) && FirebaseAuth.getInstance().uid != data["addedById"]) {
+        if (BuildConfig.DEBUG || FirebaseAuth.getInstance().uid != data["addedById"]) {
             val openCourseActivityIntent = Intent(this, CourseActivity::class.java)
             openCourseActivityIntent.putExtra(KEY_COURSE_ID, data["courseId"])
             openCourseActivityIntent.putExtra(KEY_COURSE_NAME, data["courseName"])
             val pendingIntent = PendingIntent.getActivity(this, 0, openCourseActivityIntent, 0)
-
-
-            val mBuilder = NotificationCompat.Builder(this, "new noti")
-                    .setSmallIcon(R.drawable.ic_launcher_foreground)
-                    .setContentTitle("New File Added")
+            val mBuilder = NotificationCompat.Builder(this, CHANNEL_ID)
+                    .setSmallIcon(R.drawable.ic_file)
+                    .setContentTitle(data["courseName"])
                     .setContentText(data["msg"])
                     .setAutoCancel(true)
                     .setSound(RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION))
                     .setPriority(NotificationCompat.PRIORITY_DEFAULT)
                     .setContentIntent(pendingIntent)
-                    .addAction(R.drawable.ic_open_in_new_black_24dp, "click to open",
+                    .setOnlyAlertOnce(true)
+                    .addAction(R.drawable.ic_open_in_new_black_24dp, "Open Course",
                             pendingIntent)
+            if (Build.VERSION.SDK_INT >= 23) {
+                mBuilder.color = getColor(R.color.colorPrimary)
+            } else {
+                mBuilder.color = resources.getColor(R.color.colorPrimary)
+            }
             val notificationManager = NotificationManagerCompat.from(this)
             val notification = mBuilder.build()
             notificationManager.notify(0, notification)
@@ -107,5 +112,23 @@ class FcmReceiverService : FirebaseMessagingService() {
                         repo.insertLocally(material)
                     }
                 })
+    }
+
+    companion object {
+        const val CHANNEL_ID = "comrades.course.material.addition"
+        private const val CHANNEL_NAME = "Course Material Updates"
+        private const val CHANNEL_DESC = "Updates of new files added to courses you follow"
+        fun createNotificationChannel(application: Application) {
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                // Create the NotificationChannel
+                val name = CHANNEL_NAME
+                val descriptionText = CHANNEL_DESC
+                val importance = NotificationManager.IMPORTANCE_DEFAULT
+                val mChannel = NotificationChannel(CHANNEL_ID, name, importance)
+                mChannel.description = descriptionText
+                val notificationManager = application.getSystemService(NOTIFICATION_SERVICE) as NotificationManager
+                notificationManager.createNotificationChannel(mChannel)
+            }
+        }
     }
 }
