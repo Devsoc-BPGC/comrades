@@ -1,12 +1,9 @@
 package com.macbitsgoa.comrades.coursematerial;
 
-import android.app.Notification;
-import android.content.Context;
 import android.util.Log;
 import android.webkit.MimeTypeMap;
 
 import com.crashlytics.android.Crashlytics;
-import com.macbitsgoa.comrades.R;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -18,8 +15,6 @@ import java.math.BigInteger;
 import java.net.URLEncoder;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
-
-import androidx.core.app.NotificationCompat;
 
 import static android.webkit.MimeTypeMap.getFileExtensionFromUrl;
 import static com.macbitsgoa.comrades.CHCKt.TAG_PREFIX;
@@ -34,20 +29,6 @@ public class UploadUtil {
     public static final String AUTHORIZATION_FIELD_KEY = "Authorization";
     public static final String AUTHORIZATION_FIELD_VALUE_PREFIX = "Bearer ";
     private static final String TAG = TAG_PREFIX + UploadUtil.class.getSimpleName();
-
-    public static NotificationCompat.Builder sendNotification(Context context, int drawable, CharSequence message, CharSequence messageDetails, NotificationCompat.Action action) {
-        NotificationCompat.Builder mBuilder = new NotificationCompat.Builder(context, "progress")
-                .setSmallIcon(drawable)
-                .setContentTitle(message)
-                .setContentText(messageDetails)
-                .setColor(context.getResources().getColor(R.color.colorAccent))
-                .setAutoCancel(false)
-                .setPriority(Notification.PRIORITY_HIGH);
-        if (action != null) {
-            mBuilder.addAction(action);
-        }
-        return mBuilder;
-    }
 
     public static String calculateMD5(File updateFile) {
         MessageDigest digest;

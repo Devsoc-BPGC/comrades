@@ -39,9 +39,11 @@ import androidx.work.NetworkType;
 import androidx.work.OneTimeWorkRequest;
 import androidx.work.WorkManager;
 import androidx.work.Worker;
+import androidx.work.WorkerParameters;
 
 import static com.macbitsgoa.comrades.CHCKt.TAG_PREFIX;
 import static com.macbitsgoa.comrades.CHCKt.getCourseMaterialRef;
+import static com.macbitsgoa.comrades.NotificationChannelMetaData.UPLOAD_PROGRESS;
 import static com.macbitsgoa.comrades.coursematerial.UploadUtil.AUTHORIZATION_FIELD_KEY;
 import static com.macbitsgoa.comrades.coursematerial.UploadUtil.AUTHORIZATION_FIELD_VALUE_PREFIX;
 import static com.macbitsgoa.comrades.coursematerial.UploadUtil.DRIVE_API_BASE_URL;
@@ -49,7 +51,6 @@ import static com.macbitsgoa.comrades.coursematerial.UploadUtil.calculateMD5;
 import static com.macbitsgoa.comrades.coursematerial.UploadUtil.fileToBytes;
 import static com.macbitsgoa.comrades.coursematerial.UploadUtil.getFileExtension;
 import static com.macbitsgoa.comrades.coursematerial.UploadUtil.getMimeType;
-import static com.macbitsgoa.comrades.coursematerial.UploadUtil.sendNotification;
 
 /**
  * {@link Worker} for uploading files.
@@ -79,6 +80,10 @@ public class Uploader extends Worker {
     private int notificationId;
     private Call uploadCall;
     private boolean cancelledByUser = false;
+
+    public Uploader(@NonNull final Context context, @NonNull final WorkerParameters workerParams) {
+        super(context, workerParams);
+    }
 
     /**
      * Handy method to access this class.
@@ -322,11 +327,14 @@ public class Uploader extends Worker {
     }
 
     private void notifyDuplicate(String originalFileName) {
-        builder = sendNotification(getApplicationContext(), R.drawable.ic_cloud_done_black_24dp, fileName + " couldn't be uploaded",
-                "A similar file already exists in this course with name " + originalFileName, null);
-        builder.setProgress(0, 0, false);
-        builder.setOngoing(false);
-        builder.setSound(RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION));
+        final String title = fileName + " couldn't be uploaded";
+        final String text = "A similar file already exists in this course with name " + originalFileName;
+        builder = new NotificationCompat.Builder(getApplicationContext(), UPLOAD_PROGRESS.getId())
+                .setSmallIcon(R.drawable.ic_cloud_upload)
+                .setContentTitle(title)
+                .setContentText(text)
+                .setColor(getApplicationContext().getResources().getColor(R.color.colorAccent))
+                .setSound(RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION));
         notificationManager.notify(notificationId, builder.build());
     }
 
@@ -345,26 +353,36 @@ public class Uploader extends Worker {
                 }
             }
         }, cancelUploadFilter);
-        builder = sendNotification(getApplicationContext(), R.drawable.ic_launcher_foreground, "Uploading " + fileName, "Please wait...", cancelAction);
-        builder.setProgress(0, 0, true);
-        builder.setOngoing(true);
+        final String title = "Uploading " + fileName;
+        builder = new NotificationCompat.Builder(getApplicationContext(), UPLOAD_PROGRESS.getId())
+                .setSmallIcon(R.drawable.ic_cloud_upload)
+                .setContentTitle(title)
+                .addAction(cancelAction)
+                .setColor(getApplicationContext().getResources().getColor(R.color.colorAccent))
+                .setProgress(0, 0, true)
+                .setOngoing(true);
         notificationManager.notify(notificationId, builder.build());
     }
 
     private void notifyFailure() {
-        builder = sendNotification(getApplicationContext(), R.drawable.ic_launcher_foreground, "Comrades",
-                "File Could not be uploaded. Please try again later.", null);
-        builder.setProgress(0, 0, false);
-        builder.setOngoing(false);
+        final String title = fileName + " couldn't be uploaded";
+        final String text = "Something's wrong. Please try again later.";
+        builder = new NotificationCompat.Builder(getApplicationContext(), UPLOAD_PROGRESS.getId())
+                .setSmallIcon(R.drawable.ic_cloud_upload)
+                .setContentTitle(title)
+                .setColor(getApplicationContext().getResources().getColor(R.color.colorAccent))
+                .setContentText(text);
         notificationManager.notify(notificationId, builder.build());
     }
 
     private void notifySuccess() {
-        builder = sendNotification(getApplicationContext(), R.drawable.ic_cloud_done_black_24dp, fileName + " uploaded",
-                "Thanks for Contributing", null);
-        builder.setProgress(0, 0, false);
-        builder.setOngoing(false);
-        builder.setSound(RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION));
+        final String title = fileName + " uploaded";
+        final String text = "Thanks for Contributing";
+        builder = new NotificationCompat.Builder(getApplicationContext(), UPLOAD_PROGRESS.getId())
+                .setSmallIcon(R.drawable.ic_cloud_upload)
+                .setContentTitle(title)
+                .setColor(getApplicationContext().getResources().getColor(R.color.colorAccent))
+                .setContentText(text);
         notificationManager.notify(notificationId, builder.build());
     }
 }
