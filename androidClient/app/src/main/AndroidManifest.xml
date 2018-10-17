@@ -48,6 +48,12 @@
                 <action android:name="com.google.firebase.MESSAGING_EVENT" />
             </intent-filter>
         </service>
+        <service android:name=".csa.CsaFcmService"
+            android:exported="false">
+            <intent-filter>
+                <action android:name="com.google.firebase.MESSAGING_EVENT" />
+            </intent-filter>
+        </service>
         <service
             android:name=".coursematerial.DownloadService"
             android:enabled="true">
@@ -109,6 +115,7 @@
         <activity android:name=".eateries.EateriesDetail" />
         <activity android:name=".aboutmac.AboutMacActivity" />
         <activity android:name=".TutorialActivity" />
+        <activity android:name=".csa.CsaMsgDetailActivity" />
 
 
     </application>

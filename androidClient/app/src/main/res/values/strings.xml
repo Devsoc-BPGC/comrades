@@ -54,6 +54,7 @@
     <string name="title_activity_test">TestActivity</string>
     <string name="title_menus_activity">Menus</string>
     <string name="title_activity_tutorial">TutorialActivity</string>
+    <string name="csa_notifications">CSA Notifications</string>
 
 
 </resources>

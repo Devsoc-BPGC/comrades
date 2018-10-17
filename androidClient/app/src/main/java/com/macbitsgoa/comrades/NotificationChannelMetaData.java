@@ -13,7 +13,8 @@ import androidx.annotation.RequiresApi;
  */
 public enum NotificationChannelMetaData {
     COURSE_UPDATES("comrades.course.material.addition", "Course Material Updates", "Updates of new files added to courses you follow"),
-    UPLOAD_PROGRESS("comrades.uploads.progress", "Uploads Progress", "progress of ongoing uploads");
+    UPLOAD_PROGRESS("comrades.uploads.progress", "Uploads Progress", "progress of ongoing uploads"),
+    CSA_UPDATES("comrades.csa", "CSA Announcements", "messages from CSA and administrators");
     String id;
     String name;
     String description;
