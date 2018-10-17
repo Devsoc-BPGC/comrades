@@ -1,9 +1,6 @@
 package com.macbitsgoa.comrades
 
 
-import android.app.Application
-import android.app.NotificationChannel
-import android.app.NotificationManager
 import android.app.PendingIntent
 import android.content.Intent
 import android.media.RingtoneManager
@@ -45,8 +42,6 @@ class FcmReceiverService : FirebaseMessagingService() {
             FCM_TYPE_USER_UPDATE -> updatePerson(message.data, repo)
             FCM_TYPE_MATERIAL_ADDED -> materialAdded(message.data)
         }
-
-
     }
 
     private fun materialAdded(data: Map<String, String>) {
@@ -55,7 +50,7 @@ class FcmReceiverService : FirebaseMessagingService() {
             openCourseActivityIntent.putExtra(KEY_COURSE_ID, data["courseId"])
             openCourseActivityIntent.putExtra(KEY_COURSE_NAME, data["courseName"])
             val pendingIntent = PendingIntent.getActivity(this, 0, openCourseActivityIntent, 0)
-            val mBuilder = NotificationCompat.Builder(this, CHANNEL_ID)
+            val mBuilder = NotificationCompat.Builder(this, NotificationChannelMetaData.COURSE_UPDATES.getId())
                     .setSmallIcon(R.drawable.ic_file)
                     .setContentTitle(data["courseName"])
                     .setContentText(data["msg"])
@@ -112,23 +107,5 @@ class FcmReceiverService : FirebaseMessagingService() {
                         repo.insertLocally(material)
                     }
                 })
-    }
-
-    companion object {
-        const val CHANNEL_ID = "comrades.course.material.addition"
-        private const val CHANNEL_NAME = "Course Material Updates"
-        private const val CHANNEL_DESC = "Updates of new files added to courses you follow"
-        fun createNotificationChannel(application: Application) {
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-                // Create the NotificationChannel
-                val name = CHANNEL_NAME
-                val descriptionText = CHANNEL_DESC
-                val importance = NotificationManager.IMPORTANCE_DEFAULT
-                val mChannel = NotificationChannel(CHANNEL_ID, name, importance)
-                mChannel.description = descriptionText
-                val notificationManager = application.getSystemService(NOTIFICATION_SERVICE) as NotificationManager
-                notificationManager.createNotificationChannel(mChannel)
-            }
-        }
     }
 }

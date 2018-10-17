@@ -1,16 +1,9 @@
 package com.macbitsgoa.comrades.coursematerial;
 
-import android.app.Application;
-import android.app.Notification;
-import android.app.NotificationChannel;
-import android.app.NotificationManager;
-import android.content.Context;
-import android.os.Build;
 import android.util.Log;
 import android.webkit.MimeTypeMap;
 
 import com.crashlytics.android.Crashlytics;
-import com.macbitsgoa.comrades.R;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -22,9 +15,6 @@ import java.math.BigInteger;
 import java.net.URLEncoder;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
-
-import androidx.annotation.NonNull;
-import androidx.core.app.NotificationCompat;
 
 import static android.webkit.MimeTypeMap.getFileExtensionFromUrl;
 import static com.macbitsgoa.comrades.CHCKt.TAG_PREFIX;
@@ -39,37 +29,6 @@ public class UploadUtil {
     public static final String AUTHORIZATION_FIELD_KEY = "Authorization";
     public static final String AUTHORIZATION_FIELD_VALUE_PREFIX = "Bearer ";
     private static final String TAG = TAG_PREFIX + UploadUtil.class.getSimpleName();
-    public static final String CHANNEL_ID = "comrades.uploads.progress";
-    public static final String CHANNEL_NAME = "Uploads Progress";
-    public static final String CHANNEL_DESC = "progress of ongoing uploads";
-
-    public static void createNotificationChannel(@NonNull Application application) {
-        // Create the NotificationChannel, but only on API 26+ because
-        // the NotificationChannel class is new and not in the support library
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            NotificationChannel channel = new NotificationChannel(CHANNEL_ID, CHANNEL_NAME, NotificationManager.IMPORTANCE_DEFAULT);
-            channel.setDescription(CHANNEL_DESC);
-            // Register the channel with the system; you can't change the importance
-            // or other notification behaviors after this
-            NotificationManager notificationManager = application.getSystemService(NotificationManager.class);
-            assert notificationManager != null;
-            notificationManager.createNotificationChannel(channel);
-        }
-    }
-
-    public static NotificationCompat.Builder sendNotification(Context context, int drawable, CharSequence message, CharSequence messageDetails, NotificationCompat.Action action) {
-        NotificationCompat.Builder mBuilder = new NotificationCompat.Builder(context, CHANNEL_ID)
-                .setSmallIcon(drawable)
-                .setContentTitle(message)
-                .setContentText(messageDetails)
-                .setColor(context.getResources().getColor(R.color.colorAccent))
-                .setAutoCancel(false)
-                .setPriority(Notification.PRIORITY_HIGH);
-        if (action != null) {
-            mBuilder.addAction(action);
-        }
-        return mBuilder;
-    }
 
     public static String calculateMD5(File updateFile) {
         MessageDigest digest;
