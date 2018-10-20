@@ -1,13 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:orientation="horizontal"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:backgroundTint="#FFF">
 
     <TextView
-        android:id="@+id/tv_list"
+        android:id="@+id/tv_link"
         android:padding="10dp"
         android:textSize="14sp"
         android:textColor="@android:color/black"
@@ -15,23 +14,4 @@
         android:layout_weight="1"
         android:layout_width="0dp"
         android:layout_height="wrap_content" />
-
-    <com.facebook.drawee.view.SimpleDraweeView
-        android:id="@+id/right_arrow"
-        android:layout_width="40dp"
-        android:padding="10dp"
-        android:layout_margin="10dp"
-        android:layout_height="40dp"
-        android:layout_gravity="center"
-        app:placeholderImage="@drawable/ic_chevron_right_black_24dp" />
-
-    <Switch
-        android:visibility="gone"
-        android:id="@+id/switch_notifications"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_gravity="end|center"
-        android:layout_marginEnd="20dp" />
-
-
 </LinearLayout>

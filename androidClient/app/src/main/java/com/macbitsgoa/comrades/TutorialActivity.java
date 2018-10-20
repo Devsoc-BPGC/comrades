@@ -15,8 +15,6 @@ import androidx.annotation.Nullable;
 import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
 
-import static com.macbitsgoa.comrades.HomeActivity.SETTINGS;
-
 /**
  * @author aayush singla
  */
@@ -105,7 +103,6 @@ public class TutorialActivity extends AppIntro2 {
         super.onDestroy();
         SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(this);
         SharedPreferences.Editor edit = preferences.edit();
-        edit.putBoolean(SETTINGS, true);
         edit.putBoolean(COMPLETED_ON_BOARDING_PREF_NAME, Boolean.TRUE);
         edit.apply();
     }

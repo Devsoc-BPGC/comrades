@@ -48,7 +48,6 @@ import static com.macbitsgoa.comrades.CHCKt.TAG_PREFIX;
 
 
 public class HomeActivity extends AppCompatActivity implements ForceUpdateChecker.OnUpdateNeededListener {
-    public static final String SETTINGS = "NotificationSetting";
     public static final String TAG_HOME_FRAG = "HomeFragment";
     public static final String TAG_COURSE_LIST_FRAG = "CourseListFragment";
     public static final String TAG_PROFILE_FRAG = "ProfileFragment";
@@ -256,15 +255,6 @@ public class HomeActivity extends AppCompatActivity implements ForceUpdateChecke
     protected void onResume() {
         super.onResume();
         invalidateOptionsMenu();
-        SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(getBaseContext());
-        boolean previousStarted = preferences.getBoolean("Previously Started", false);
-
-        if (!previousStarted) {
-            SharedPreferences.Editor edit = preferences.edit();
-            edit.putBoolean(SETTINGS, true);
-            edit.putBoolean("Previously Started", Boolean.TRUE);
-            edit.apply();
-        }
     }
 
     @Override

@@ -22,7 +22,6 @@ import java.util.Objects;
 import java.util.stream.Stream;
 
 import static com.macbitsgoa.comrades.CHCKt.TAG_PREFIX;
-import static com.macbitsgoa.comrades.HomeActivity.SETTINGS;
 
 
 /**
@@ -98,8 +97,7 @@ public class Comrades extends Application {
                 database.getCourseDao().insert(myCourse);
             }
             SharedPreferences.Editor edit = sharedPreferences.edit();
-            edit.putBoolean(SETTINGS, true);
-            edit.putBoolean("Courses Present", Boolean.TRUE);
+            edit.putBoolean("Courses Present", true);
             edit.apply();
             return null;
         }
