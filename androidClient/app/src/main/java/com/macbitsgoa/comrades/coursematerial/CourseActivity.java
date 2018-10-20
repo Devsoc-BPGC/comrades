@@ -21,6 +21,7 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.crashlytics.android.Crashlytics;
 import com.google.android.gms.auth.api.signin.GoogleSignIn;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.android.material.snackbar.Snackbar;
@@ -269,19 +270,15 @@ public class CourseActivity extends AppCompatActivity
         if (searchManager != null) {
             searchView.setSearchableInfo(searchManager.getSearchableInfo(getComponentName()));
         }
-        searchView.setQueryHint(Html.fromHtml("<font color = #ffffff>" + "Search.." + "</font>"));
-        searchView.setIconifiedByDefault(true);
-        searchView.setSubmitButtonEnabled(true);
+        searchView.setQueryHint(Html.fromHtml("<font color = #ffffff>Search Files</font>"));
         searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
             @Override
             public boolean onQueryTextSubmit(@NonNull final String s) {
-                Log.e(TAG, "query:" + s);
                 return false;
             }
 
             @Override
             public boolean onQueryTextChange(@NonNull final String s) {
-                Log.e(TAG, "query:" + s);
                 getMaterialFromDb(s);
                 return false;
             }
@@ -298,7 +295,7 @@ public class CourseActivity extends AppCompatActivity
     }
 
     private void handleError(final Throwable throwable) {
-        Log.e("TAG", throwable.getMessage(), throwable);
+        Crashlytics.log(Log.ERROR, TAG, throwable.getMessage());
         Toast.makeText(this, "Problem in Fetching Material",
                 Toast.LENGTH_LONG).show();
     }
@@ -370,12 +367,12 @@ public class CourseActivity extends AppCompatActivity
     public void onChildChanged(@NonNull final DataSnapshot dataSnapshot, final String s) {
         final CourseMaterial courseMaterial = dataSnapshot.getValue(CourseMaterial.class);
         if (courseMaterial == null) {
-            Log.e(TAG, "null course material", new Throwable("Trace").fillInStackTrace());
+            Crashlytics.log(Log.ERROR, TAG, "null course material");
             return;
         }
         final int index = CourseMaterial.findIndex(materialArrayList, courseMaterial._id);
         if (index < 0) {
-            Log.e(TAG, "material was null.", new Throwable("Trace").fillInStackTrace());
+            Crashlytics.log(Log.ERROR, TAG, "null course material 2");
             return;
         }
         courseMaterial.filePath = String.format("%s/%s/%s/", getExternalStorageDirectory(),

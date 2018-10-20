@@ -40,14 +40,10 @@ public class HomeFragment extends Fragment implements ChildEventListener {
     private RecentAdapter recentAdapter;
     private static final String TAG = TAG_PREFIX + HomeFragment.class.getSimpleName();
 
-    public static Fragment newInstance() {
-        return new HomeFragment();
-    }
 
     @Override
     public View onCreateView(@NotNull LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.fragment_home, container, false);
         ImageButton btnMyCourses = view.findViewById(R.id.btn_my_courses);
         ImageButton btnMenus = view.findViewById(R.id.btn_menus);

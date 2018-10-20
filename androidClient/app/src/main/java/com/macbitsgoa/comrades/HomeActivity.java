@@ -38,8 +38,8 @@ import java.util.Objects;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.SearchView;
 import androidx.coordinatorlayout.widget.CoordinatorLayout;
-import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
+import androidx.fragment.app.FragmentTransaction;
 import io.reactivex.Observable;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.schedulers.Schedulers;
@@ -60,43 +60,67 @@ public class HomeActivity extends AppCompatActivity implements ForceUpdateChecke
     private SearchView searchView;
     private MySimpleDraweeView userProfileImage;
     private FloatingActionButton fab_add_course;
-    @SuppressLint("RestrictedApi")
+    private MenuItem searchOption;
+
     private BottomNavigationView.OnNavigationItemSelectedListener mOnNavigationItemSelectedListener
             = item -> {
+        if (searchOption != null) {
+            if (searchOption.isActionViewExpanded()) {
+                searchOption.collapseActionView();
+            }
+            searchOption.setVisible(false);
+        }
+        HomeFragment homeFragment = (HomeFragment) fragmentManager.findFragmentByTag(TAG_HOME_FRAG);
+        CourseListFragment courseFragment = (CourseListFragment) fragmentManager.findFragmentByTag(TAG_COURSE_LIST_FRAG);
+        ProfileFragment profileFragment = (ProfileFragment) fragmentManager.findFragmentByTag(TAG_PROFILE_FRAG);
+        FragmentTransaction transaction = fragmentManager.beginTransaction();
+        if (homeFragment != null) {
+            transaction.hide(homeFragment);
+        }
+        if (profileFragment != null) {
+            transaction.hide(profileFragment);
+        }
+        if (courseFragment != null) {
+            transaction.hide(courseFragment);
+        }
         switch (item.getItemId()) {
             case R.id.navigation_home:
-                fab_add_course.setVisibility(View.GONE);
+                //noinspection RedundantCast
+                ((View) fab_add_course).setVisibility(View.GONE);
                 fab_add_course.setOnClickListener(null);
-                Fragment homeFragment = fragmentManager.findFragmentByTag(TAG_HOME_FRAG);
                 if (homeFragment == null) {
-                    homeFragment = HomeFragment.newInstance();
+                    homeFragment = new HomeFragment();
+                    transaction.add(R.id.container_fragment, homeFragment, TAG_HOME_FRAG);
                 }
-                fragmentManager.beginTransaction().replace(R.id.container_fragment,
-                        homeFragment, TAG_HOME_FRAG).addToBackStack(null).commit();
-                return true;
+                transaction.show(homeFragment);
+                break;
             case R.id.navigation_courses:
-                fab_add_course.setVisibility(View.VISIBLE);
+                //noinspection RedundantCast
+                ((View) fab_add_course).setVisibility(View.VISIBLE);
                 fab_add_course.setOnClickListener(v -> CourseListFragment.handleAddCourse(HomeActivity.this));
-                Fragment courseListFragment = fragmentManager.findFragmentByTag(TAG_COURSE_LIST_FRAG);
-                if (courseListFragment == null) {
-                    courseListFragment = CourseListFragment.newInstance();
+                if (courseFragment == null) {
+                    courseFragment = new CourseListFragment();
+                    transaction.add(R.id.container_fragment, courseFragment, TAG_COURSE_LIST_FRAG);
                 }
-                fragmentManager.beginTransaction().replace(R.id.container_fragment,
-                        courseListFragment, TAG_COURSE_LIST_FRAG).addToBackStack(null).commit();
+                transaction.show(courseFragment);
+                if (searchOption != null) {
+                    searchOption.setVisible(true);
+                }
                 break;
             case R.id.navigation_profile:
-                fab_add_course.setVisibility(View.GONE);
+                //noinspection RedundantCast
+                ((View) fab_add_course).setVisibility(View.GONE);
                 fab_add_course.setOnClickListener(null);
-                Fragment profileFragment = fragmentManager.findFragmentByTag(TAG_PROFILE_FRAG);
                 if (profileFragment == null) {
-                    profileFragment = ProfileFragment.newInstance();
+                    profileFragment = new ProfileFragment();
+                    transaction.add(R.id.container_fragment, profileFragment, TAG_PROFILE_FRAG);
                 }
-                fragmentManager.beginTransaction().replace(R.id.container_fragment,
-                        profileFragment, TAG_PROFILE_FRAG).addToBackStack(null).commit();
+                transaction.show(profileFragment);
                 break;
             default:
                 return false;
         }
+        transaction.commit();
         return true;
     };
 
@@ -112,7 +136,6 @@ public class HomeActivity extends AppCompatActivity implements ForceUpdateChecke
         snack = findViewById(R.id.container);
         fab_add_course = findViewById(R.id.fab_add_course);
         navigation.setOnNavigationItemSelectedListener(mOnNavigationItemSelectedListener);
-        fragmentManager.addOnBackStackChangedListener(getListener());
         ForceUpdateChecker.with(this).onUpdateNeeded(this).check();
         SharedPreferences sharedPreferences =
                 PreferenceManager.getDefaultSharedPreferences(this);
@@ -149,17 +172,6 @@ public class HomeActivity extends AppCompatActivity implements ForceUpdateChecke
         savedInstanceState.putInt("bottomNav", navigation.getSelectedItemId());
     }
 
-    private FragmentManager.OnBackStackChangedListener getListener() {
-        return () -> {
-            if (fragmentManager != null) {
-                Fragment currFrag = fragmentManager.findFragmentByTag(TAG_PROFILE_FRAG);
-                if (navigation.getSelectedItemId() == R.id.navigation_profile && currFrag != null) {
-                    currFrag.onResume();
-                }
-            }
-        };
-    }
-
     @Override
     public boolean onCreateOptionsMenu(final Menu menu) {
         final MenuInflater inflater = getMenuInflater();
@@ -187,23 +199,18 @@ public class HomeActivity extends AppCompatActivity implements ForceUpdateChecke
         });
 
         SearchManager searchManager = (SearchManager) getSystemService(Context.SEARCH_SERVICE);
-        searchView = (SearchView) menu.findItem(R.id.action_search).getActionView();
+        searchOption = menu.findItem(R.id.action_search);
+        searchView = (SearchView) searchOption.getActionView();
         searchView.setSearchableInfo(searchManager != null ? searchManager.getSearchableInfo(getComponentName()) : null);
-        searchView.setIconifiedByDefault(true);
-        searchView.setIconified(false);
-        searchView.setSubmitButtonEnabled(true);
-        searchView.setQueryHint(Html.fromHtml("<font color = #ffffff>" + "Search.." + "</font>"));
-        searchView.setMaxWidth(Integer.MAX_VALUE);
+        searchView.setQueryHint(Html.fromHtml("<font color = #ffffff>Search Courses</font>"));
         searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
             @Override
             public boolean onQueryTextSubmit(String s) {
-                Log.e("TAG", "query:" + s);
                 return false;
             }
 
             @Override
             public boolean onQueryTextChange(String s) {
-                Log.e("TAG", "query:" + s);
                 getCoursesFromDb(s);
                 return false;
             }

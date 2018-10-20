@@ -19,7 +19,6 @@
             android:fontFamily="@font/ps_bold"
             android:gravity="center_vertical"
             android:padding="16dp"
-            android:text="21 Courses"
             android:textAllCaps="true"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toStartOf="@id/ib_sort"
