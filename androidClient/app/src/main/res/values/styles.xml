@@ -21,7 +21,6 @@
     <style name="searchStyle" parent="Widget.AppCompat.SearchView.ActionBar">
         <item name="android:textColorHint">@android:color/white</item>
         <item name="android:editTextColor">@android:color/white</item>
-        <item name="android:queryHint">Search..</item>
         <item name="android:searchIcon">@null</item>
     </style>
 

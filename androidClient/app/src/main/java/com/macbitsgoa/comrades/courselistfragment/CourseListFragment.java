@@ -51,10 +51,6 @@ public class CourseListFragment extends Fragment
     private CourseVm courseVm;
     private int currentSortOrder = 2;
 
-    public static Fragment newInstance() {
-        return new CourseListFragment();
-    }
-
     public static void handleAddCourse(Context context) {
         final boolean signedIn = FirebaseAuth.getInstance().getCurrentUser() != null;
         boolean storagePermission = true;
