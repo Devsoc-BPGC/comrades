@@ -28,6 +28,7 @@ import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.macbitsgoa.comrades.aboutmac.AboutMacActivity;
 import com.macbitsgoa.comrades.courselistfragment.CourseListFragment;
+import com.macbitsgoa.comrades.csa.CsaFragment;
 import com.macbitsgoa.comrades.homefragment.HomeFragment;
 import com.macbitsgoa.comrades.persistance.Database;
 import com.macbitsgoa.comrades.profilefragment.ProfileFragment;
@@ -53,6 +54,7 @@ public class HomeActivity extends AppCompatActivity implements ForceUpdateChecke
     public static final String TAG_COURSE_LIST_FRAG = "CourseListFragment";
     public static final String TAG_PROFILE_FRAG = "ProfileFragment";
     public static final String TAG = TAG_PREFIX + HomeActivity.class.getSimpleName();
+    private static final String TAG_CSA_FRAG = "CsaFragment";
     public static BottomNavigationView navigation;
     public static CoordinatorLayout snack;
     private GoogleApiClient mGoogleApiClient;
@@ -73,6 +75,7 @@ public class HomeActivity extends AppCompatActivity implements ForceUpdateChecke
         HomeFragment homeFragment = (HomeFragment) fragmentManager.findFragmentByTag(TAG_HOME_FRAG);
         CourseListFragment courseFragment = (CourseListFragment) fragmentManager.findFragmentByTag(TAG_COURSE_LIST_FRAG);
         ProfileFragment profileFragment = (ProfileFragment) fragmentManager.findFragmentByTag(TAG_PROFILE_FRAG);
+        CsaFragment csaFragment = (CsaFragment) fragmentManager.findFragmentByTag(TAG_CSA_FRAG);
         FragmentTransaction transaction = fragmentManager.beginTransaction();
         if (homeFragment != null) {
             transaction.hide(homeFragment);
@@ -82,6 +85,9 @@ public class HomeActivity extends AppCompatActivity implements ForceUpdateChecke
         }
         if (courseFragment != null) {
             transaction.hide(courseFragment);
+        }
+        if (csaFragment != null) {
+            transaction.hide(csaFragment);
         }
         switch (item.getItemId()) {
             case R.id.navigation_home:
@@ -116,6 +122,15 @@ public class HomeActivity extends AppCompatActivity implements ForceUpdateChecke
                     transaction.add(R.id.container_fragment, profileFragment, TAG_PROFILE_FRAG);
                 }
                 transaction.show(profileFragment);
+                break;
+            case R.id.navigation_csa:
+                //noinspection RedundantCast
+                ((View) fab_add_course).setVisibility(View.GONE);
+                if (csaFragment == null) {
+                    csaFragment = new CsaFragment();
+                    transaction.add(R.id.container_fragment, csaFragment, TAG_CSA_FRAG);
+                }
+                transaction.show(csaFragment);
                 break;
             default:
                 return false;
