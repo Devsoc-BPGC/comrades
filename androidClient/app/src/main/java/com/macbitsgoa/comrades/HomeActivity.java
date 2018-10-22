@@ -75,6 +75,7 @@ public class HomeActivity extends AppCompatActivity implements ForceUpdateChecke
         HomeFragment homeFragment = (HomeFragment) fragmentManager.findFragmentByTag(TAG_HOME_FRAG);
         CourseListFragment courseFragment = (CourseListFragment) fragmentManager.findFragmentByTag(TAG_COURSE_LIST_FRAG);
         ProfileFragment profileFragment = (ProfileFragment) fragmentManager.findFragmentByTag(TAG_PROFILE_FRAG);
+        CsaFragment csaFragment = (CsaFragment) fragmentManager.findFragmentByTag(TAG_CSA_FRAG);
         FragmentTransaction transaction = fragmentManager.beginTransaction();
         if (homeFragment != null) {
             transaction.hide(homeFragment);
@@ -84,6 +85,9 @@ public class HomeActivity extends AppCompatActivity implements ForceUpdateChecke
         }
         if (courseFragment != null) {
             transaction.hide(courseFragment);
+        }
+        if (csaFragment != null) {
+            transaction.hide(csaFragment);
         }
         switch (item.getItemId()) {
             case R.id.navigation_home:
@@ -120,15 +124,13 @@ public class HomeActivity extends AppCompatActivity implements ForceUpdateChecke
                 transaction.show(profileFragment);
                 break;
             case R.id.navigation_csa:
-                fab_add_course.setVisibility(View.GONE);
-                Fragment csaFragment = fragmentManager.findFragmentByTag(TAG_CSA_FRAG);
+                //noinspection RedundantCast
+                ((View) fab_add_course).setVisibility(View.GONE);
                 if (csaFragment == null) {
                     csaFragment = new CsaFragment();
+                    transaction.add(R.id.container_fragment, csaFragment, TAG_CSA_FRAG);
                 }
-                fragmentManager.beginTransaction()
-                        .replace(R.id.container_fragment, csaFragment, TAG_CSA_FRAG)
-                        .addToBackStack(null)
-                        .commit();
+                transaction.show(csaFragment);
                 break;
             default:
                 return false;

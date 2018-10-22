@@ -1,98 +1,66 @@
 <?xml version="1.0" encoding="utf-8"?>
-<com.google.android.material.card.MaterialCardView
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<com.google.android.material.card.MaterialCardView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:layout_margin="8dp"
-    app:cardElevation="4dp"
+    android:layout_marginStart="4dp"
+    android:layout_marginTop="4dp"
+    android:layout_marginEnd="4dp"
     android:orientation="vertical"
-    app:cardCornerRadius="5dp">
+    android:padding="16dp"
+    app:cardCornerRadius="4dp"
+    app:cardElevation="4dp">
 
-    <RelativeLayout
+    <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content">
-        <LinearLayout
-            android:id="@+id/LL"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="vertical">
-            <TextView
-                android:id="@+id/EventTitle"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                tools:text="Random Upcoming Event "
-                android:fontFamily="@font/ps_bold"
-                android:layout_margin="5dp"
-                android:textColor="#000"
-                android:textSize="25sp"
-                />
-
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:orientation="horizontal"
-                android:layout_height="wrap_content">
-
-                <TextView
-                    android:id="@+id/SenderName"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    tools:text="Firstname Lastname,"
-                    android:fontFamily="@font/ps_regular"
-                    android:layout_marginStart="5dp"
-                    android:paddingBottom="5dp"
-                    android:textSize="18sp"/>
-
-                <TextView
-                    android:id="@+id/SenderPost"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    tools:text="Xyz of CSA"
-                    android:fontFamily="@font/ps_regular"
-                    android:layout_marginStart="5dp"
-                    android:paddingBottom="5dp"
-                    android:textSize="18sp"/>
-
-
-            </LinearLayout>
-
-            <TextView
-                android:id="@+id/EventDetails"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_margin="5dp"
-                android:text="@string/lorem_ipsum"
-                android:textSize="15sp"
-                android:textColor="#000"
-                />
-        </LinearLayout>
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
 
         <TextView
-            android:id="@+id/NewsTimeStamp"
-            android:layout_width="wrap_content"
+            android:id="@+id/tv_title"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            tools:text="19/10/2018 07:30PM"
-            android:layout_margin="5dp"
-            android:layout_below="@id/LL"
-            android:paddingTop="10dp"
-            />
+            android:ellipsize="end"
+            android:fontFamily="@font/ps_bold"
+            android:maxLines="1"
+            android:padding="8dp"
+            android:textColor="@color/black"
+            android:textSize="21sp"
+            tools:text="Random Upcoming Event" />
 
-        <Button
-            android:id="@+id/ReadMore"
+        <TextView
+            android:id="@+id/tv_sender_name"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            tools:text="Read more"
             android:fontFamily="@font/ps_regular"
-            android:textAllCaps="false"
-            android:drawablePadding="10dp"
-            android:drawableEnd="@drawable/ic_arrow_forward_black_24dp"
-            android:layout_below="@id/LL"
-            android:drawableTint="#000"
-            android:layout_alignParentEnd="true"
-            android:background="#fff" />
-    </RelativeLayout>
+            android:padding="4dp"
+            android:textColor="@color/grey"
+            android:textSize="12sp"
+            tools:text="John Duke, CSA Prez" />
 
+        <TextView
+            android:id="@+id/tv_content"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:ellipsize="end"
+            android:fontFamily="@font/ps_regular"
+            android:justificationMode="inter_word"
+            android:maxLines="4"
+            android:padding="4dp"
+            android:textColor="@color/black"
+            android:textSize="16sp" />
 
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/btn_read_more"
+            style="@style/Widget.MaterialComponents.Button.TextButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="end"
+            android:fontFamily="@font/ps_regular"
+            android:padding="8dp"
+            android:text="@string/read_more"
+            android:textAllCaps="false" />
+    </LinearLayout>
 
 </com.google.android.material.card.MaterialCardView>

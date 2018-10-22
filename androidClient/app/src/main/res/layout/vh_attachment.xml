@@ -12,14 +12,14 @@
 
 
     <com.facebook.drawee.view.SimpleDraweeView
-        android:id="@+id/AttachmentImg"
+        android:id="@+id/sdv_file_thumb"
         android:layout_width="300dp"
         app:placeholderImage="@drawable/ic_photo_black_24dp"
         android:layout_gravity="center"
         android:layout_height="200dp" />
 
     <TextView
-        android:id="@+id/AttachName"
+        android:id="@+id/tv_filename"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         tools:text="Poster for Random Event"
