@@ -66,6 +66,13 @@
             {
               "client_id": "666225132801-iklcdj36jau98rf2v44a0v1rnguioatd.apps.googleusercontent.com",
               "client_type": 3
+            },
+            {
+              "client_id": "666225132801-fqjpfrm7nofhmoe1keglkjlmitclc0v2.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.MACBITSGoa.BITSApp"
+              }
             }
           ]
         },
@@ -107,6 +114,14 @@
           }
         },
         {
+          "client_id": "666225132801-ju8p83akvcj3n5dgrqpk2u7p5v41240b.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.macbitsgoa.comrades.debug",
+            "certificate_hash": "f3617c88c5c6974f7def83821a5eaf12c7fbd78a"
+          }
+        },
+        {
           "client_id": "666225132801-iklcdj36jau98rf2v44a0v1rnguioatd.apps.googleusercontent.com",
           "client_type": 3
         }
@@ -126,6 +141,13 @@
             {
               "client_id": "666225132801-iklcdj36jau98rf2v44a0v1rnguioatd.apps.googleusercontent.com",
               "client_type": 3
+            },
+            {
+              "client_id": "666225132801-fqjpfrm7nofhmoe1keglkjlmitclc0v2.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.MACBITSGoa.BITSApp"
+              }
             }
           ]
         },

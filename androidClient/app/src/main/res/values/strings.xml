@@ -54,7 +54,8 @@
     <string name="title_activity_test">TestActivity</string>
     <string name="title_menus_activity">Menus</string>
     <string name="title_activity_tutorial">TutorialActivity</string>
-    <string name="csa_notifications">CSA Notifications</string>
+    <string name="csa_news">CSA News</string>
+    <string name="lorem_ipsum">Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat...</string>
 
 
 </resources>

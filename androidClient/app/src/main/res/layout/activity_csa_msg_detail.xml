@@ -1,6 +1,86 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:orientation="vertical" android:layout_width="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
     android:layout_height="match_parent">
+
+    <TextView
+        android:id="@+id/Heading"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        tools:text="Random Upcoming Event With A Big Name"
+        android:fontFamily="@font/ps_bold"
+        android:padding="10dp"
+        android:textColor="#000"
+        android:textSize="28sp"
+        />
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:orientation="horizontal"
+        android:layout_height="wrap_content">
+
+        <com.macbitsgoa.comrades.MySimpleDraweeView
+            android:id="@+id/profile_dp"
+            android:layout_width="75dp"
+            android:layout_height="75dp"
+            app:roundAsCircle="true"
+            android:layout_margin="5dp"/>
+
+        <LinearLayout
+            android:padding="5dp"
+            android:layout_width="wrap_content"
+            android:orientation="vertical"
+            android:layout_height="wrap_content">
+            <TextView
+                android:id="@+id/sender_name"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:fontFamily="@font/ps_regular"
+                android:layout_marginStart="5dp"
+                android:textColor="#000"
+                android:textSize="20sp"
+                tools:text="Firstname Lastname"/>
+
+            <TextView
+                android:id="@+id/sender_post"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textColor="#000"
+                android:layout_marginStart="5dp"
+                android:textSize="16sp"
+                android:fontFamily="@font/ps_regular"
+                tools:text="Xyz Post, CSA"/>
+
+            <TextView
+                android:id="@+id/time_stamp"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="5dp"
+                android:paddingTop="5dp"
+                android:fontFamily="@font/ps_regular"
+                tools:text="dd/mm/yyyy hrs:min"/>
+        </LinearLayout>
+
+
+    </LinearLayout>
+
+    <TextView
+        android:id="@+id/content_csa_msg"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        tools:text="@string/about_mac_main"
+        android:textColor="#000"
+        android:textSize="15sp"
+        android:layout_margin="10dp"/>
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/AttachList"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+    </androidx.recyclerview.widget.RecyclerView>
 
 </LinearLayout>
