@@ -6,6 +6,7 @@ const val FCM_TYPE_MATERIAL_ADDED = "material_added"
 const val FCM_TYPE_MATERIAL_UPDATE = "materialUpdate"
 const val FCM_TYPE_USER_UPDATE = "userUpdate"
 const val FCM_TYPE_COURSE_UPDATE = "courseUpdate"
+const val FCM_TYPE_CSA_NOTIFS = "csa_notifs"
 const val FCM_KEY_VALUE = "value"
 const val FCM_KEY_TYPE = "type"
 const val USERS = "users"
@@ -14,6 +15,7 @@ const val COURSES = "courses"
 const val CONTRIBUTORS = "contributors"
 const val CONTRIBUTORS_NAME = "name"
 const val FB_NODE_COURSE_MATERIAL = "courseMaterial"
+
 /**
  * Get fcm channel name corresponding to the course
  */
