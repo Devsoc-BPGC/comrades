@@ -277,3 +277,25 @@ exports.releaseRanks = functions.database.ref("/release/users/{uuid}/score")
             return 0;
         });
     });
+
+exports.debugCsaNotif = functions.database.ref('/debug/adminFeed/{pushId}').onCreate((snapshot, context) => {
+    const newNotif = snapshot.val();
+
+    if (newNotif.notify === true) {
+        const payload = {
+            sender: `${newNotif.name}`,
+            timeStamp: `${newNotif.timestamp}`,
+            subject: `${newNotif.title}`,
+            post: `${newNotif.post}`
+            type: 'csa_notifs'
+        }
+
+        return admin.messaging().sendToTopic('CsaNotifications', {data: payload}).then((response) => {
+            console.log('Successfully sent notification', response);
+            return 0;
+        }).catch((error) => {
+            console.log('Error sending notification', error);
+            throw error;
+        });
+    }
+});

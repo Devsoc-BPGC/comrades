@@ -3,6 +3,7 @@ package com.macbitsgoa.comrades
 import com.macbitsgoa.comrades.persistance.Course
 
 const val FCM_TYPE_MATERIAL_ADDED = "material_added"
+const val FCM_TYPE_CSA_NOTIFS = "csa_notifs"
 const val FCM_KEY_TYPE = "type"
 const val USERS = "users"
 const val TOPIC_COURSE_UPDATES = BuildConfig.BUILD_TYPE + "CourseUpdates"
