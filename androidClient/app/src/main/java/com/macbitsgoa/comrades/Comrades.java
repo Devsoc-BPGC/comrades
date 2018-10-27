@@ -8,8 +8,6 @@ import android.preference.PreferenceManager;
 import android.util.Log;
 
 import com.facebook.drawee.backends.pipeline.Fresco;
-import com.google.android.gms.tasks.OnCompleteListener;
-import com.google.android.gms.tasks.Task;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.messaging.FirebaseMessaging;
@@ -24,9 +22,8 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.stream.Stream;
 
-import androidx.annotation.NonNull;
-
 import static com.macbitsgoa.comrades.CHCKt.TAG_PREFIX;
+import static com.macbitsgoa.comrades.FirebaseKeysKt.TOPIC_CSA_NEWS;
 import static com.macbitsgoa.comrades.HomeActivity.SETTINGS;
 
 
@@ -62,14 +59,10 @@ public class Comrades extends Application {
 
         }
 
-        FirebaseMessaging.getInstance().subscribeToTopic("CsaNotifications")
-                .addOnCompleteListener(new OnCompleteListener<Void>() {
-                    @Override
-                    public void onComplete(@NonNull Task<Void> task) {
-                        if (!task.isSuccessful()) {
-                            Log.e("error msg","Error in subscription");
-                        }
-
+        FirebaseMessaging.getInstance().subscribeToTopic(TOPIC_CSA_NEWS)
+                .addOnCompleteListener(task -> {
+                    if (!task.isSuccessful()) {
+                         Log.e(TAG,"Error in subscription");
                     }
                 });
 

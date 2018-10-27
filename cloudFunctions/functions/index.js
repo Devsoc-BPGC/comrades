@@ -290,7 +290,7 @@ exports.debugCsaNotif = functions.database.ref('/debug/adminFeed/{pushId}').onCr
             type: 'csa_notifs'
         }
 
-        return admin.messaging().sendToTopic('CsaNotifications', {data: payload}).then((response) => {
+        return admin.messaging().sendToTopic('debugCsaNotifications', {data: payload}).then((response) => {
             console.log('Successfully sent notification', response);
             return 0;
         }).catch((error) => {
