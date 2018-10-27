@@ -10,6 +10,7 @@ import android.util.Log;
 import com.facebook.drawee.backends.pipeline.Fresco;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.messaging.FirebaseMessaging;
 import com.google.firebase.remoteconfig.FirebaseRemoteConfig;
 import com.macbitsgoa.comrades.courselistfragment.MyCourse;
 import com.macbitsgoa.comrades.persistance.Database;
@@ -22,6 +23,7 @@ import java.util.Objects;
 import java.util.stream.Stream;
 
 import static com.macbitsgoa.comrades.CHCKt.TAG_PREFIX;
+import static com.macbitsgoa.comrades.FirebaseKeysKt.TOPIC_CSA_NEWS;
 import static com.macbitsgoa.comrades.HomeActivity.SETTINGS;
 
 
@@ -56,6 +58,13 @@ public class Comrades extends Application {
                     });
 
         }
+
+        FirebaseMessaging.getInstance().subscribeToTopic(TOPIC_CSA_NEWS)
+                .addOnCompleteListener(task -> {
+                    if (!task.isSuccessful()) {
+                         Log.e(TAG,"Error in subscription");
+                    }
+                });
 
     }
 

@@ -10,4 +10,5 @@ public class CsaNews {
     public String timestamp;
     public String profileImageUrl;
     public List<Attachment> attachment;
+    public boolean notify;
 }

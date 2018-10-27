@@ -42,13 +42,7 @@
         <activity android:name=".GetGoogleSignInActivity" />
 
         <service
-            android:name=".FcmReceiverService"
-            android:exported="false">
-            <intent-filter>
-                <action android:name="com.google.firebase.MESSAGING_EVENT" />
-            </intent-filter>
-        </service>
-        <service android:name=".csa.CsaFcmService"
+            android:name=".FcmService"
             android:exported="false">
             <intent-filter>
                 <action android:name="com.google.firebase.MESSAGING_EVENT" />
