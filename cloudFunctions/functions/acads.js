@@ -1,6 +1,12 @@
 const firebase = require("./firebase.js");
 const admin = firebase.admin;
 const functions = firebase.functions;
+const express = require("express");
+const cors = require("cors");
+const app = express();
+
+// Automatically allow cross-origin requests
+app.use(cors({origin: true}));
 
 const fillCourses = (response) => {
     return admin.database().ref(`/debug/courses/`).once("value").then((snapshot) => {
@@ -18,4 +24,6 @@ const coursesHandler = (request, response) => {
     fillCourses(response);
 };
 
-exports.courses = functions.https.onRequest(coursesHandler);
+app.get('*', coursesHandler);
+
+exports.courses = functions.https.onRequest(app);
