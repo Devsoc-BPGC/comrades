@@ -1,8 +1,9 @@
-const functions = require("firebase-functions");
-const admin = require("firebase-admin");
+const firebase = require("./firebase.js");
+const functions = firebase.functions;
+const admin = firebase.admin;
+const acads = require("./acads.js");
 let db;
 
-admin.initializeApp(functions.config().firebase);
 db = admin.database();
 
 exports.newDebugCourseAdded = functions.database.ref(`/debug/courses/{courseId}/`).onCreate((snapshot) => {
@@ -278,6 +279,7 @@ exports.releaseRanks = functions.database.ref("/release/users/{uuid}/score")
         });
     });
 
+
 exports.debugCsaNotif = functions.database.ref('/debug/adminFeed/{pushId}').onCreate((snapshot, context) => {
     const newNotif = snapshot.val();
 
@@ -286,7 +288,7 @@ exports.debugCsaNotif = functions.database.ref('/debug/adminFeed/{pushId}').onCr
             sender: `${newNotif.name}`,
             timeStamp: `${newNotif.timestamp}`,
             subject: `${newNotif.title}`,
-            post: `${newNotif.post}`
+            post: `${newNotif.post}`,
             type: 'csa_notifs'
         }
 
@@ -299,3 +301,5 @@ exports.debugCsaNotif = functions.database.ref('/debug/adminFeed/{pushId}').onCr
         });
     }
 });
+
+exports.courses = acads.courses;
